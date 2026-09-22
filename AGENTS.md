@@ -77,15 +77,24 @@ it rather than letting it grow.
 | ---------------------------- | ------------------------------------------------------------ |
 | `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, TextLink, IconTile, StatusPill |
 | `components/forms/`          | Inputs and form compositions — InputField, FormOptionsRow     |
-| `components/cards/`          | Card building blocks — CardHeading, CardNote                  |
+| `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard                 |
+| `components/dashboard/`      | Dashboard sections, one folder per feature — `stats/`, `live-calls/`, `attention/`, `agents/`, `audit/` |
+| `components/nav/`            | Sidebar, top bar and the account menu                         |
+| `components/notifications/`  | Notification popover and its rows                             |
+| `components/motion/`         | Reveal and other shared transitions                           |
+| `components/layout/`         | Page shells — ViewportShell, ScrollableCenter                 |
+| `components/shadcn/`         | shadcn primitives. Edit only to fix a defect or bind it to our tokens, and say why in a comment |
 | `components/features/`       | Feature/marketing list rows — FeatureItem, FeatureList         |
 | `components/auth/`           | Auth-specific compositions — AuthCard, AuthHeroPanel, AuthHeroCopy |
 | `components/decor/`          | Purely decorative, `aria-hidden` pieces                       |
 | `components/brand/`          | Logo and brand marks                                          |
 | `components/providers/`      | Client providers mounted at the root                          |
 
-Add a folder when a new concern appears (`tables/`, `nav/`, `modals/`,
-`dashboard/`…) rather than widening an existing one.
+Add a folder when a new concern appears (`tables/`, `modals/`, `charts/`…)
+rather than widening an existing one. A folder that grows past a handful of
+files splits by feature, the way `dashboard/` does.
+
+Shared hooks live in `src/hooks/`.
 
 - Domain folders (`auth/`, later `agent/`, `client/`, `admin/`) hold
   compositions tied to that domain. Anything a second domain needs moves down
@@ -101,6 +110,11 @@ Add a folder when a new concern appears (`tables/`, `nav/`, `modals/`,
   `.join(" ")`, never manual string concatenation for classes.
 - `cn()` is `clsx` + `tailwind-merge`, so a later class correctly beats an
   earlier conflicting one.
+- tailwind-merge only knows Tailwind's own class names, so every custom scale
+  has to be registered with it or the override silently fails. The type scale
+  lives in `src/lib/typography.js` and the radius scale in `src/lib/radii.js`.
+  **Add a class to either scale in `globals.css` → add its name to that file**,
+  or `cn("rounded-md", "rounded-8")` keeps both and the stylesheet decides.
 
 ## 8. Buttons
 
@@ -121,13 +135,49 @@ raw `<button>` at a call site.
 Shared chrome goes in that segment's `layout.js`, not copy-pasted into each
 `page.js`. A page should render only what is unique to it.
 
-## 10. Toasts
+The three role dashboards (`admin`, `agent`, `client`) are one shell, not three.
+`DashboardShell` renders the sidebar, top bar and content area for all of them
+and takes a `role`; each role's `layout.js` is a single line. Nothing in the
+shell may hardcode a role:
+
+- Nav rows come from the catalogue in `src/data/dashboard/nav-items.data.js`,
+  and a role lists which ones it shows in `nav.data.js`. Hrefs are built from
+  the role, so one entry serves `/admin/calls`, `/agent/calls` and
+  `/client/calls`.
+- `useDashboardStore` holds the bundles keyed by role; components select
+  `nav[role]` / `topBar[role]`.
+- Adding a role is a data entry plus a one-line `layout.js`. If it needs a
+  component change, the component was not reusable enough — fix that instead.
+
+## 10. shadcn
+
+shadcn components are primitives we adopt, not a second design system.
+
+- They land in `components/shadcn/` and are generated as `.jsx`.
+- `globals.css` maps shadcn's semantic names (`bg-primary`, `border-border`,
+  `bg-sidebar`…) onto our Figma tokens, so a shadcn component inherits this
+  design system. Add a component needing a name that is not mapped → map it.
+- `npx shadcn@latest add` is not trusted output. It has shipped `import { cn }
+  from "cn"`, demo files at the repo root, a dark-mode variant, and hooks that
+  fail our lint. Check its diff and clean up before moving on.
+- Its overlays (sheet, popover, tooltip, dialog) animate through
+  **`tw-animate-css`**, which the installer does not add. Without the
+  `@import "tw-animate-css"` in `globals.css`, `animate-in`, `slide-in-from-*`
+  and `fade-in-0` are dead classes and every overlay pops into place with no
+  motion — it looks like a missing animation, not a missing dependency.
+- Overlay motion uses the project's own curve, not shadcn's defaults:
+  `ease-reveal` (the `--ease-reveal` token, matching `REVEAL_EASE` in
+  `src/lib/motion.js`), and the exit is always quicker than the entrance.
+- Use them for behaviour — focus management, portals, keyboard handling — and
+  restyle to the design rather than accepting their defaults.
+
+## 11. Toasts
 
 `goey-toast`. `<GooeyToaster />` is mounted exactly once in the root layout via
 `ToasterProvider`, and `goey-toast/styles.css` is imported once at the root.
 Call `gooeyToast.*` from stores or handlers.
 
-## 11. Never commit or push unless asked
+## 12. Never commit or push unless asked
 
 Do not run `git commit`, `git push`, or open a PR on your own initiative — not
 after finishing a task, not to "save progress", not because the tree looks
@@ -137,7 +187,7 @@ Commit only when explicitly told to in that message ("commit this", "commit and
 push"). Permission is for that request only and does not carry over to the next
 task. Pushing needs its own explicit instruction: "commit" never implies push.
 
-## 12. Design tokens
+## 13. Design tokens
 
 Colors, radii, type scale and elevation come from `src/app/globals.css`, which
 mirrors the Figma variables. Never hardcode a hex value in a component. The

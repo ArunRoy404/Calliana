@@ -1,10 +1,19 @@
 import FeatureItem from "@/components/features/FeatureItem";
+import Reveal from "@/components/motion/Reveal";
 import { cn } from "@/lib/cn";
 
-/** Feature highlights on the hero panel — Figma 43:8137. */
+/**
+ * Feature highlights on the hero panel — Figma 43:8137.
+ * Both an item of the hero's cascade and a container for its own rows.
+ */
 export default function FeatureList({ features = [], className }) {
   return (
-    <ul className={cn("flex flex-col gap-2.5", className)}>
+    <Reveal
+      as="ul"
+      item
+      stagger
+      className={cn("flex flex-col gap-2.5", className)}
+    >
       {features?.map((feature) => (
         <FeatureItem
           key={feature?.id}
@@ -13,6 +22,6 @@ export default function FeatureList({ features = [], className }) {
           body={feature?.body}
         />
       ))}
-    </ul>
+    </Reveal>
   );
 }

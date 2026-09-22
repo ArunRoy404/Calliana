@@ -1,0 +1,45 @@
+Hello there,
+
+Hope you are doing well.
+
+We are pleased to inform you that the project has been initialized and the
+architecture is now in place. Development is progressing on schedule.
+
+Today we would like to share a visual update of the website:
+
+ - We have initialized the frontend project using Next.js
+ - We have reviewed the Figma file and configured the project against it,
+   so every colour, font, spacing and corner radius in the build comes
+   directly from your design system
+ - We have developed the Sign In page
+ - We have developed the Forgot Password page
+ - We have developed the Verify Email page, including the one-time code entry
+ - We have developed the Reset Password page
+ - We have developed the confirmation ("All Set") page
+ - We have connected the full sign-in journey, so each screen leads to the
+   next and the complete flow can be walked through end to end
+ - We have developed a custom 404 page consistent with the rest of the site
+ - We have added smooth page transitions throughout
+ - We have developed the Admin Dashboard overview page, including the
+   statistics cards, Live Calls, Attention Required, Agent Availability and
+   the System Audit & Routing Trail
+ - We have developed the dashboard navigation: a collapsible sidebar, the top
+   bar, the notifications panel and the account menu
+ - We have built the dashboard shell so that the Agent and Client dashboards
+   will reuse the same navigation and layout, which will keep them consistent
+   with the Admin area and shorten their delivery time
+ - We have made every screen fully responsive, from mobile through to large
+   desktop displays
+
+Please note that the screens are currently presented with sample content and
+are not yet connected to live data. Any button that is not yet wired to the
+backend will confirm this on screen, so nothing appears broken while you
+review.
+
+Live URL:
+
+We would welcome any feedback you may have on the screens delivered so far,
+and we will incorporate it into the next round of work. Please feel free to
+reach out with any questions in the meantime.
+
+Best regards,
