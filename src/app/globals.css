@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* shadcn's overlays (sheet, popover, tooltip, dialog) are written against
+   `animate-in` / `slide-in-from-left` / `fade-in-0`. Those utilities are not
+   part of Tailwind — without this import every one of them is a dead class and
+   the overlays simply pop into place. */
+@import "tw-animate-css";
+
 /* ==========================================================================
    CALLIANA — DESIGN TOKENS
    Source: Figma "New Testing Project" (file 9foyDETn5IOj3mfPLg6qQl)
@@ -87,6 +93,8 @@
   --brand-error: #ef4444; /* Figma "Error" — brighter red than status-error */
   --brand-success: #10b981; /* Figma "Success" — brighter green than status-success */
   --brand-white: #ffffff; /* Figma "White" / "Base White" / "color White" */
+  --brand-text-black: #0d0b09; /* Figma "Black Text" — warmer than text-primary */
+  --brand-track: #f3f4f8; /* Figma "background" — scrollbar track */
 
   /* The wordmark's own gradient, read from the logo SVG's stops — use these
      when brand-coloured type or artwork is called for. */
@@ -138,6 +146,16 @@
      ------------------------------------------------------------------ */
   --elevation-sm: 0 2px 6px -1px rgb(15 23 42 / 0.08); /* Figma "Elevation/SM" */
   --elevation-card: 0 2px 3px 0 rgb(15 23 42 / 0.08); /* auth card drop shadow */
+
+  /* ------------------------------------------------------------------
+     13. DASHBOARD SHELL
+     ------------------------------------------------------------------
+     The sidebar's expanded and collapsed widths are set on the provider (see
+     DashboardShell) because shadcn writes its own defaults inline there. The
+     mobile sheet cannot be: it renders in a portal at the end of <body> and so
+     never inherits them, which leaves the root as the only way to reach it.
+     ------------------------------------------------------------------ */
+  --sidebar-width-mobile: 260px;
 }
 
 /* ==========================================================================
@@ -199,6 +217,8 @@
   --color-brand-black: var(--brand-black);
   --color-brand-gray: var(--brand-gray);
   --color-brand-gray-dark: var(--brand-gray-dark);
+  --color-brand-text-black: var(--brand-text-black);
+  --color-brand-track: var(--brand-track);
   --color-brand-border: var(--brand-border);
   --color-brand-error: var(--brand-error);
   --color-brand-success: var(--brand-success);
@@ -219,14 +239,71 @@
   --color-auth-panel-scrim: var(--auth-panel-scrim);
   --color-auth-feature-muted: var(--auth-feature-muted);
 
+  /* Motion — the same curve `src/lib/motion.js` gives framer-motion, so a CSS
+     transition and a JS reveal settle identically. */
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+
   /* Elevation */
   --shadow-elevation-sm: var(--elevation-sm);
   --shadow-card: var(--elevation-card);
+
+  /* The sidebar block ships its own palette; point it at ours so the rail
+     matches the design instead of shadcn's defaults. */
+  --color-sidebar: var(--surface-base);
+  --color-sidebar-foreground: var(--text-secondary);
+  --color-sidebar-primary: var(--action-primary);
+  --color-sidebar-primary-foreground: var(--text-on-primary);
+  --color-sidebar-accent: var(--surface-selected);
+  --color-sidebar-accent-foreground: var(--text-primary);
+  --color-sidebar-border: var(--border-default);
+  --color-sidebar-ring: var(--border-focus);
+}
+
+/* ==========================================================================
+   SHADCN BRIDGE
+   shadcn components are written against a fixed set of semantic names
+   (bg-primary, text-muted-foreground, border-border …). Pointing those at our
+   Figma tokens makes every shadcn component inherit this design system, so
+   there is one source of truth rather than two parallel palettes.
+
+   Add a shadcn component that needs a name not listed here → map it here, do
+   not let it fall back to an undefined variable.
+   ========================================================================== */
+@theme inline {
+  --color-background: var(--surface-canvas);
+  --color-foreground: var(--text-primary);
+
+  --color-card: var(--surface-base);
+  --color-card-foreground: var(--text-primary);
+
+  --color-popover: var(--surface-elevated);
+  --color-popover-foreground: var(--text-primary);
+
+  --color-primary: var(--action-primary);
+  --color-primary-foreground: var(--text-on-primary);
+
+  --color-secondary: var(--action-secondary);
+  --color-secondary-foreground: var(--text-primary);
+
+  --color-muted: var(--surface-subtle);
+  --color-muted-foreground: var(--text-tertiary);
+
+  --color-accent: var(--surface-selected);
+  --color-accent-foreground: var(--text-primary);
+
+  --color-destructive: var(--status-error);
+  --color-destructive-foreground: var(--text-on-primary);
+
+  --color-border: var(--border-default);
+  --color-input: var(--border-default);
+  --color-ring: var(--border-focus);
 }
 
 /* Radii — declared non-inline so Tailwind both emits `--radius-*` onto :root
    (making `var(--radius-12)` from pasted Figma code resolve) and generates the
    matching `rounded-*` utilities. */
+/* Adding a radius here? Also add its class name to `src/lib/radii.js`, or
+   `cn()` cannot drop the radius a shadcn primitive already set. */
 @theme {
   --radius-0: 0px;
   --radius-4: 4px; /* inputs, checkboxes */
@@ -317,4 +394,61 @@ body {
   background: var(--surface-canvas);
   color: var(--text-primary);
   font-family: var(--font-sans);
+}
+
+/* Tailwind v4 leaves an uncoloured `border` as `currentColor`, so every shadcn
+   primitive that writes a bare `border` (popover, dropdown, input…) draws it in
+   the text colour — near-black. Point the default at our hairline token, which
+   is what those primitives assume. */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--border-default);
+  }
+}
+
+/* Scrollbars — the design's bar (Figma 196:19925) applied once, everywhere,
+   instead of each panel rebuilding it. Native scrollbars appear only when there
+   is something to scroll; a panel that wants the space reserved regardless asks
+   for `scrollbar-gutter: stable`. */
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--brand-track);
+  border-radius: var(--radius-999);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--brand-black);
+  border-radius: var(--radius-999);
+}
+
+/* Firefox has no `::-webkit-scrollbar`, so its own properties are the only
+   lever there — and setting them unconditionally would make Chrome ignore
+   every rule above and draw its thin 10px default instead. */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--brand-black) var(--brand-track);
+  }
+}
+
+/* The reveals in `src/components/motion/` already honour this through
+   framer-motion's `useReducedMotion`; the CSS-driven overlays need saying
+   explicitly, or a sheet still flies in for someone who asked it not to. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

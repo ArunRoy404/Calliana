@@ -15,6 +15,12 @@
  */
 export const REVEAL_EASE = [0.16, 1, 0.3, 1];
 
+/**
+ * The same curve for CSS transitions, exposed in `globals.css` as `--ease-reveal`
+ * and used through the `ease-reveal` utility. Keep the two in step.
+ */
+export const REVEAL_EASE_CSS = "cubic-bezier(0.16, 1, 0.3, 1)";
+
 /** Long enough to read as intentional, short enough not to delay input. */
 export const REVEAL_DURATION = 0.55;
 
