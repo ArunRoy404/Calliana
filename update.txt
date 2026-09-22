@@ -28,7 +28,10 @@ are not yet connected to live data. Any button that is not yet wired to the
 backend will confirm this on screen, so nothing appears broken while you
 review.
 
-Live URL: https://calliana.vercel.app
+Live URL: 
+ - https://calliana.vercel.app
+ - https://calliana.vercel.app/admin
+
 
 We would welcome any feedback you may have on the screens delivered so far,
 and we will incorporate it into the next round of work. Please feel free to
