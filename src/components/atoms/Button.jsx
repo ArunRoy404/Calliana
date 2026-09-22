@@ -20,9 +20,13 @@ const VARIANT_CLASSES = {
     "bg-action-secondary text-text-primary hover:bg-border-default",
   danger: "bg-status-error text-text-on-primary hover:bg-status-error/90",
   ghost: "bg-transparent text-text-secondary hover:bg-action-secondary",
+  /** An inline action that reads as a link but behaves as a button. */
+  link: "bg-transparent text-action-primary hover:opacity-70",
 };
 
 const SIZE_CLASSES = {
+  /** No padding and no size of its own — for inline actions inside a row. */
+  none: "",
   sm: "text-body-sm px-4 py-2",
   md: "text-button px-6 py-3",
   lg: "text-body-lg px-8 py-3.5",
