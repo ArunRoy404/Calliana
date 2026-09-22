@@ -1,4 +1,7 @@
+import { Children } from "react";
+
 import AppImage from "@/components/atoms/AppImage";
+import Reveal from "@/components/motion/Reveal";
 import { cn } from "@/lib/cn";
 
 /**
@@ -20,33 +23,45 @@ export default function AuthStatusCard({
   className,
 }) {
   return (
-    <div
+    <Reveal
+      stagger
       className={cn(
         "relative flex w-[500px] max-w-full flex-col items-center gap-6 overflow-hidden rounded-16 border border-solid border-border-default bg-surface-base px-10 py-12 shadow-card",
         className,
       )}
     >
-      <div className="relative flex size-[72px] shrink-0 items-center justify-center">
-        <AppImage
-          src={icon?.src}
-          width={icon?.width}
-          height={icon?.height}
-          className="absolute inset-0"
-          priority
-        />
-        <span className="relative text-[32px] leading-none font-bold text-status-success-strong">
-          {mark}
-        </span>
-      </div>
+      {/* The badge gets a little further to travel, so it leads the cascade. */}
+      <Reveal item distance={24}>
+        <div className="relative flex size-[72px] shrink-0 items-center justify-center">
+          <AppImage
+            src={icon?.src}
+            width={icon?.width}
+            height={icon?.height}
+            className="absolute inset-0"
+            priority
+          />
+          <span className="relative text-[32px] leading-none font-bold text-status-success-strong">
+            {mark}
+          </span>
+        </div>
+      </Reveal>
 
-      <div className="flex w-full flex-col items-center gap-3 text-center">
-        <h1 className="text-[36px] leading-none font-bold text-text-primary">
-          {heading?.title}
-        </h1>
-        <p className="text-label-lg text-text-secondary">{heading?.subtitle}</p>
-      </div>
+      <Reveal item className="w-full">
+        <div className="flex w-full flex-col items-center gap-3 text-center">
+          <h1 className="text-[36px] leading-none font-bold text-text-primary">
+            {heading?.title}
+          </h1>
+          <p className="text-label-lg text-text-secondary">
+            {heading?.subtitle}
+          </p>
+        </div>
+      </Reveal>
 
-      {children}
-    </div>
+      {Children.map(children, (child) => (
+        <Reveal item className="w-full">
+          {child}
+        </Reveal>
+      ))}
+    </Reveal>
   );
 }
