@@ -1,26 +1,303 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   CALLIANA — DESIGN TOKENS
+   Source: Figma "New Testing Project" (file 9foyDETn5IOj3mfPLg6qQl)
+   Single light theme. This project has no dark mode by design.
+
+   Tokens are declared twice on purpose:
+     1. :root  — raw custom properties using the EXACT Figma variable names,
+                 so code pasted out of Figma (var(--action-primary)) just works.
+     2. @theme — maps those into Tailwind so utilities (bg-action-primary,
+                 text-text-secondary, rounded-12 …) are generated from them.
+   ========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ------------------------------------------------------------------
+     1. SURFACES — page, card and panel backgrounds
+     ------------------------------------------------------------------ */
+  --surface-base: #ffffff; /* cards, inputs, menus — the default "paper" */
+  --surface-elevated: #ffffff; /* raised layers: popovers, dropdowns, modals */
+  --surface-canvas: #f7f9fc; /* app background behind all cards */
+  --surface-subtle: #eef2f7; /* muted fills: table headers, inactive tabs */
+  --surface-selected: #eef4ff; /* active nav item / selected row tint */
+
+  /* ------------------------------------------------------------------
+     2. TEXT — foreground ramp, darkest to lightest
+     ------------------------------------------------------------------ */
+  --text-primary: #0f172a; /* headings and primary body copy */
+  --text-secondary: #475569; /* supporting copy, form labels */
+  --text-tertiary: #64748b; /* meta text, placeholders, timestamps */
+  --text-disabled: #94a3b8; /* disabled controls and dimmed labels */
+  --text-on-primary: #ffffff; /* text sitting on a filled primary surface */
+
+  /* ------------------------------------------------------------------
+     3. BORDERS
+     ------------------------------------------------------------------ */
+  --border-default: #e2e8f0; /* standard hairline on cards and inputs */
+  --border-strong: #cbd5e1; /* emphasised dividers, checkbox outlines */
+  --border-focus: #3d68e8; /* focus ring on interactive elements */
+
+  /* ------------------------------------------------------------------
+     4. ACTIONS — interactive fills
+     ------------------------------------------------------------------ */
+  --action-primary: #3157d5; /* primary buttons, links, active states */
+  --action-primary-hover: #2948b5; /* primary hover / pressed */
+  --action-secondary: #eef2f7; /* secondary button fill, neutral chips */
+  --action-accent: #0f9d8a; /* teal accent — connected / live indicators */
+
+  /* ------------------------------------------------------------------
+     5. STATUS — each paired with a tinted background
+     ------------------------------------------------------------------ */
+  --status-success: #16a34a; /* completed, resolved, connected */
+  --status-success-bg: #f0fdf4; /* success badge / banner background */
+  --status-error: #dc2626; /* missed calls, failures, destructive */
+  --status-error-bg: #fef2f2; /* error badge / banner background */
+  --status-warning: #d97706; /* overdue, needs reply, high priority */
+  --status-warning-bg: #fffbeb; /* warning badge / banner background */
+  --status-info: #0284c7; /* neutral informational state */
+  --status-info-bg: #f0f9ff; /* info badge / banner background */
+
+  /* ------------------------------------------------------------------
+     6. TINT SCALES — soft washes used for glows and highlights
+     ------------------------------------------------------------------ */
+  --teal-50: #ecfdf8; /* teal glow behind the auth card */
+  --blue-100: #dce8ff; /* blue glow behind the auth card */
+
+  /* ==================================================================
+     7. CUSTOM PROJECT COLORS
+     ------------------------------------------------------------------
+     Ad-hoc named swatches that live in the Figma file alongside the
+     semantic set above. They are NOT part of the semantic system and
+     several duplicate it at slightly different values (three blues,
+     two reds, two greens). Kept here so nothing from the design is
+     lost, namespaced with --brand- so they can never be mistaken for
+     a semantic token. Prefer the semantic tokens for new work.
+     ================================================================== */
+  --brand-signal-blue: #5b7ff0; /* Figma "Signal Blue" — lighter accent blue */
+  --brand-ink-black: #0e1224; /* Figma "Ink Black" — near-black navy */
+  --brand-navy: #1e3a5f; /* Figma "Primary" — deep navy */
+  --brand-black: #252832; /* Figma "Color Black" — soft charcoal */
+  --brand-gray: #ddddde; /* Figma "color gray" — light neutral */
+  --brand-gray-dark: #808080; /* Figma "dark gray" — mid neutral */
+  --brand-border: #e5eeff; /* Figma "Border" — blue-tinted hairline */
+  --brand-error: #ef4444; /* Figma "Error" — brighter red than status-error */
+  --brand-success: #10b981; /* Figma "Success" — brighter green than status-success */
+  --brand-white: #ffffff; /* Figma "White" / "Base White" / "color White" */
+
+  /* ------------------------------------------------------------------
+     8. MATERIAL 3 LEFTOVERS
+     ------------------------------------------------------------------
+     Shipped with third-party components pulled into the Figma file.
+     Recorded for completeness; do not reach for these in new work.
+     ------------------------------------------------------------------ */
+  --m3-on-primary: #ffffff; /* Schemes/On Primary */
+  --m3-on-surface-variant: #49454f; /* Schemes/On Surface Variant */
+  --m3-outline: #79747e; /* Schemes/Outline */
+  --m3-surface-container: #f3edf7; /* Schemes/Surface Container */
+  --m3-surface-container-highest: #e6e0e9; /* Schemes/Surface Container Highest */
+
+  /* ------------------------------------------------------------------
+     9. SCREEN LITERALS
+     ------------------------------------------------------------------
+     Raw hex values used directly on a screen rather than via a variable.
+     ------------------------------------------------------------------ */
+  --auth-panel-scrim: #3b3b3b; /* flat wash the sign-in hero photo sits on at 20% */
+  --auth-feature-muted: #d9d9d9; /* feature sub-labels on the hero panel */
+
+  /* Radii live in the @theme block below — Tailwind emits them onto :root
+     from there, so declaring them here as well would be circular. */
+
+  /* ------------------------------------------------------------------
+     11. SPACING — Figma's scale, for reference and pasted Figma code.
+     Tailwind's own 4px-based scale covers these (p-6 === 24px), so no
+     utilities are generated from them.
+     ------------------------------------------------------------------ */
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-6: 6px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+
+  /* ------------------------------------------------------------------
+     12. ELEVATION
+     ------------------------------------------------------------------ */
+  --elevation-sm: 0 2px 6px -1px rgb(15 23 42 / 0.08); /* Figma "Elevation/SM" */
+  --elevation-card: 0 2px 3px 0 rgb(15 23 42 / 0.08); /* auth card drop shadow */
 }
 
+/* ==========================================================================
+   TAILWIND THEME MAPPING
+   `inline` keeps the utilities pointing at the :root variables above, so
+   there is a single source of truth for every value.
+   ========================================================================== */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Type — Geist is the only family in the design system */
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+
+  /* Surfaces */
+  --color-surface-base: var(--surface-base);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-canvas: var(--surface-canvas);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-selected: var(--surface-selected);
+
+  /* Text */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-disabled: var(--text-disabled);
+  --color-text-on-primary: var(--text-on-primary);
+
+  /* Borders */
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+  --color-border-focus: var(--border-focus);
+
+  /* Actions */
+  --color-action-primary: var(--action-primary);
+  --color-action-primary-hover: var(--action-primary-hover);
+  --color-action-secondary: var(--action-secondary);
+  --color-action-accent: var(--action-accent);
+
+  /* Status */
+  --color-status-success: var(--status-success);
+  --color-status-success-bg: var(--status-success-bg);
+  --color-status-error: var(--status-error);
+  --color-status-error-bg: var(--status-error-bg);
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-bg: var(--status-warning-bg);
+  --color-status-info: var(--status-info);
+  --color-status-info-bg: var(--status-info-bg);
+
+  /* Tints */
+  --color-teal-50: var(--teal-50);
+  --color-blue-100: var(--blue-100);
+
+  /* Custom project colors — see section 7 */
+  --color-brand-signal-blue: var(--brand-signal-blue);
+  --color-brand-ink-black: var(--brand-ink-black);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-black: var(--brand-black);
+  --color-brand-gray: var(--brand-gray);
+  --color-brand-gray-dark: var(--brand-gray-dark);
+  --color-brand-border: var(--brand-border);
+  --color-brand-error: var(--brand-error);
+  --color-brand-success: var(--brand-success);
+  --color-brand-white: var(--brand-white);
+
+  /* Material 3 leftovers — see section 8 */
+  --color-m3-on-primary: var(--m3-on-primary);
+  --color-m3-on-surface-variant: var(--m3-on-surface-variant);
+  --color-m3-outline: var(--m3-outline);
+  --color-m3-surface-container: var(--m3-surface-container);
+  --color-m3-surface-container-highest: var(--m3-surface-container-highest);
+
+  /* Screen literals — see section 9 */
+  --color-auth-panel-scrim: var(--auth-panel-scrim);
+  --color-auth-feature-muted: var(--auth-feature-muted);
+
+  /* Elevation */
+  --shadow-elevation-sm: var(--elevation-sm);
+  --shadow-card: var(--elevation-card);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Radii — declared non-inline so Tailwind both emits `--radius-*` onto :root
+   (making `var(--radius-12)` from pasted Figma code resolve) and generates the
+   matching `rounded-*` utilities. */
+@theme {
+  --radius-0: 0px;
+  --radius-4: 4px; /* inputs, checkboxes */
+  --radius-6: 6px; /* buttons */
+  --radius-8: 8px; /* small cards, badges */
+  --radius-10: 10px; /* icon tiles */
+  --radius-12: 12px; /* panels */
+  --radius-16: 16px; /* auth card */
+  --radius-24: 24px; /* outer split-screen shell */
+  --radius-999: 999px; /* pills and circular chips */
 }
 
+/* ==========================================================================
+   TYPE SCALE
+   Figma text styles, reproduced as utility classes. Every style shares
+   line-height 1.2; letter-spacing differs per style.
+
+   Adding a style here? Also add its class name to `src/lib/typography.js`, or
+   `cn()` will mistake it for a colour class and strip it.
+   ========================================================================== */
+@layer components {
+  .text-display-l {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 1px;
+  } /* Display/L */
+  .text-h2 {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -1px;
+  } /* Heading/H2 */
+  .text-h3 {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 1px;
+  } /* Heading/H3 */
+  .text-h4 {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 1px;
+  } /* Heading/H4 */
+  .text-body-lg {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.2;
+  } /* Body/Large */
+  .text-body-md {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+  } /* Body/Medium */
+  .text-body-sm {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.2;
+  } /* Body/Small — same metrics as Caption/Default */
+  .text-label-lg {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+  } /* Label/Large */
+  .text-label-md {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+  } /* Label/Medium */
+  .text-label-sm {
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+  } /* Label/Small */
+  .text-button {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+  } /* Button/Default */
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
 }
