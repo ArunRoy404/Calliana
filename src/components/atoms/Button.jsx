@@ -1,6 +1,7 @@
 "use client";
 
 import { gooeyToast } from "goey-toast";
+import Link from "next/link";
 
 import Spinner from "@/components/atoms/Spinner";
 import { cn } from "@/lib/cn";
@@ -34,6 +35,7 @@ export default function Button({
   variant = "primary",
   size = "md",
   type = "button",
+  href,
   fullWidth = false,
   isLoading = false,
   isDisabled = false,
@@ -61,23 +63,36 @@ export default function Button({
     }
   }
 
+  const classes = cn(
+    "flex cursor-pointer items-center justify-center gap-2 rounded-6 outline-none",
+    "transition-all duration-200 ease-out",
+    "active:scale-[0.98]",
+    "focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2",
+    "disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100",
+    VARIANT_CLASSES?.[variant],
+    SIZE_CLASSES?.[size],
+    fullWidth && "w-full",
+    className,
+  );
+
+  // A button that navigates is still a button visually, so the variants stay
+  // here rather than growing a second component.
+  if (href) {
+    return (
+      <Link href={href} onClick={handleClick} className={classes} {...props}>
+        {isLoading && <Spinner />}
+        {children}
+      </Link>
+    );
+  }
+
   return (
     <button
       type={type}
       disabled={isInactive}
       aria-busy={isLoading || undefined}
       onClick={handleClick}
-      className={cn(
-        "flex cursor-pointer items-center justify-center gap-2 rounded-6 outline-none",
-        "transition-all duration-200 ease-out",
-        "active:scale-[0.98]",
-        "focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2",
-        "disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100",
-        VARIANT_CLASSES?.[variant],
-        SIZE_CLASSES?.[size],
-        fullWidth && "w-full",
-        className,
-      )}
+      className={classes}
       {...props}
     >
       {isLoading && <Spinner />}

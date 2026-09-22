@@ -1,4 +1,4 @@
-import CallianaLogo from "@/components/brand/CallianaLogo";
+import AuthCardHeader from "@/components/auth/AuthCardHeader";
 import CardHeading from "@/components/cards/CardHeading";
 import CardNote from "@/components/cards/CardNote";
 import { cn } from "@/lib/cn";
@@ -6,11 +6,13 @@ import { cn } from "@/lib/cn";
 /**
  * Shell shared by every auth card — Figma 43:8217.
  *
- * Logo, heading and footnote are identical across sign-in, forgot-password,
+ * Header, heading and footnote are identical across sign-in, forgot-password,
  * verify-email and reset-password; only the body between them changes.
+ * Pass `backLink` on any step after sign-in.
  */
 export default function AuthCard({
   heading,
+  backLink,
   note,
   onSubmit,
   children,
@@ -24,9 +26,14 @@ export default function AuthCard({
         className,
       )}
     >
-      <CallianaLogo />
+      <AuthCardHeader backLink={backLink} />
 
-      <CardHeading title={heading?.title} subtitle={heading?.subtitle} />
+      <CardHeading
+        title={heading?.title}
+        subtitle={heading?.subtitle}
+        subtitlePrefix={heading?.subtitlePrefix}
+        subtitleEmphasis={heading?.subtitleEmphasis}
+      />
 
       {children}
 
