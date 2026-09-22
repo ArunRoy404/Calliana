@@ -63,6 +63,9 @@
      ------------------------------------------------------------------ */
   --teal-50: #ecfdf8; /* teal glow behind the auth card */
   --blue-100: #dce8ff; /* blue glow behind the auth card */
+  --surface-otp: #f5f7ff; /* one-time-code tile fill — Figma 43:8989 */
+  --text-muted: #8b93b8; /* Figma "Muted text" — the resend-code prompt */
+  --status-success-strong: #1fa153; /* success check mark — Figma 43:9433 */
 
   /* ==================================================================
      7. CUSTOM PROJECT COLORS
@@ -84,6 +87,13 @@
   --brand-error: #ef4444; /* Figma "Error" — brighter red than status-error */
   --brand-success: #10b981; /* Figma "Success" — brighter green than status-success */
   --brand-white: #ffffff; /* Figma "White" / "Base White" / "color White" */
+
+  /* The wordmark's own gradient, read from the logo SVG's stops — use these
+     when brand-coloured type or artwork is called for. */
+  --brand-gradient-start: #5146d8; /* indigo */
+  --brand-gradient-mid: #913bc0; /* purple */
+  --brand-gradient-end: #d830a7; /* magenta */
+  --brand-cyan: #20c8e8; /* the accent stroke in the wordmark */
 
   /* ------------------------------------------------------------------
      8. MATERIAL 3 LEFTOVERS
@@ -178,6 +188,9 @@
   /* Tints */
   --color-teal-50: var(--teal-50);
   --color-blue-100: var(--blue-100);
+  --color-surface-otp: var(--surface-otp);
+  --color-text-muted: var(--text-muted);
+  --color-status-success-strong: var(--status-success-strong);
 
   /* Custom project colors — see section 7 */
   --color-brand-signal-blue: var(--brand-signal-blue);
@@ -190,6 +203,10 @@
   --color-brand-error: var(--brand-error);
   --color-brand-success: var(--brand-success);
   --color-brand-white: var(--brand-white);
+  --color-brand-gradient-start: var(--brand-gradient-start);
+  --color-brand-gradient-mid: var(--brand-gradient-mid);
+  --color-brand-gradient-end: var(--brand-gradient-end);
+  --color-brand-cyan: var(--brand-cyan);
 
   /* Material 3 leftovers — see section 8 */
   --color-m3-on-primary: var(--m3-on-primary);
