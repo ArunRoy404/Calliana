@@ -20,7 +20,7 @@ export default function AssignedClientRow({
 }) {
   return (
     <RowCard
-      emphasis
+      variant="emphasis"
       revealDelay={revealDelay}
       className="flex-wrap sm:flex-nowrap"
     >

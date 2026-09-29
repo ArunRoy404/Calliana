@@ -1,6 +1,8 @@
 import DashboardSidebar from "@/components/nav/DashboardSidebar";
 import DashboardTopBar from "@/components/nav/DashboardTopBar";
 import { SidebarInset, SidebarProvider } from "@/components/shadcn/sidebar";
+import { cn } from "@/lib/cn";
+import { MAIN_PADDING } from "@/lib/layout";
 import { SIDEBAR_STYLE } from "@/lib/sidebar";
 
 /**
@@ -19,7 +21,7 @@ export default function DashboardShell({ role, children }) {
 
       <SidebarInset className="min-w-0 bg-surface-canvas">
         <DashboardTopBar role={role} />
-        <main className="min-w-0 flex-1 p-4 sm:px-6 sm:pt-8 sm:pb-6">
+        <main className={cn("min-w-0 flex-1", MAIN_PADDING)}>
           {children}
         </main>
       </SidebarInset>

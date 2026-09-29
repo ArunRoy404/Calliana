@@ -24,6 +24,8 @@ const VARIANT_CLASSES = {
   /** Hairline-bordered, for row actions and pagers — Figma 198:22899. */
   outline:
     "border border-solid border-border-default bg-surface-canvas text-text-secondary hover:border-border-strong hover:bg-surface-subtle hover:text-text-primary",
+  /** Tinted, blue-ruled icon action — Figma 198:26137 (a row's call button). */
+  info: "border border-solid border-border-focus bg-status-info-bg text-action-primary hover:bg-surface-selected",
   /** White, hairline-bordered secondary action — Figma 198:32344 (Cancel). */
   neutral:
     "border border-solid border-border-default bg-surface-base text-text-primary hover:border-border-strong hover:bg-surface-subtle",
@@ -40,6 +42,8 @@ const SIZE_CLASSES = {
   /** In-row actions — Figma 198:22899. */
   compact:
     "text-body-md gap-1.5 rounded-8 px-3 py-1.5 font-medium leading-[19.5px]",
+  /** A 28px icon-only square — Figma 198:31047 (a page's back button). */
+  square: "size-7 shrink-0 rounded-4 p-0",
   /** `sm` and `md` are row controls: filter-bar and form heights. */
   sm: "text-body-sm h-control-sm px-4",
   md: "text-button h-control px-6",

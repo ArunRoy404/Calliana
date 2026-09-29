@@ -1,10 +1,10 @@
 "use client";
 
+import ActionBar from "@/components/actions/ActionBar";
 import Button from "@/components/atoms/Button";
 import AgentActivitiesTab from "@/components/agents/detail/AgentActivitiesTab";
 import AgentCallsTab from "@/components/agents/detail/AgentCallsTab";
 import AgentClientsTab from "@/components/agents/detail/AgentClientsTab";
-import AgentDetailActions from "@/components/agents/detail/AgentDetailActions";
 import AgentDetailHeader from "@/components/agents/detail/AgentDetailHeader";
 import AgentPerformanceTab from "@/components/agents/detail/AgentPerformanceTab";
 import AgentProfileTab from "@/components/agents/detail/AgentProfileTab";
@@ -69,10 +69,7 @@ export default function AgentDetailPanel() {
         <Button onClick={() => setOpen?.(false)}>{content?.closeLabel}</Button>
       }
     >
-      <AgentDetailActions
-        actions={content?.actions}
-        notFunctional={notFunctional}
-      />
+      <ActionBar actions={content?.actions} buttonProps={notFunctional} />
 
       <UnderlineTabs
         tabs={content?.tabs}

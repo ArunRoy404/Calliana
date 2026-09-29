@@ -1,5 +1,5 @@
 import AssignedClientRow from "@/components/agents/detail/AssignedClientRow";
-import { nestedRevealDelayAt } from "@/lib/motion";
+import StaggerList from "@/components/lists/StaggerList";
 
 /**
  * Assigned Clients tab — Figma 199:41309: a count, then one row per client.
@@ -14,17 +14,17 @@ export default function AgentClientsTab({ agent, content, notFunctional }) {
         {labels?.clientsCount?.replace("{count}", clients?.length)}
       </p>
 
-      <ul className="flex flex-col gap-4">
-        {clients?.map((client, index) => (
+      <StaggerList items={clients}>
+        {(client, revealDelay) => (
           <AssignedClientRow
             key={client?.id}
             client={client}
             labels={labels}
             notFunctional={notFunctional}
-            revealDelay={nestedRevealDelayAt(0, index)}
+            revealDelay={revealDelay}
           />
-        ))}
-      </ul>
+        )}
+      </StaggerList>
     </>
   );
 }

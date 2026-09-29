@@ -2,6 +2,7 @@ import AppImage from "@/components/atoms/AppImage";
 import Button from "@/components/atoms/Button";
 import ScheduleSlotRow from "@/components/agents/detail/ScheduleSlotRow";
 import UpcomingEventRow from "@/components/agents/detail/UpcomingEventRow";
+import StaggerList from "@/components/lists/StaggerList";
 import Reveal from "@/components/motion/Reveal";
 import { nestedRevealDelayAt, revealDelayAt } from "@/lib/motion";
 
@@ -51,15 +52,15 @@ export default function AgentScheduleTab({ agent, content, notFunctional }) {
         <h3 className="text-label-lg text-text-primary">
           {labels?.upcomingTitle}
         </h3>
-        <ul className="flex flex-col gap-4">
-          {agent?.upcoming?.map((event, index) => (
+        <StaggerList items={agent?.upcoming} revealDelay={upcomingStart}>
+          {(event, revealDelay) => (
             <UpcomingEventRow
               key={event?.id}
               event={event}
-              revealDelay={nestedRevealDelayAt(upcomingStart, index)}
+              revealDelay={revealDelay}
             />
-          ))}
-        </ul>
+          )}
+        </StaggerList>
       </Reveal>
     </>
   );

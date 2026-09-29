@@ -1,3 +1,6 @@
+import { Fragment } from "react";
+
+import MetaLine from "@/components/atoms/MetaLine";
 import StatusBadge from "@/components/atoms/StatusBadge";
 import UserAvatar from "@/components/atoms/UserAvatar";
 
@@ -34,18 +37,19 @@ export default function AgentDetailHeader({ agent, labels }) {
 
       <div className="text-body-md flex flex-col gap-2 text-text-secondary sm:pl-16">
         <p>{agent?.role}</p>
-        <p className="flex flex-wrap items-center gap-x-2">
-          <span>
-            <span className="font-semibold">{labels?.clients}</span>{" "}
-            {agent?.clientCount}
-          </span>
-          <span aria-hidden>{labels?.separator}</span>
-          <span>
-            {labels?.lastActive} {agent?.lastActive}
-          </span>
-          <span aria-hidden>{labels?.separator}</span>
-          <span className="break-all">{agent?.email}</span>
-        </p>
+        <MetaLine
+          separator={labels?.separator}
+          items={[
+            <Fragment key="clients">
+              <span className="font-semibold">{labels?.clients}</span>{" "}
+              {agent?.clientCount}
+            </Fragment>,
+            `${labels?.lastActive} ${agent?.lastActive}`,
+            <span key="email" className="break-all">
+              {agent?.email}
+            </span>,
+          ]}
+        />
       </div>
     </div>
   );

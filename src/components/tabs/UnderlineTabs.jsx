@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/cn";
 import {
   Tabs,
   TabsContent,
@@ -13,29 +14,45 @@ import {
  * the look is the design's: plain labels, the active one in primary blue with
  * a rule beneath, over a faint hairline.
  *
- * `tabs` is `[{ id, label }]`; `panels` maps each id to its content. The strip
- * scrolls sideways on a narrow screen rather than wrapping, with the bar
- * hidden — a scrollbar under a tab row reads as a second rule.
+ * `tabs` is `[{ id, label, count }]`; `panels` maps each id to its content. A
+ * `count` shows in a small ringed chip after the label that takes the tab's
+ * colour (Figma 198:31256). The strip scrolls sideways on a narrow screen
+ * rather than wrapping, with the bar hidden — a scrollbar under a tab row
+ * reads as a second rule.
+ *
+ * `spacing` sets the gap between tabs: `tight` in a side panel, `wide` across
+ * a page (Figma 198:31249).
  */
+const SPACING = { tight: "gap-2", wide: "gap-6" };
+
 export default function UnderlineTabs({
   tabs = [],
   panels = {},
   value,
   onValueChange,
+  spacing = "tight",
 }) {
   return (
     <Tabs value={value} onValueChange={onValueChange} className="gap-4">
       <TabsList
         variant="line"
-        className="w-full justify-start gap-2 overflow-x-auto overflow-y-hidden rounded-none border-b border-solid border-brand-track p-0 [scrollbar-width:none] group-data-[orientation=horizontal]/tabs:h-auto [&::-webkit-scrollbar]:hidden"
+        className={cn(
+          "w-full justify-start overflow-x-auto overflow-y-hidden rounded-none border-b border-solid border-brand-track p-0 [scrollbar-width:none] group-data-[orientation=horizontal]/tabs:h-auto [&::-webkit-scrollbar]:hidden",
+          SPACING?.[spacing] ?? SPACING?.tight,
+        )}
       >
         {tabs?.map((tab) => (
           <TabsTrigger
             key={tab?.id}
             value={tab?.id}
-            className="text-body-lg h-auto flex-none cursor-pointer rounded-none border-0 border-b border-solid border-transparent px-2 pb-2 font-normal text-text-tertiary transition-colors duration-200 ease-out after:hidden hover:text-text-secondary data-[state=active]:border-border-focus data-[state=active]:text-action-primary"
+            className="text-body-lg h-auto flex-none cursor-pointer gap-1 rounded-none border-0 border-b border-solid border-transparent px-2 pb-2 font-normal text-text-tertiary transition-colors duration-200 ease-out after:hidden hover:text-text-secondary data-[state=active]:border-border-focus data-[state=active]:text-action-primary"
           >
             {tab?.label}
+            {tab?.count != null && (
+              <span className="text-label-sm flex size-[18px] shrink-0 items-center justify-center rounded-999 border border-solid border-current bg-brand-track">
+                {tab?.count}
+              </span>
+            )}
           </TabsTrigger>
         ))}
       </TabsList>

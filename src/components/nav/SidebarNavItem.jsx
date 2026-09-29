@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
 } from "@/components/shadcn/sidebar";
 import { cn } from "@/lib/cn";
+import { isNavActive } from "@/lib/navActive";
 
 /**
  * One sidebar row — Figma 42:2396 (active) / 42:3119 (rest), refined for the
@@ -22,7 +23,7 @@ import { cn } from "@/lib/cn";
  */
 export default function SidebarNavItem({ item }) {
   const pathname = usePathname();
-  const isActive = pathname === item?.href;
+  const isActive = isNavActive(pathname, item?.href);
 
   return (
     <SidebarMenuItem

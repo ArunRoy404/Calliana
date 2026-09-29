@@ -1,10 +1,9 @@
 "use client";
 
 import Button from "@/components/atoms/Button";
-import TimelineEvent from "@/components/timeline/TimelineEvent";
 import PanelCard from "@/components/cards/PanelCard";
 import Icon from "@/components/atoms/Icon";
-import { nestedRevealDelayAt } from "@/lib/motion";
+import Timeline from "@/components/timeline/Timeline";
 import { useAdminContentStore } from "@/store/admin/useAdminContentStore";
 
 /** System audit trail — Figma 196:18650. */
@@ -28,16 +27,7 @@ export default function AuditTrailPanel({ revealDelay = 0 }) {
         </Button>
       }
     >
-      <ul className="flex flex-col">
-        {panel?.events?.map((event, index) => (
-          <TimelineEvent
-            key={event?.id}
-            event={event}
-            isLast={index === (panel?.events?.length ?? 0) - 1}
-            revealDelay={nestedRevealDelayAt(revealDelay, index)}
-          />
-        ))}
-      </ul>
+      <Timeline events={panel?.events} revealDelay={revealDelay} />
     </PanelCard>
   );
 }

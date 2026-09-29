@@ -1,4 +1,4 @@
-import AppImage from "@/components/atoms/AppImage";
+import TextureLayer from "@/components/decor/TextureLayer";
 import Reveal from "@/components/motion/Reveal";
 import { cn } from "@/lib/cn";
 
@@ -26,15 +26,7 @@ export default function TableCard({
         className,
       )}
     >
-      {texture && (
-        // A flat RGB image with no alpha, so the design's 17% is applied here.
-        <AppImage
-          src={texture}
-          fill
-          sizes="100vw"
-          className="pointer-events-none -z-10 object-cover opacity-17"
-        />
-      )}
+      <TextureLayer src={texture} className="opacity-17" />
 
       {toolbar}
       {children}

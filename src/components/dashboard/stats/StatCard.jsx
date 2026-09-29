@@ -1,5 +1,6 @@
 import AppImage from "@/components/atoms/AppImage";
 import AssetIcon from "@/components/atoms/AssetIcon";
+import TextureLayer from "@/components/decor/TextureLayer";
 import Reveal from "@/components/motion/Reveal";
 import { cn } from "@/lib/cn";
 import { DEFAULT_TONE, TONE_SURFACE, TONE_TEXT } from "@/lib/tones";
@@ -33,16 +34,11 @@ export default function StatCard({ stat, revealDelay = 0 }) {
     <Reveal
       as="article"
       delay={revealDelay}
-      className="relative flex h-[150px] flex-col items-center gap-2 overflow-hidden border border-solid border-border-strong bg-surface-base p-4"
+      className="relative isolate flex h-[150px] flex-col items-center gap-2 overflow-hidden border border-solid border-border-strong bg-surface-base p-4"
     >
       {/* No CSS opacity here: Figma baked the layer's 26% into the PNG's own
           alpha channel, so dimming it again would apply 26% twice. */}
-      <AppImage
-        src={TEXTURE}
-        fill
-        unoptimized
-        className="pointer-events-none object-cover"
-      />
+      <TextureLayer src={TEXTURE} />
 
       <div className="relative flex w-full items-start justify-between">
         <span
