@@ -1,5 +1,5 @@
 import AppImage from "@/components/atoms/AppImage";
-import Icon from "@/components/atoms/Icon";
+import AssetIcon from "@/components/atoms/AssetIcon";
 import Reveal from "@/components/motion/Reveal";
 import { cn } from "@/lib/cn";
 import { DEFAULT_TONE, TONE_SURFACE, TONE_TEXT } from "@/lib/tones";
@@ -52,15 +52,7 @@ export default function StatCard({ stat, revealDelay = 0 }) {
             toneText,
           )}
         >
-          {stat?.icon?.src ? (
-            <AppImage
-              src={stat?.icon?.src}
-              width={stat?.icon?.width}
-              height={stat?.icon?.height}
-            />
-          ) : (
-            <Icon name={stat?.icon?.lucide} />
-          )}
+          <AssetIcon icon={stat?.icon} />
         </span>
       </div>
 
@@ -100,12 +92,15 @@ export default function StatCard({ stat, revealDelay = 0 }) {
           )}
         </div>
 
-        <AppImage
-          src={stat?.spark?.src}
-          width={116}
-          height={70}
-          className="pointer-events-none absolute right-0 bottom-0"
-        />
+        {/* The agent panel's tiles (Figma 202:22582) carry no trend line. */}
+        {stat?.spark?.src && (
+          <AppImage
+            src={stat?.spark?.src}
+            width={116}
+            height={70}
+            className="pointer-events-none absolute right-0 bottom-0"
+          />
+        )}
       </div>
     </Reveal>
   );

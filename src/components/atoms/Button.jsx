@@ -16,8 +16,7 @@ import { cn } from "@/lib/cn";
 const VARIANT_CLASSES = {
   primary:
     "bg-action-primary text-text-on-primary hover:bg-action-primary-hover",
-  secondary:
-    "bg-action-secondary text-text-primary hover:bg-border-default",
+  secondary: "bg-action-secondary text-text-primary hover:bg-border-default",
   danger: "bg-status-error text-text-on-primary hover:bg-status-error/90",
   ghost: "bg-transparent text-text-secondary hover:bg-action-secondary",
   /** An inline action that reads as a link but behaves as a button. */
@@ -25,6 +24,9 @@ const VARIANT_CLASSES = {
   /** Hairline-bordered, for row actions and pagers — Figma 198:22899. */
   outline:
     "border border-solid border-border-default bg-surface-canvas text-text-secondary hover:border-border-strong hover:bg-surface-subtle hover:text-text-primary",
+  /** White, hairline-bordered secondary action — Figma 198:32344 (Cancel). */
+  neutral:
+    "border border-solid border-border-default bg-surface-base text-text-primary hover:border-border-strong hover:bg-surface-subtle",
   /** Light action on a dark toolbar strip — Figma 198:22851. */
   toolbar:
     "rounded-4 bg-brand-track font-medium text-brand-black hover:bg-surface-base",
@@ -36,7 +38,8 @@ const SIZE_CLASSES = {
   /** Pagers — Figma 198:23014. */
   xs: "text-label-md gap-1 rounded-4 px-2 py-1",
   /** In-row actions — Figma 198:22899. */
-  compact: "text-body-md gap-1.5 rounded-8 px-3 py-1.5 font-medium leading-[19.5px]",
+  compact:
+    "text-body-md gap-1.5 rounded-8 px-3 py-1.5 font-medium leading-[19.5px]",
   /** `sm` and `md` are row controls: filter-bar and form heights. */
   sm: "text-body-sm h-control-sm px-4",
   md: "text-button h-control px-6",
