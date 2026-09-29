@@ -3,9 +3,13 @@
  *
  * Only the page title changes between roles; the controls are the same bar, so
  * they are declared once and spread in.
+ *
+ * `pages` titles the inner routes, keyed by the route segment after the role
+ * (`/admin/agents` → `agents`). A page without an entry shows the role's own
+ * heading, which is also what the role's home shows.
  */
 const SHARED = {
-  search: { placeholder: "Search...", shortcut: "⌘K", label: "Search" },
+  search: { placeholder: "Search...", label: "Search" },
   notifications: { label: "Notifications" },
   language: {
     label: "English",
@@ -17,6 +21,12 @@ const SHARED = {
   },
   appearance: { label: "Light mode" },
   texture: "/admin/sidebar-texture.png",
+  pages: {
+    agents: {
+      title: "AGENTS",
+      subtitle: "Manage agent accounts and assignments.",
+    },
+  },
 };
 
 const ROLE_HEADINGS = {

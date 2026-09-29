@@ -46,7 +46,7 @@ export default function InputField({
 
       <div
         className={cn(
-          "flex h-11 items-center gap-2 overflow-hidden rounded-4 border bg-surface-base px-3 transition-colors duration-200 ease-out has-disabled:bg-surface-subtle",
+          "flex h-control items-center gap-2 overflow-hidden rounded-4 border bg-surface-base px-3 transition-colors duration-200 ease-out has-disabled:bg-surface-subtle",
           borderClass,
         )}
       >
