@@ -81,7 +81,7 @@ it rather than letting it grow.
 | `components/dashboard/`      | Dashboard sections, one folder per feature — `stats/`, `live-calls/`, `attention/`, `agents/`, `audit/` |
 | `components/nav/`            | Sidebar, top bar and the account menu                         |
 | `components/notifications/`  | Notification popover and its rows                             |
-| `components/motion/`         | Reveal and other shared transitions                           |
+| `components/motion/`         | Reveal, MotionTableRow and other shared transitions           |
 | `components/layout/`         | Page shells — ViewportShell, ScrollableCenter                 |
 | `components/shadcn/`         | shadcn primitives. Edit only to fix a defect or bind it to our tokens, and say why in a comment |
 | `components/features/`       | Feature/marketing list rows — FeatureItem, FeatureList         |
@@ -179,16 +179,59 @@ Call `gooeyToast.*` from stores or handlers.
 
 ## 12. Never commit or push unless asked
 
+**Never commit and never push unless the user says so, in that message.** This
+has no exceptions.
+
 Do not run `git commit`, `git push`, or open a PR on your own initiative — not
 after finishing a task, not to "save progress", not because the tree looks
-finished. Leave the work in the working tree and say what changed.
+finished, not because an earlier message allowed it. Leave the work in the
+working tree and say what changed.
 
 Commit only when explicitly told to in that message ("commit this", "commit and
 push"). Permission is for that request only and does not carry over to the next
 task. Pushing needs its own explicit instruction: "commit" never implies push.
+
+When told to commit:
+
+- Commit on the working branch (`roy`), never directly on `main` — `main` only
+  moves through a merged PR.
+- Split the work into batches, one commit per concern (e.g. shell chrome,
+  shared motion helpers, the components that use them, docs), each one a state
+  that builds.
 
 ## 13. Design tokens
 
 Colors, radii, type scale and elevation come from `src/app/globals.css`, which
 mirrors the Figma variables. Never hardcode a hex value in a component. The
 project is **light theme only** — no dark mode, no `dark:` variants.
+
+## 14. Reveal motion: every component reveals itself, parents set the order
+
+A page never wraps its content in one big `Reveal`. Everything arriving at once
+reads as a page load; things arriving one after another reads as premium.
+
+- **Every card, panel and list row reveals itself.** Its root is
+  `<Reveal as="…" delay={revealDelay}>`, and the component takes a
+  `revealDelay` prop (seconds, default `0`). Layout wrappers — page columns,
+  grids, rows of panels — are plain `div`s and never animate.
+- **The parent hands out the delays**, always through the helpers in
+  `src/lib/motion.js`. Never hand-write a delay number at a call site.
+  - `revealDelayAt(start, index)` — siblings: the `index`th item starts one
+    `REVEAL_STEP` after the previous. A grid of cards maps its items with it.
+  - `nestedRevealDelayAt(parentDelay, index)` — a container's own rows: they
+    start `REVEAL_NESTED_OFFSET` after the container, then step one by one.
+    A panel passes its own `revealDelay` in, so its rows follow it.
+- **The page sets the sequence** in reading order and derives offsets from the
+  data, not from hardcoded counts. The admin overview is the reference:
+  primary stat cards from `0`, secondary ones from `revealDelayAt(0,
+  primary.length)`, then each panel a step after the last, and every panel's
+  rows nested after their panel.
+- A list or table row is a reveal too: `<Reveal as="li">`, and for shadcn's
+  table `<Reveal as={MotionTableRow}>`. `as` takes a tag name or a motion
+  component made once at module level — never `motion.create()` in render.
+- Timing lives in `src/lib/motion.js` (`REVEAL_STEP`, `REVEAL_NESTED_OFFSET`,
+  `REVEAL_DURATION`, `REVEAL_EASE`). Change the feel there, once, for the
+  whole app. `Reveal` already drops movement and delay under
+  `prefers-reduced-motion`.
+- `<Reveal stagger>` / `<Reveal item>` stay for small self-contained groups
+  (the auth card's own slots). Do not use them to sequence a page.
