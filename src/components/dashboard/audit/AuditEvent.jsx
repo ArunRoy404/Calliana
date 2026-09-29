@@ -1,15 +1,21 @@
+import Reveal from "@/components/motion/Reveal";
 import { cn } from "@/lib/cn";
 import { DEFAULT_TONE, TONE_DOT, TONE_RING } from "@/lib/tones";
 
 /**
  * One timeline entry — Figma 196:18661.
  * The connector is drawn per row and suppressed on the last one.
+ * Reveals after `revealDelay` seconds.
  */
-export default function AuditEvent({ event, isLast = false }) {
+export default function AuditEvent({ event, isLast = false, revealDelay = 0 }) {
   const tone = event?.tone ?? DEFAULT_TONE;
 
   return (
-    <li className="relative flex gap-4 pb-6 last:pb-0">
+    <Reveal
+      as="li"
+      delay={revealDelay}
+      className="relative flex gap-4 pb-6 last:pb-0"
+    >
       {!isLast && (
         <span
           aria-hidden
@@ -36,6 +42,6 @@ export default function AuditEvent({ event, isLast = false }) {
         <p className="text-body-md text-text-primary">{event?.label}</p>
         <p className="text-body-sm text-text-tertiary">{event?.timestamp}</p>
       </div>
-    </li>
+    </Reveal>
   );
 }

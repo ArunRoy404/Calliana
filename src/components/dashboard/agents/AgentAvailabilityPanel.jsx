@@ -2,6 +2,8 @@
 
 import StatusBadge from "@/components/atoms/StatusBadge";
 import PanelCard from "@/components/cards/PanelCard";
+import MotionTableRow from "@/components/motion/MotionTableRow";
+import Reveal from "@/components/motion/Reveal";
 import {
   Table,
   TableBody,
@@ -11,20 +13,25 @@ import {
   TableRow,
 } from "@/components/shadcn/table";
 import { cn } from "@/lib/cn";
+import { nestedRevealDelayAt } from "@/lib/motion";
 import { useAdminContentStore } from "@/store/admin/useAdminContentStore";
 
 /**
  * Agent presence table — Figma 195:18407.
  * Uses the shadcn Table, which scrolls horizontally on narrow screens rather
- * than crushing six columns.
+ * than crushing six columns. Each body row reveals a step after the last.
  */
-export default function AgentAvailabilityPanel() {
+export default function AgentAvailabilityPanel({ revealDelay = 0 }) {
   const panel = useAdminContentStore(
     (state) => state.dashboard?.agentAvailability,
   );
 
   return (
-    <PanelCard title={panel?.title} subtitle={panel?.subtitle}>
+    <PanelCard
+      title={panel?.title}
+      subtitle={panel?.subtitle}
+      revealDelay={revealDelay}
+    >
       <div className="-mx-2 overflow-x-auto px-2">
         <Table>
           <TableHeader>
@@ -44,8 +51,12 @@ export default function AgentAvailabilityPanel() {
           </TableHeader>
 
           <TableBody>
-            {panel?.rows?.map((row) => (
-              <TableRow key={row?.id}>
+            {panel?.rows?.map((row, index) => (
+              <Reveal
+                as={MotionTableRow}
+                key={row?.id}
+                delay={nestedRevealDelayAt(revealDelay, index)}
+              >
                 <TableCell>
                   <div className="flex flex-col gap-1">
                     <span className="text-body-md whitespace-nowrap text-text-primary">
@@ -83,7 +94,7 @@ export default function AgentAvailabilityPanel() {
                 <TableCell className="text-label-sm whitespace-nowrap text-text-secondary">
                   {row?.lastActive}
                 </TableCell>
-              </TableRow>
+              </Reveal>
             ))}
           </TableBody>
         </Table>

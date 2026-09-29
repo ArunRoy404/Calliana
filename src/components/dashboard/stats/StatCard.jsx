@@ -1,5 +1,6 @@
 import AppImage from "@/components/atoms/AppImage";
 import Icon from "@/components/atoms/Icon";
+import Reveal from "@/components/motion/Reveal";
 import { cn } from "@/lib/cn";
 import { DEFAULT_TONE, TONE_SURFACE, TONE_TEXT } from "@/lib/tones";
 
@@ -9,11 +10,14 @@ import { DEFAULT_TONE, TONE_SURFACE, TONE_TEXT } from "@/lib/tones";
  * Square by design: only the icon tile (12px) and the delta pill (8px) are
  * rounded. The trend line is the design's own SVG rather than a generated
  * polyline, so each card's curve is exactly the one that was drawn.
+ *
+ * Reveals itself after `revealDelay` seconds; `StatCardGrid` steps the delay
+ * per card so a row arrives one card at a time.
  */
 const TEXTURE = "/admin/card-texture.png";
 const TREND_ARROW = "/admin/trend-arrow.svg";
 
-export default function StatCard({ stat }) {
+export default function StatCard({ stat, revealDelay = 0 }) {
   const tone = stat?.tone ?? DEFAULT_TONE;
   const toneSurface = TONE_SURFACE?.[tone] ?? TONE_SURFACE?.[DEFAULT_TONE];
   const toneText = TONE_TEXT?.[tone] ?? TONE_TEXT?.[DEFAULT_TONE];
@@ -21,11 +25,16 @@ export default function StatCard({ stat }) {
   // The icon tile and the delta pill are tinted independently in the design —
   // a blue icon can sit above a green delta.
   const deltaTone = stat?.deltaTone ?? tone;
-  const deltaSurface = TONE_SURFACE?.[deltaTone] ?? TONE_SURFACE?.[DEFAULT_TONE];
+  const deltaSurface =
+    TONE_SURFACE?.[deltaTone] ?? TONE_SURFACE?.[DEFAULT_TONE];
   const deltaText = TONE_TEXT?.[deltaTone] ?? TONE_TEXT?.[DEFAULT_TONE];
 
   return (
-    <article className="relative flex h-[150px] flex-col items-center gap-2 overflow-hidden border border-solid border-border-strong bg-surface-base p-4">
+    <Reveal
+      as="article"
+      delay={revealDelay}
+      className="relative flex h-[150px] flex-col items-center gap-2 overflow-hidden border border-solid border-border-strong bg-surface-base p-4"
+    >
       {/* No CSS opacity here: Figma baked the layer's 26% into the PNG's own
           alpha channel, so dimming it again would apply 26% twice. */}
       <AppImage
@@ -98,6 +107,6 @@ export default function StatCard({ stat }) {
           className="pointer-events-none absolute right-0 bottom-0"
         />
       </div>
-    </article>
+    </Reveal>
   );
 }
