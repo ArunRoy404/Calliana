@@ -79,7 +79,7 @@ export default function AgentAvailabilityPanel({ revealDelay = 0 }) {
                   <StatusBadge
                     label={row?.zoiper?.label}
                     tone={row?.zoiper?.tone}
-                    plain
+                    variant="plain"
                   />
                 </TableCell>
 

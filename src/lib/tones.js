@@ -26,6 +26,20 @@ export const TONE_DOT = {
   neutral: "bg-text-disabled",
 };
 
+/**
+ * Dots inside a tag badge — Figma 198:22881. The table's badges pair each
+ * tinted label with a dot of a *different* shade (a teal dot on green text, a
+ * primary-blue dot on info-blue text), so they get their own map.
+ */
+export const TONE_TAG_DOT = {
+  success: "bg-action-accent",
+  error: "bg-status-error",
+  warning: "bg-status-warning",
+  info: "bg-action-primary",
+  primary: "bg-action-primary",
+  neutral: "bg-text-secondary",
+};
+
 /** Tinted background — badges and attention rows. */
 export const TONE_SURFACE = {
   success: "bg-status-success-bg",
