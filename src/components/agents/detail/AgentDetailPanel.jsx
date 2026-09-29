@@ -12,6 +12,8 @@ import AgentScheduleTab from "@/components/agents/detail/AgentScheduleTab";
 import AgentTasksTab from "@/components/agents/detail/AgentTasksTab";
 import SidePanel from "@/components/overlays/SidePanel";
 import UnderlineTabs from "@/components/tabs/UnderlineTabs";
+import { useRetainedValue } from "@/hooks/useRetainedValue";
+import { useStoreParams } from "@/hooks/useUrlParams";
 import { notFunctionalProps } from "@/lib/notFunctional";
 import { useAgentsStore } from "@/store/admin/useAgentsStore";
 
@@ -19,15 +21,20 @@ import { useAgentsStore } from "@/store/admin/useAgentsStore";
  * One agent's detail — Figma 198:32695 and the six tab frames after it, on the
  * shared `SidePanel`. The header and action row stay above the tabs; each tab
  * is its own component and reveals its content as it is selected.
+ *
+ * The agent and tab are the URL's `?agent=<id>&tab=<tab>`, read through the
+ * agents store, so the panel opens straight from a shared link. On close the
+ * last agent is kept on screen while the panel slides away.
  */
 export default function AgentDetailPanel() {
-  const isOpen = useAgentsStore((state) => state.isDetailOpen);
+  const params = useStoreParams(useAgentsStore);
+  const selectedAgent = useAgentsStore((state) => state.selectedAgent(params));
+  const tab = useAgentsStore((state) => state.detailTab(params));
   const setOpen = useAgentsStore((state) => state.setDetailOpen);
-  const agent = useAgentsStore((state) => state.selectedAgent);
   const content = useAgentsStore((state) => state.detailContent);
-  const tab = useAgentsStore((state) => state.detailTab);
   const setTab = useAgentsStore((state) => state.setDetailTab);
 
+  const agent = useRetainedValue(selectedAgent);
   const notFunctional = notFunctionalProps(content);
 
   const panels = {
@@ -54,7 +61,7 @@ export default function AgentDetailPanel() {
 
   return (
     <SidePanel
-      open={isOpen}
+      open={Boolean(selectedAgent)}
       onOpenChange={setOpen}
       title={agent?.name}
       header={<AgentDetailHeader agent={agent} labels={content?.labels} />}

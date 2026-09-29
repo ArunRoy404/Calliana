@@ -11,6 +11,7 @@ import DataTable from "@/components/tables/DataTable";
 import TableCard from "@/components/tables/TableCard";
 import TablePagination from "@/components/tables/TablePagination";
 import TableToolbar from "@/components/tables/TableToolbar";
+import { useTableView } from "@/hooks/useTableView";
 import { useAgentsStore } from "@/store/admin/useAgentsStore";
 
 /**
@@ -24,19 +25,18 @@ import { useAgentsStore } from "@/store/admin/useAgentsStore";
  * shared by both views.
  *
  * "Add New Agent" opens the add panel and "View Agent" opens that agent's
- * detail panel — both the shared `SidePanel`, their state in the store.
+ * detail panel — both the shared `SidePanel`.
+ *
+ * Search, filter, rows per page, page and the open panel all live in the URL
+ * (`useTableView` reads them; the store's actions write them), so any view of
+ * this page is a link that reopens it exactly.
  */
 export default function AgentsDirectory() {
   const content = useAgentsStore((state) => state.content);
-  const query = useAgentsStore((state) => state.query);
-  const filter = useAgentsStore((state) => state.filter);
-  const pageSize = useAgentsStore((state) => state.pageSize);
   const pageSizeLabel = useAgentsStore((state) => state.pageSizeLabel);
   const pageSizeOptions = useAgentsStore((state) => state.pageSizeOptions);
-  const rows = useAgentsStore((state) => state.visibleRows);
-  const page = useAgentsStore((state) => state.page);
-  const pageCount = useAgentsStore((state) => state.pageCount);
-  const summary = useAgentsStore((state) => state.summary);
+  const { query, filter, pageSize, visibleRows, page, pageCount, summary } =
+    useTableView(useAgentsStore);
   const setQuery = useAgentsStore((state) => state.setQuery);
   const setFilter = useAgentsStore((state) => state.setFilter);
   const setPageSize = useAgentsStore((state) => state.setPageSize);
@@ -101,7 +101,7 @@ export default function AgentsDirectory() {
         <div className="hidden xl:block">
           <DataTable
             columns={content?.columns}
-            rows={rows}
+            rows={visibleRows}
             emptyLabel={content?.emptyLabel}
             onRowAction={openAgent}
             className={content?.tableClassName}
@@ -109,7 +109,7 @@ export default function AgentsDirectory() {
         </div>
 
         <AgentCardContainer
-          rows={rows}
+          rows={visibleRows}
           layout={content?.card}
           emptyLabel={content?.emptyLabel}
           onRowAction={openAgent}

@@ -3,15 +3,18 @@
 import Button from "@/components/atoms/Button";
 import AddAgentFields from "@/components/agents/add/AddAgentFields";
 import SidePanel from "@/components/overlays/SidePanel";
+import { useStoreParams } from "@/hooks/useUrlParams";
 import { useAddAgentFormStore } from "@/store/admin/useAddAgentFormStore";
 import { useAgentsStore } from "@/store/admin/useAgentsStore";
 
 /**
  * "Add new agent account" — Figma 198:32312, on the shared `SidePanel`.
- * The panel's open state lives in the agents store; the form's in its own.
+ * Whether it is open is the URL's `?panel=add`, read through the agents
+ * store; the form's values live in its own store.
  */
 export default function AddAgentPanel() {
-  const isOpen = useAgentsStore((state) => state.isAddOpen);
+  const params = useStoreParams(useAgentsStore);
+  const isOpen = useAgentsStore((state) => state.isAddOpen(params));
   const setOpen = useAgentsStore((state) => state.setAddOpen);
   const content = useAddAgentFormStore((state) => state.content);
   const cancel = useAddAgentFormStore((state) => state.cancel);
