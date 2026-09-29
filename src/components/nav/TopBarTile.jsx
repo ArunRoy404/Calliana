@@ -16,9 +16,9 @@ export default function TopBarTile({
     <Tag
       aria-label={label}
       className={cn(
-        "flex h-11 shrink-0 items-center justify-center gap-1 rounded-6 border border-solid border-border-default bg-surface-base backdrop-blur-[30px] transition-colors duration-200 ease-out",
+        "flex h-control shrink-0 items-center justify-center gap-1 rounded-6 border border-solid border-border-default bg-surface-base backdrop-blur-[30px] transition-colors duration-200 ease-out",
         Tag === "button" && "cursor-pointer hover:bg-surface-subtle",
-        !tone && "w-11",
+        !tone && "w-control",
         tone,
         className,
       )}

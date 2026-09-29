@@ -3,14 +3,19 @@
 import * as React from "react"
 import { cn } from "@/lib/cn"
 
+// Edited: `containerClassName` reaches the scroll wrapper, which shadcn
+// otherwise hard-codes. `overflow-x-auto` makes the wrapper scroll vertically
+// too, so rows rising into place during a reveal flashed a vertical scrollbar;
+// DataTable pins the y-axis through this.
 function Table({
   className,
+  containerClassName,
   ...props
 }) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto"
+      className={cn("relative w-full overflow-x-auto", containerClassName)}
     >
       <table
         data-slot="table"

@@ -1,10 +1,15 @@
 import AppImage from "@/components/atoms/AppImage";
 import StatusBadge from "@/components/atoms/StatusBadge";
+import Reveal from "@/components/motion/Reveal";
 
-/** One live call — Figma 191:16825. */
-export default function LiveCallRow({ call }) {
+/** One live call — Figma 191:16825. Reveals after `revealDelay` seconds. */
+export default function LiveCallRow({ call, revealDelay = 0 }) {
   return (
-    <li className="flex items-center gap-3 border-b border-solid border-border-default py-3 last:border-b-0">
+    <Reveal
+      as="li"
+      delay={revealDelay}
+      className="flex items-center gap-3 border-b border-solid border-border-default py-3 last:border-b-0"
+    >
       <AppImage
         src={call?.avatar?.src}
         width={call?.avatar?.width}
@@ -16,8 +21,12 @@ export default function LiveCallRow({ call }) {
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <p className="text-body-md flex flex-wrap items-center gap-x-2 text-text-primary">
           <span className="truncate">{call?.caller}</span>
-          <span aria-hidden className="text-text-tertiary">•</span>
-          <span className="text-body-sm text-text-tertiary">{call?.channel}</span>
+          <span aria-hidden className="text-text-tertiary">
+            •
+          </span>
+          <span className="text-body-sm text-text-tertiary">
+            {call?.channel}
+          </span>
         </p>
         <p className="text-body-sm truncate text-text-secondary">
           {call?.client}
@@ -30,6 +39,6 @@ export default function LiveCallRow({ call }) {
         </p>
         <StatusBadge label={call?.status?.label} tone={call?.status?.tone} />
       </div>
-    </li>
+    </Reveal>
   );
 }

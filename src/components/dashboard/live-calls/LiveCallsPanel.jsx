@@ -3,10 +3,11 @@
 import Button from "@/components/atoms/Button";
 import LiveCallRow from "@/components/dashboard/live-calls/LiveCallRow";
 import PanelCard from "@/components/cards/PanelCard";
+import { nestedRevealDelayAt } from "@/lib/motion";
 import { useAdminContentStore } from "@/store/admin/useAdminContentStore";
 
 /** Live calls — Figma 191:16818. */
-export default function LiveCallsPanel() {
+export default function LiveCallsPanel({ revealDelay = 0 }) {
   const panel = useAdminContentStore((state) => state.dashboard?.liveCalls);
   const fallback = useAdminContentStore((state) => state.dashboard);
 
@@ -14,6 +15,7 @@ export default function LiveCallsPanel() {
     <PanelCard
       title={panel?.title}
       tone={panel?.tone}
+      revealDelay={revealDelay}
       action={
         <Button
           variant="link"
@@ -28,8 +30,12 @@ export default function LiveCallsPanel() {
       }
     >
       <ul className="flex flex-col">
-        {panel?.items?.map((call) => (
-          <LiveCallRow key={call?.id} call={call} />
+        {panel?.items?.map((call, index) => (
+          <LiveCallRow
+            key={call?.id}
+            call={call}
+            revealDelay={nestedRevealDelayAt(revealDelay, index)}
+          />
         ))}
       </ul>
     </PanelCard>

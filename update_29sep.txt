@@ -1,0 +1,57 @@
+Hello there,
+
+Hope you are doing well.
+
+We are pleased to share the next update on the project. Development is
+progressing on schedule, and the Agents and Clients sections of the admin
+area are now in place.
+
+Today we would like to share a visual update of the website:
+
+ - We have refined the Admin Dashboard: the top bar now stays in place while
+   you scroll, the side menu is slimmer and cleaner, and each section of the
+   page now appears smoothly one after another as it loads
+ - We have developed the Agents page, listing every agent with their call
+   status, Zoiper connection, assigned clients, calls today and last activity
+ - We have added search, an availability filter and a choice of how many rows
+   to show per page, along with page-by-page navigation
+ - We have developed the "Add New Agent" panel, including role, availability,
+   client assignment, call queue and working hours, with checks that let you
+   know if anything is missing or incorrect
+ - We have developed the Agent Details panel, with Profile, Performance,
+   Assigned Clients, Calls, Tasks, Schedule and Activities tabs
+ - We have developed the Clients page, listing every client with their
+   primary contact, phone, last interaction, upcoming appointments, open tasks
+   and status
+ - We have added search, category and status filters, and the same
+   rows-per-page choice and page navigation as the Agents page
+ - We have developed the "Add New Client Account" panel, covering business
+   information, primary contact, agent assignment, status and support notes
+ - We have developed the Client Details page, with Overview, Contacts, Calls,
+   Messages, Appointments, Tasks, Support Instructions and Activities tabs
+ - We have made every page shareable: searches, filters, the page you are on,
+   an open panel and the selected tab are all kept in the web address, so
+   copying the link and sending it to a colleague opens exactly the same view
+ - We have made every new screen fully responsive; on phones and tablets the
+   Agents and Clients lists switch to easy-to-read cards
+
+Please note that the screens are currently presented with sample content and
+are not yet connected to live data. Any button that is not yet wired to the
+backend will confirm this on screen, so nothing appears broken while you
+review.
+
+Live URL:
+ - Admin Dashboard: https://calliana.vercel.app/admin
+ - Agents: https://calliana.vercel.app/admin/agents
+ - Add New Agent: https://calliana.vercel.app/admin/agents?panel=add
+ - Agent Details: https://calliana.vercel.app/admin/agents?agent=sofia-martinez
+ - Clients: https://calliana.vercel.app/admin/clients
+ - Add New Client: https://calliana.vercel.app/admin/clients?panel=add
+ - Client Details: https://calliana.vercel.app/admin/clients/laura-alegre-clinic
+
+
+We would welcome any feedback you may have on the screens delivered so far,
+and we will incorporate it into the next round of work. Please feel free to
+reach out with any questions in the meantime.
+
+Best regards,

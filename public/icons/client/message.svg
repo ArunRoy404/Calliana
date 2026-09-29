@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="message">
+<path id="Vector" d="M5.66667 12.6667H5.33333C2.66667 12.6667 1.33333 12 1.33333 8.66667V5.33333C1.33333 2.66667 2.66667 1.33333 5.33333 1.33333H10.6667C13.3333 1.33333 14.6667 2.66667 14.6667 5.33333V8.66667C14.6667 11.3333 13.3333 12.6667 10.6667 12.6667H10.3333C10.1267 12.6667 9.92667 12.7667 9.8 12.9333L8.8 14.2667C8.36 14.8533 7.64 14.8533 7.2 14.2667L6.2 12.9333C6.09333 12.7867 5.84667 12.6667 5.66667 12.6667Z" stroke="#0F172A" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<g id="Vector_2">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10.6643 7.33333H10.6703Z" fill="#0F172A"/>
+<path d="M10.6643 7.33333H10.6703" stroke="#0F172A" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g id="Vector_3">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.99699 7.33333H8.00298Z" fill="#0F172A"/>
+<path d="M7.99699 7.33333H8.00298" stroke="#0F172A" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<path id="Vector_4" d="M5.32967 7.33333H5.33566" stroke="#0F172A" stroke-linecap="round" stroke-linejoin="round"/>
+<g id="Vector_5" opacity="0">
+</g>
+</g>
+</svg>

@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 /**
- * Field rules shared across the auth forms, so sign-in, forgot-password and
- * reset-password cannot drift apart on what counts as a valid email or a
- * strong enough password.
+ * Field rules shared across the app's forms, so sign-in, the add drawers and
+ * the rest cannot drift apart on what counts as a valid email, phone number
+ * or strong enough password.
  */
 
 export const emailField = z
@@ -11,6 +11,13 @@ export const emailField = z
   .trim()
   .min(1, "Enter your work email")
   .pipe(z.email("That doesn’t look like a valid email"));
+
+/** A phone number as agents type it: digits with spaces, dashes, brackets. */
+export const phoneField = z
+  .string()
+  .trim()
+  .min(1, "Enter a phone number")
+  .regex(/^\+?[\d\s()-]{7,}$/, "That doesn’t look like a phone number");
 
 export const passwordField = z
   .string()

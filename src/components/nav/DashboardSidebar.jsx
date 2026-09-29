@@ -11,6 +11,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/shadcn/sidebar";
+import { SIDEBAR_IMAGE_SIZES } from "@/lib/sidebar";
 import { useDashboardStore } from "@/store/dashboard/useDashboardStore";
 
 /**
@@ -33,16 +34,17 @@ export default function DashboardSidebar({ role }) {
         <AppImage
           src={nav?.textures?.panel}
           fill
-          sizes="260px"
+          sizes={SIDEBAR_IMAGE_SIZES}
           className="pointer-events-none object-cover opacity-10"
         />
       )}
 
-      <SidebarHeader className="relative items-center border-b border-solid border-border-strong p-0 pt-4 pb-4 group-data-[collapsible=icon]:hidden">
+      {/* Same height as the top bar, so the two bottom borders meet. */}
+      <SidebarHeader className="relative h-(--dashboard-bar-height) shrink-0 items-center justify-center border-b border-solid border-border-strong p-0 group-data-[collapsible=icon]:hidden">
         <CallianaLogo />
       </SidebarHeader>
 
-      <SidebarContent className="relative gap-2 pt-4">
+      <SidebarContent className="relative gap-4 pt-4">
         {nav?.sections?.map((section) => (
           <SidebarSection key={section?.id} section={section} />
         ))}

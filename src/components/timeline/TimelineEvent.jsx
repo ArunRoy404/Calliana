@@ -1,15 +1,27 @@
+import Reveal from "@/components/motion/Reveal";
 import { cn } from "@/lib/cn";
 import { DEFAULT_TONE, TONE_DOT, TONE_RING } from "@/lib/tones";
 
 /**
- * One timeline entry — Figma 196:18661.
- * The connector is drawn per row and suppressed on the last one.
+ * One timeline entry — Figma 196:18661 (dashboard audit trail) and 202:23142
+ * (agent activities). The connector is drawn per row and suppressed on the
+ * last one. `emphasis` sets the label in semibold, as the activities list has
+ * it. Reveals after `revealDelay` seconds.
  */
-export default function AuditEvent({ event, isLast = false }) {
+export default function TimelineEvent({
+  event,
+  isLast = false,
+  emphasis = false,
+  revealDelay = 0,
+}) {
   const tone = event?.tone ?? DEFAULT_TONE;
 
   return (
-    <li className="relative flex gap-4 pb-6 last:pb-0">
+    <Reveal
+      as="li"
+      delay={revealDelay}
+      className="relative flex gap-4 pb-6 last:pb-0"
+    >
       {!isLast && (
         <span
           aria-hidden
@@ -33,9 +45,16 @@ export default function AuditEvent({ event, isLast = false }) {
       </span>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="text-body-md text-text-primary">{event?.label}</p>
+        <p
+          className={cn(
+            "text-text-primary",
+            emphasis ? "text-label-lg" : "text-body-md",
+          )}
+        >
+          {event?.label}
+        </p>
         <p className="text-body-sm text-text-tertiary">{event?.timestamp}</p>
       </div>
-    </li>
+    </Reveal>
   );
 }

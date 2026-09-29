@@ -1,6 +1,7 @@
 import { Geist } from "next/font/google";
 
 import ToasterProvider from "@/components/providers/ToasterProvider";
+import UrlRouterBridge from "@/components/providers/UrlRouterBridge";
 import { cn } from "@/lib/cn";
 
 import "goey-toast/styles.css";
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col">
         {children}
         <ToasterProvider />
+        <UrlRouterBridge />
       </body>
     </html>
   );

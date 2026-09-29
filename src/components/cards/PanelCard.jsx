@@ -1,10 +1,14 @@
 import StatusDot from "@/components/atoms/StatusDot";
+import Reveal from "@/components/motion/Reveal";
 import { cn } from "@/lib/cn";
 import { TONE_TEXT } from "@/lib/tones";
 
 /**
  * The card shell every dashboard panel shares — Figma 191:16818.
  * Title, optional leading dot, optional subtitle, optional trailing action.
+ *
+ * Reveals itself after `revealDelay` seconds. A panel hands the same value to
+ * `nestedRevealDelayAt` so its rows follow it in one by one.
  */
 export default function PanelCard({
   title,
@@ -12,10 +16,13 @@ export default function PanelCard({
   tone,
   action,
   children,
+  revealDelay = 0,
   className,
 }) {
   return (
-    <section
+    <Reveal
+      as="section"
+      delay={revealDelay}
       className={cn(
         "flex flex-col gap-5 border border-solid border-border-strong bg-surface-base p-6",
         className,
@@ -42,6 +49,6 @@ export default function PanelCard({
       </header>
 
       {children}
-    </section>
+    </Reveal>
   );
 }

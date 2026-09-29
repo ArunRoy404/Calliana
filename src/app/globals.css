@@ -6,6 +6,13 @@
    the overlays simply pop into place. */
 @import "tw-animate-css";
 
+/* Light theme only. Tailwind's default `dark:` follows the OS setting, so
+   every `dark:` class shadcn ships (tabs, select, input…) would switch on for
+   a visitor whose system is in dark mode — the active tab lost its blue that
+   way. Binding the variant to a `.dark` class this app never sets turns all of
+   them off at the root. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ==========================================================================
    CALLIANA — DESIGN TOKENS
    Source: Figma "New Testing Project" (file 9foyDETn5IOj3mfPLg6qQl)
@@ -96,6 +103,14 @@
   --brand-text-black: #0d0b09; /* Figma "Black Text" — warmer than text-primary */
   --brand-track: #f3f4f8; /* Figma "background" — scrollbar track */
 
+  /* Avatar tints — a person's initials chip (Figma 202:30956). */
+  --tint-red: #fee2e2;
+  --tint-red-ink: #991b1b;
+  --tint-amber: #fef3c7;
+  --tint-amber-ink: #92400e;
+  --tint-violet: #f3e8ff;
+  --tint-violet-ink: #6b21a8;
+
   /* The wordmark's own gradient, read from the logo SVG's stops — use these
      when brand-coloured type or artwork is called for. */
   --brand-gradient-start: #5146d8; /* indigo */
@@ -155,7 +170,26 @@
      mobile sheet cannot be: it renders in a portal at the end of <body> and so
      never inherits them, which leaves the root as the only way to reach it.
      ------------------------------------------------------------------ */
-  --sidebar-width-mobile: 260px;
+  --sidebar-width-mobile: 232px; /* = SIDEBAR_WIDTH in src/lib/sidebar.js */
+
+  /* The top bar and the sidebar's logo header share one height, so their
+     bottom borders meet in a single unbroken line. It lives on the root for the
+     same portal reason: the mobile sheet's header must match too. Figma 167:49829. */
+  --dashboard-bar-height: 78px;
+
+  /* ------------------------------------------------------------------
+     14. CONTROLS
+     ------------------------------------------------------------------
+     Two heights, one per context, so every control in a row lines up:
+       --control-height     forms and the top bar — inputs, form buttons,
+                            top-bar tiles and search (44px, Figma's inputs).
+       --control-height-sm  filter bars — a table toolbar's search, selects
+                            and action button (36px, Figma 198:22840).
+     Exposed as `h-control` / `h-control-sm` (and `size-*`, `w-*`). Controls
+     pick one through their `size` prop ("md" / "sm"), never a raw height.
+     ------------------------------------------------------------------ */
+  --control-height: 44px;
+  --control-height-sm: 36px;
 }
 
 /* ==========================================================================
@@ -164,6 +198,10 @@
    there is a single source of truth for every value.
    ========================================================================== */
 @theme inline {
+  /* One height for every control — see CONTROLS above. */
+  --spacing-control: var(--control-height);
+  --spacing-control-sm: var(--control-height-sm);
+
   /* Type — Geist is the only family in the design system */
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
@@ -220,6 +258,12 @@
   --color-brand-text-black: var(--brand-text-black);
   --color-brand-track: var(--brand-track);
   --color-brand-border: var(--brand-border);
+  --color-tint-red: var(--tint-red);
+  --color-tint-red-ink: var(--tint-red-ink);
+  --color-tint-amber: var(--tint-amber);
+  --color-tint-amber-ink: var(--tint-amber-ink);
+  --color-tint-violet: var(--tint-violet);
+  --color-tint-violet-ink: var(--tint-violet-ink);
   --color-brand-error: var(--brand-error);
   --color-brand-success: var(--brand-success);
   --color-brand-white: var(--brand-white);
@@ -415,8 +459,8 @@ body {
    is something to scroll; a panel that wants the space reserved regardless asks
    for `scrollbar-gutter: stable`. */
 *::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 6px;
+  height: 6px;
 }
 
 *::-webkit-scrollbar-track {

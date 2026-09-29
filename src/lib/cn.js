@@ -1,6 +1,11 @@
 import { clsx } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 
+import {
+  CONTROL_HEIGHT_CLASSES,
+  CONTROL_SIZE_CLASSES,
+  CONTROL_WIDTH_CLASSES,
+} from "@/lib/controls";
 import { RADIUS_CLASSES } from "@/lib/radii";
 import { TYPOGRAPHY_CLASSES } from "@/lib/typography";
 
@@ -13,11 +18,17 @@ import { TYPOGRAPHY_CLASSES } from "@/lib/typography";
  * The radius scale has the opposite problem: tailwind-merge does not recognise
  * `rounded-8` at all, so it never drops the `rounded-md` a shadcn primitive set
  * and the two fight in the stylesheet. Registering ours in the same group fixes
- * the override.
+ * the override. The control height (`h-control`) is registered the same way.
  */
 const twMerge = extendTailwindMerge({
   extend: {
-    classGroups: { "font-size": TYPOGRAPHY_CLASSES, rounded: RADIUS_CLASSES },
+    classGroups: {
+      "font-size": TYPOGRAPHY_CLASSES,
+      rounded: RADIUS_CLASSES,
+      h: CONTROL_HEIGHT_CLASSES,
+      w: CONTROL_WIDTH_CLASSES,
+      size: CONTROL_SIZE_CLASSES,
+    },
   },
 });
 

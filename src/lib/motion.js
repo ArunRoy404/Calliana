@@ -32,3 +32,28 @@ export const REVEAL_STAGGER = 0.07;
 
 /** Pause before a group's first child begins. */
 export const REVEAL_DELAY_CHILDREN = 0.05;
+
+/**
+ * Gap between siblings in a reveal sequence, in seconds — the step that makes
+ * cards and rows arrive one after another instead of landing as a block.
+ */
+export const REVEAL_STEP = 0.08;
+
+/**
+ * How long a container is on screen before its own rows start to follow it
+ * in, in seconds. Lets the panel settle first, then fill.
+ */
+export const REVEAL_NESTED_OFFSET = 0.15;
+
+/** Delay of the `index`th sibling in a sequence that starts at `start`. */
+export function revealDelayAt(start = 0, index = 0) {
+  return (start ?? 0) + (index ?? 0) * REVEAL_STEP;
+}
+
+/**
+ * Delay of the `index`th row inside a container that itself reveals at
+ * `parentDelay` — the rows begin once the container has had a moment.
+ */
+export function nestedRevealDelayAt(parentDelay = 0, index = 0) {
+  return revealDelayAt((parentDelay ?? 0) + REVEAL_NESTED_OFFSET, index);
+}

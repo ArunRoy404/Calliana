@@ -1,8 +1,10 @@
 "use client";
 
+import { useSelectedLayoutSegment } from "next/navigation";
+
 import AppImage from "@/components/atoms/AppImage";
 import Icon from "@/components/atoms/Icon";
-import TopBarSearch from "@/components/nav/TopBarSearch";
+import SearchField from "@/components/forms/SearchField";
 import TopBarTile from "@/components/nav/TopBarTile";
 import NotificationsBell from "@/components/notifications/NotificationsBell";
 import { SidebarTrigger } from "@/components/shadcn/sidebar";
@@ -16,12 +18,21 @@ import { useDashboardStore } from "@/store/dashboard/useDashboardStore";
  * search below `xl`, and the language, status and appearance tiles below `md` —
  * leaving the title and the bell on a phone. The account menu is not here: it
  * lives in the sidebar footer, which is one tap away on every size.
+ *
+ * Sticky, so the title and controls stay put while the page scrolls under it.
+ * Its height is `--dashboard-bar-height`, shared with the sidebar's logo header
+ * so the two bottom borders line up.
+ *
+ * The heading follows the route: an inner page (`/admin/agents`) shows its own
+ * entry from `topBar.pages`, and anything else falls back to the role's.
  */
 export default function DashboardTopBar({ role }) {
   const topBar = useDashboardStore((state) => state.topBar?.[role]);
+  const segment = useSelectedLayoutSegment();
+  const heading = topBar?.pages?.[segment] ?? topBar;
 
   return (
-    <header className="relative z-10 flex min-h-[78px] items-center gap-3 overflow-hidden border-b border-solid border-border-default bg-surface-elevated px-4 py-3 sm:px-6">
+    <header className="sticky top-0 z-20 flex h-(--dashboard-bar-height) shrink-0 items-center gap-3 overflow-hidden border-b border-solid border-border-default bg-surface-elevated px-4 py-3 sm:px-6">
       {topBar?.texture && (
         <AppImage
           src={topBar?.texture}
@@ -31,17 +42,20 @@ export default function DashboardTopBar({ role }) {
         />
       )}
 
-      <SidebarTrigger className="relative size-11 shrink-0 rounded-6 border border-solid border-border-default bg-surface-base text-text-primary hover:bg-surface-subtle [&_svg]:size-6" />
+      <SidebarTrigger className="relative size-control shrink-0 rounded-6 border border-solid border-border-default bg-surface-base text-text-primary hover:bg-surface-subtle [&_svg]:size-6" />
 
       <div className="relative flex min-w-0 flex-1 flex-col gap-1">
-        <h1 className="text-h4 truncate text-text-primary">{topBar?.title}</h1>
+        <h1 className="text-h4 truncate text-text-primary">{heading?.title}</h1>
         <p className="text-body-sm truncate text-text-secondary">
-          {topBar?.subtitle}
+          {heading?.subtitle}
         </p>
       </div>
 
       <div className="relative flex shrink-0 items-center gap-2 sm:gap-3 xl:gap-4">
-        <TopBarSearch search={topBar?.search} />
+        <SearchField
+          search={topBar?.search}
+          className="hidden w-[228px] xl:flex"
+        />
 
         <NotificationsBell label={topBar?.notifications?.label} />
 
