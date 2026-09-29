@@ -26,6 +26,10 @@ const SHARED = {
       title: "AGENTS",
       subtitle: "Manage agent accounts and assignments.",
     },
+    clients: {
+      title: "Clients",
+      subtitle: "Manage all client accounts on the platform.",
+    },
   },
 };
 
