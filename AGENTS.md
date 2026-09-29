@@ -76,8 +76,10 @@ it rather than letting it grow.
 | Folder                       | Holds                                                        |
 | ---------------------------- | ------------------------------------------------------------ |
 | `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, TextLink, IconTile, StatusPill |
-| `components/forms/`          | Inputs and form compositions — InputField, FormOptionsRow     |
-| `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard                 |
+| `components/forms/`          | Inputs and form compositions — InputField, FormOptionsRow, SearchField, FilterSelect |
+| `components/tables/`         | The reusable data table — TableCard, TableToolbar, DataTable, TablePagination, EmptyMessage, and `cells/` (one renderer per column `type`) |
+| `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard, CardField      |
+| `components/agents/`         | Agent compositions — AgentCard, AgentCardContainer (the agents list below `xl`) |
 | `components/dashboard/`      | Dashboard sections, one folder per feature — `stats/`, `live-calls/`, `attention/`, `agents/`, `audit/` |
 | `components/nav/`            | Sidebar, top bar and the account menu                         |
 | `components/notifications/`  | Notification popover and its rows                             |
@@ -121,7 +123,8 @@ Shared hooks live in `src/hooks/`.
 All button behaviour lives in `src/components/atoms/Button.jsx`. Never style a
 raw `<button>` at a call site.
 
-- Variants: `primary`, `secondary`, `danger`, `ghost`. Sizes: `sm`, `md`, `lg`.
+- Variants: `primary`, `secondary`, `danger`, `ghost`, `link`, `outline`,
+  `toolbar`. Sizes: `none`, `xs`, `compact`, `sm`, `md`, `lg`.
 - `isDisabled` — disables and dims.
 - `isLoading` — disables and shows a smoothly rotating spinner.
 - `notFunctional` — for UI that has no backend yet. `onClick` still runs (so
@@ -235,3 +238,65 @@ reads as a page load; things arriving one after another reads as premium.
   `prefers-reduced-motion`.
 - `<Reveal stagger>` / `<Reveal item>` stay for small self-contained groups
   (the auth card's own slots). Do not use them to sequence a page.
+
+## 15. Two control heights: forms and filter bars
+
+Controls that sit in a row share one of two heights, set by tokens in
+`globals.css` and chosen through a `size` prop — never a raw height:
+
+| `size` | Token / class                         | Used for                                          |
+| ------ | ------------------------------------- | ------------------------------------------------- |
+| `md`   | `--control-height` · `h-control` (44px)   | Forms and the top bar — inputs, form buttons, top-bar tiles and search |
+| `sm`   | `--control-height-sm` · `h-control-sm` (36px) | Filter bars — a table toolbar's search, selects and action button |
+
+- `SearchField` (default `md`), `FilterSelect` (default `sm`) and `Button`
+  (`sm` / `md`) all take the same `size`, so everything in one bar matches.
+  The class for each size is `CONTROL_SIZE_HEIGHT` in `src/lib/controls.js`.
+- Never give a control its own height (`h-9`, `h-11`, `py-3` for height).
+  The `h-control*` classes are registered with `cn()`, so they override cleanly.
+- Change a height once, in its token, for the whole app.
+- Search fields carry no keyboard-shortcut hint (no `⌘K` chip) — anywhere.
+
+## 16. Every list is a reusable table
+
+- A list screen is built from `components/tables/` (`TableCard`,
+  `TableToolbar`, `DataTable`, `TablePagination`) and a store made by
+  `createTableStore` (`src/store/createTableStore.js`). Never hand-build a
+  table or its search/filter/paging logic.
+- The table is data-driven: columns (label, `type`, row field, alignment) and
+  rows live in the data file. A new kind of cell is one file in
+  `components/tables/cells/` plus one entry in `TableCellContent`.
+- **10 rows per page by default** (`TABLE_DEFAULTS` in
+  `src/data/tables/table-defaults.data.js`). Every table's toolbar has a
+  **rows-per-page select beside its filter**, fed by the store's
+  `pageSizeOptions` / `setPageSize`.
+- Declare each column once as a named constant and reference it from both
+  `columns` and `card`, so the table and card views can never drift.
+
+## 17. Tables become cards on smaller screens
+
+Wide tables do not scroll sideways on phones and tablets. Below `xl` a list
+renders as cards; from `xl` up, as the table.
+
+- Each list gets a `<Name>Card` and `<Name>CardContainer` (the agents list is
+  the reference: `components/agents/`). The card draws every value with the
+  table's own cell renderers (`TableCellContent`) and labels fields with
+  `CardField`, following the `card` layout in the data file — title, status,
+  subtitle, fields, action.
+- Both views render the store's same `visibleRows`, so search, filter,
+  rows-per-page and paging are shared; the toolbar and pager serve both.
+- The container is one column on a phone, two from `sm`; cards reveal one by
+  one (rule 14). An empty result uses `EmptyMessage` in both views.
+- A reveal must never flash a scrollbar. Anything that animates inside a
+  scroll container clips the axis it moves on — `DataTable` passes
+  `containerClassName="overflow-y-hidden"` to the table's scroll wrapper, and
+  `TableCard` clips its own overflow.
+
+## 18. Sidebar
+
+The dashboard sidebar is deliberately slimmer than Figma: 232px, with a 64px
+icon rail — both in `src/lib/sidebar.js` (and `--sidebar-width-mobile` in
+`globals.css` must match). Rows sit inset with soft corners and letter-spaced
+labels; the active row gets a tint and a primary accent bar on the sidebar
+edge. Keep new nav work within that language rather than returning to
+full-bleed rows.
