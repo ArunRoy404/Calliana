@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/atoms/Button";
-import AuditEvent from "@/components/dashboard/audit/AuditEvent";
+import TimelineEvent from "@/components/timeline/TimelineEvent";
 import PanelCard from "@/components/cards/PanelCard";
 import Icon from "@/components/atoms/Icon";
 import { nestedRevealDelayAt } from "@/lib/motion";
@@ -30,7 +30,7 @@ export default function AuditTrailPanel({ revealDelay = 0 }) {
     >
       <ul className="flex flex-col">
         {panel?.events?.map((event, index) => (
-          <AuditEvent
+          <TimelineEvent
             key={event?.id}
             event={event}
             isLast={index === (panel?.events?.length ?? 0) - 1}
