@@ -1,6 +1,7 @@
 import DashboardSidebar from "@/components/nav/DashboardSidebar";
 import DashboardTopBar from "@/components/nav/DashboardTopBar";
 import { SidebarInset, SidebarProvider } from "@/components/shadcn/sidebar";
+import { SIDEBAR_STYLE } from "@/lib/sidebar";
 
 /**
  * The chrome every role dashboard sits in — Figma 167:49827.
@@ -9,19 +10,11 @@ import { SidebarInset, SidebarProvider } from "@/components/shadcn/sidebar";
  * heading the shell loads. A role's `layout.js` is one line as a result.
  *
  * shadcn's sidebar provider owns the rail's open/collapsed state and the mobile
- * sheet, so the shell only supplies the design's widths: 260px expanded, a 72px
- * icon rail, and 260px again for the sheet — the phone gets the same rail the
- * design draws, not shadcn's wider default.
+ * sheet; the widths come from `src/lib/sidebar.js`.
  */
-const SIDEBAR_WIDTH = {
-  "--sidebar-width": "260px",
-  "--sidebar-width-icon": "72px",
-  "--sidebar-width-mobile": "260px",
-};
-
 export default function DashboardShell({ role, children }) {
   return (
-    <SidebarProvider style={SIDEBAR_WIDTH}>
+    <SidebarProvider style={SIDEBAR_STYLE}>
       <DashboardSidebar role={role} />
 
       <SidebarInset className="min-w-0 bg-surface-canvas">

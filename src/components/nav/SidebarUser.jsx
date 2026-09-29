@@ -4,6 +4,7 @@ import AppImage from "@/components/atoms/AppImage";
 import Button from "@/components/atoms/Button";
 import Icon from "@/components/atoms/Icon";
 import ProfileMenu from "@/components/nav/ProfileMenu";
+import { SIDEBAR_IMAGE_SIZES } from "@/lib/sidebar";
 
 /**
  * Signed-in user and role footer — Figma 42:2416.
@@ -18,13 +19,13 @@ export default function SidebarUser({ nav }) {
         <button
           type="button"
           aria-label={nav?.user?.name}
-          className="relative flex w-full cursor-pointer items-center gap-2 overflow-hidden px-4 py-2 text-left transition-colors duration-200 ease-out hover:bg-surface-subtle"
+          className="relative mx-3 flex cursor-pointer items-center gap-2.5 overflow-hidden rounded-8 border border-solid border-border-default bg-surface-base/60 px-3 py-2.5 text-left backdrop-blur-sm transition-colors duration-200 ease-out hover:border-border-strong hover:bg-surface-subtle"
         >
           {nav?.textures?.user && (
             <AppImage
               src={nav?.textures?.user}
               fill
-              sizes="260px"
+              sizes={SIDEBAR_IMAGE_SIZES}
               className="pointer-events-none object-cover opacity-10 backdrop-blur-[15px]"
             />
           )}
@@ -54,8 +55,8 @@ export default function SidebarUser({ nav }) {
         </button>
       </ProfileMenu>
 
-      <div className="flex w-full items-center justify-between gap-2 px-4 py-2">
-        <p className="text-body-sm text-brand-gray-dark">
+      <div className="flex w-full items-center justify-between gap-2 px-4 py-1">
+        <p className="text-body-sm whitespace-nowrap text-brand-gray-dark">
           {nav?.role?.label}{" "}
           <span className="text-label-md text-status-success">
             {nav?.role?.value}
@@ -66,9 +67,9 @@ export default function SidebarUser({ nav }) {
           variant="link"
           size="none"
           href={nav?.signOut?.href}
-          className="text-body-md text-status-error"
+          className="text-body-sm gap-1.5 whitespace-nowrap text-status-error"
         >
-          <Icon name="LogOut" />
+          <Icon name="LogOut" size={16} />
           {nav?.signOut?.label}
         </Button>
       </div>

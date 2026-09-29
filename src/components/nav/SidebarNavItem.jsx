@@ -12,32 +12,38 @@ import {
 import { cn } from "@/lib/cn";
 
 /**
- * One sidebar row — Figma 42:2396 (active) / 42:3119 (rest).
+ * One sidebar row — Figma 42:2396 (active) / 42:3119 (rest), refined for the
+ * slimmer rail: rows sit inset with soft corners, labels are a touch smaller
+ * and letter-spaced, and the active row is marked by a tint plus a primary
+ * accent bar on the sidebar's edge.
  *
  * Built on shadcn's SidebarMenuButton so collapse-to-icon, tooltips and the
- * mobile sheet all come for free, but restyled to the design: full-bleed rows
- * with square corners and a top/bottom rule on the active one, rather than
- * shadcn's inset pill.
+ * mobile sheet all come for free.
  */
 export default function SidebarNavItem({ item }) {
   const pathname = usePathname();
   const isActive = pathname === item?.href;
 
   return (
-    <SidebarMenuItem>
+    <SidebarMenuItem
+      className={cn(
+        "px-3",
+        // The accent bar lives on the item, not the button, because the button
+        // clips its overflow.
+        "before:absolute before:top-1.5 before:bottom-1.5 before:left-0 before:w-[3px] before:rounded-r-999 before:bg-action-primary before:transition-opacity before:duration-200",
+        isActive ? "before:opacity-100" : "before:opacity-0",
+      )}
+    >
       <SidebarMenuButton
         asChild
         isActive={isActive}
         tooltip={item?.label}
         className={cn(
-          // shadcn forces 16px icons; the design uses 20px.
-          "text-body-md h-auto gap-2 rounded-none px-4 py-2 [&>svg]:size-5",
-          // Collapsed, shadcn shrinks the row to a 32px square wedged against
-          // the rail's left edge, which clips a 20px icon. Centre a 44px square
-          // in the 72px rail instead.
-          "group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0!",
+          "text-body-sm h-9 gap-2.5 rounded-6 px-3 font-medium tracking-[0.04em] transition-colors duration-200 ease-out [&>svg]:size-[18px]",
+          // Collapsed, centre a 40px square in the 64px rail.
+          "group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0!",
           isActive
-            ? "border-y border-solid border-border-focus bg-surface-selected text-text-primary"
+            ? "bg-surface-selected text-action-primary hover:bg-surface-selected hover:text-action-primary data-[active=true]:text-action-primary"
             : "text-text-secondary hover:bg-surface-subtle hover:text-text-primary",
         )}
       >
@@ -50,7 +56,7 @@ export default function SidebarNavItem({ item }) {
       </SidebarMenuButton>
 
       {item?.badge && (
-        <SidebarMenuBadge className="text-label-sm size-4 min-w-4 justify-center rounded-999 bg-surface-base p-0 text-text-secondary">
+        <SidebarMenuBadge className="text-label-sm top-1/2! right-5 size-5 min-w-5 -translate-y-1/2 justify-center rounded-999 border border-solid border-border-default bg-surface-base p-0 tracking-normal text-text-secondary">
           {item?.badge}
         </SidebarMenuBadge>
       )}
