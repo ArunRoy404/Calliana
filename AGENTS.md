@@ -75,11 +75,15 @@ it rather than letting it grow.
 
 | Folder                       | Holds                                                        |
 | ---------------------------- | ------------------------------------------------------------ |
-| `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, TextLink, IconTile, StatusPill |
-| `components/forms/`          | Inputs and form compositions — InputField, FormOptionsRow, SearchField, FilterSelect |
+| `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, AssetIcon, ToneIcon, UserAvatar, StatusBadge, TextLink, IconTile, StatusPill |
+| `components/forms/`          | Inputs and form compositions — FieldShell, InputField, FormField, FormSelect, FilterSelect, TimeRangeField, SearchField, FormOptionsRow |
+| `components/overlays/`       | SidePanel — the one drawer every add/edit/detail panel is built on |
+| `components/tabs/`           | UnderlineTabs                                                  |
+| `components/timeline/`       | TimelineEvent (audit trail, agent activities)                  |
+| `components/charts/`         | MeterRow and other small data graphics                         |
 | `components/tables/`         | The reusable data table — TableCard, TableToolbar, DataTable, TablePagination, EmptyMessage, and `cells/` (one renderer per column `type`) |
-| `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard, CardField      |
-| `components/agents/`         | Agent compositions — AgentCard, AgentCardContainer (the agents list below `xl`) |
+| `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard, CardField, DetailSection, InfoTile, MetricRow, NoticeCard, RowCard, StatFigure |
+| `components/agents/`         | Agent compositions — AgentCard, AgentCardContainer; `add/` (AddAgentPanel) and `detail/` (AgentDetailPanel, its tabs and rows) |
 | `components/dashboard/`      | Dashboard sections, one folder per feature — `stats/`, `live-calls/`, `attention/`, `agents/`, `audit/` |
 | `components/nav/`            | Sidebar, top bar and the account menu                         |
 | `components/notifications/`  | Notification popover and its rows                             |
@@ -300,3 +304,84 @@ icon rail — both in `src/lib/sidebar.js` (and `--sidebar-width-mobile` in
 labels; the active row gets a tint and a primary accent bar on the sidebar
 edge. Keep new nav work within that language rather than returning to
 full-bleed rows.
+
+## 19. Reuse before you build — and prefer shadcn
+
+Before writing any component, **search the project for one that already does
+the job** (`components/atoms`, `forms`, `cards`, `tables`, `overlays`,
+`motion`, the stores and `src/lib`). Extend an existing component with a prop or
+variant before creating a new one; a near-duplicate is a rule 0 defect.
+
+When nothing fits, **start from a shadcn primitive** rather than hand-rolling
+behaviour. If the primitive is not in `components/shadcn/` yet, add it with
+`npx shadcn@latest add <name>` and clean it up (rule 10). Wrap it once in a
+project component that owns the look, and use that wrapper everywhere —
+never the raw primitive at a call site.
+
+| Need                         | shadcn primitive | Project wrapper                         |
+| ---------------------------- | ---------------- | --------------------------------------- |
+| Side panel / drawer          | `sheet`          | `overlays/SidePanel`                    |
+| Avatar with initials fallback| `avatar`         | `atoms/UserAvatar`                      |
+| Dropdown select              | `select`         | `forms/FilterSelect` (`filter` / `field` variants), `forms/FormSelect` (labelled) |
+| Tabs                         | `tabs`           | `tabs/UnderlineTabs`, `NotificationsPanel` pills |
+| Table                        | `table`          | `tables/DataTable`                      |
+
+## 20. Every side panel is `SidePanel`
+
+Add, edit and detail drawers — for any entity — are all built on
+`components/overlays/SidePanel` (shadcn `sheet` underneath). It owns the width,
+the header (title, subtitle, close), the scrolling body, the sticky footer and
+the motion; a feature supplies only its content.
+
+- Open/close state lives in the feature's store (`isAddOpen`,
+  `selectedAgentId`…), never in `useState`.
+- The body scrolls on its own; header and footer stay put.
+- Never style a raw `SheetContent` at a call site.
+
+## 21. Avatars are `UserAvatar`
+
+Every person picture is `components/atoms/UserAvatar` (shadcn `avatar`). With
+no `src` it shows the person's initials, derived from their name — data files
+never store initials. Sizes come from its `size` prop, not a call-site class.
+
+## 22. Capture what each request teaches
+
+Whenever a request carries a lasting preference or decision — a design
+language, a component pattern, a workflow habit — write it into this file as a
+rule in the same change, and add a one-line pointer in `CLAUDE.md`. Rules are
+how later work stays consistent with earlier work; a preference that lives only
+in a past conversation is lost.
+
+## 23. Forms: one frame, one store factory, one schema
+
+- Every field sits in `forms/FieldShell` (label, control, helper/error line).
+  `InputField` and `FormSelect` both render through it, so a text box and a
+  dropdown in one form share label style, spacing and error treatment.
+  `InputField` takes a `trailingIcon`, and `type="time"` opens the native
+  picker from anywhere in the box.
+- A form's state is a `createFormStore` store; its rules are a Zod schema in
+  `src/schemas/<domain>/`. Submit, cancel and reset are store actions — the
+  component only binds fields (`FormField`, or a small bound wrapper like
+  `AddAgentSelect`) and calls them.
+- With no backend, a valid submit closes the panel and shows the
+  not-wired-up toast; it never pretends the action happened.
+
+## 24. Light theme is enforced, not assumed
+
+`globals.css` binds `dark:` to a `.dark` class the app never sets
+(`@custom-variant dark`). Without it, Tailwind's `dark:` follows the OS, and
+every `dark:` class shadcn ships switches on for visitors in dark mode — the
+agent panel's active tab lost its colour that way. Never remove that line, and
+never write a `dark:` class.
+
+## 25. Icons come from data, as assets or lucide
+
+- A data file describes an icon as `{ src, width, height }` (an exported Figma
+  asset in `public/icons/`) or `{ lucide, size }`. `atoms/AssetIcon` renders
+  either; components never branch on it themselves.
+- Download Figma assets once into `public/icons/<feature>/`. When an export is
+  broken (missing paths, a masked group), use the closest lucide glyph and say
+  so in a comment beside the data entry.
+- Actions without a backend spread `notFunctionalProps(content)` from
+  `src/lib/notFunctional.js` rather than rebuilding the props object.
+
