@@ -1,6 +1,8 @@
 "use client";
 
 import AgentCardContainer from "@/components/agents/AgentCardContainer";
+import AddAgentPanel from "@/components/agents/add/AddAgentPanel";
+import AgentDetailPanel from "@/components/agents/detail/AgentDetailPanel";
 import AppImage from "@/components/atoms/AppImage";
 import Button from "@/components/atoms/Button";
 import FilterSelect from "@/components/forms/FilterSelect";
@@ -20,6 +22,9 @@ import { useAgentsStore } from "@/store/admin/useAgentsStore";
  * From `xl` up the agents are a table; below it the same page of rows becomes
  * cards, since ten columns cannot fit a phone or tablet. Toolbar and pager are
  * shared by both views.
+ *
+ * "Add New Agent" opens the add panel and "View Agent" opens that agent's
+ * detail panel — both the shared `SidePanel`, their state in the store.
  */
 export default function AgentsDirectory() {
   const content = useAgentsStore((state) => state.content);
@@ -37,82 +42,83 @@ export default function AgentsDirectory() {
   const setPageSize = useAgentsStore((state) => state.setPageSize);
   const nextPage = useAgentsStore((state) => state.nextPage);
   const previousPage = useAgentsStore((state) => state.previousPage);
-
-  const notFunctional = {
-    notFunctional: true,
-    notFunctionalMessage: content?.notFunctionalMessage,
-    notFunctionalDescription: content?.notFunctionalDescription,
-  };
+  const openAdd = useAgentsStore((state) => state.openAdd);
+  const openAgent = useAgentsStore((state) => state.openAgent);
 
   return (
-    <TableCard
-      texture={content?.texture}
-      toolbar={
-        <TableToolbar
-          start={
-            <>
-              <SearchField
-                search={content?.search}
-                value={query}
-                onValueChange={setQuery}
-                size="sm"
-                className="w-full sm:w-[350px]"
-              />
-              <FilterSelect
-                label={content?.filter?.label}
-                options={content?.filter?.options}
-                value={filter}
-                onValueChange={setFilter}
-              />
-              <FilterSelect
-                label={pageSizeLabel}
-                options={pageSizeOptions}
-                value={`${pageSize}`}
-                onValueChange={setPageSize}
-              />
-            </>
-          }
-          end={
-            <Button variant="toolbar" size="sm" {...notFunctional}>
-              <AppImage
-                src={content?.addAction?.icon?.src}
-                width={content?.addAction?.icon?.width}
-                height={content?.addAction?.icon?.height}
-              />
-              {content?.addAction?.label}
-            </Button>
-          }
-        />
-      }
-      footer={
-        <TablePagination
-          summary={summary}
-          page={page}
-          pageCount={pageCount}
-          previousLabel={content?.pagination?.previousLabel}
-          nextLabel={content?.pagination?.nextLabel}
-          onPrevious={previousPage}
-          onNext={nextPage}
-        />
-      }
-    >
-      <div className="hidden xl:block">
-        <DataTable
-          columns={content?.columns}
-          rows={rows}
-          emptyLabel={content?.emptyLabel}
-          actionProps={notFunctional}
-          className={content?.tableClassName}
-        />
-      </div>
+    <>
+      <TableCard
+        texture={content?.texture}
+        toolbar={
+          <TableToolbar
+            start={
+              <>
+                <SearchField
+                  search={content?.search}
+                  value={query}
+                  onValueChange={setQuery}
+                  size="sm"
+                  className="w-full sm:w-[350px]"
+                />
+                <FilterSelect
+                  label={content?.filter?.label}
+                  options={content?.filter?.options}
+                  value={filter}
+                  onValueChange={setFilter}
+                />
+                <FilterSelect
+                  label={pageSizeLabel}
+                  options={pageSizeOptions}
+                  value={`${pageSize}`}
+                  onValueChange={setPageSize}
+                />
+              </>
+            }
+            end={
+              <Button variant="toolbar" size="sm" onClick={openAdd}>
+                <AppImage
+                  src={content?.addAction?.icon?.src}
+                  width={content?.addAction?.icon?.width}
+                  height={content?.addAction?.icon?.height}
+                />
+                {content?.addAction?.label}
+              </Button>
+            }
+          />
+        }
+        footer={
+          <TablePagination
+            summary={summary}
+            page={page}
+            pageCount={pageCount}
+            previousLabel={content?.pagination?.previousLabel}
+            nextLabel={content?.pagination?.nextLabel}
+            onPrevious={previousPage}
+            onNext={nextPage}
+          />
+        }
+      >
+        <div className="hidden xl:block">
+          <DataTable
+            columns={content?.columns}
+            rows={rows}
+            emptyLabel={content?.emptyLabel}
+            onRowAction={openAgent}
+            className={content?.tableClassName}
+          />
+        </div>
 
-      <AgentCardContainer
-        rows={rows}
-        layout={content?.card}
-        emptyLabel={content?.emptyLabel}
-        actionProps={notFunctional}
-        className="xl:hidden"
-      />
-    </TableCard>
+        <AgentCardContainer
+          rows={rows}
+          layout={content?.card}
+          emptyLabel={content?.emptyLabel}
+          onRowAction={openAgent}
+          className="xl:hidden"
+        />
+      </TableCard>
+
+      <AddAgentPanel />
+      <AgentDetailPanel />
+    </>
   );
 }
