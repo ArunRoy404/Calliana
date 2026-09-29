@@ -14,14 +14,21 @@ import {
 /**
  * Smooth rise-and-fade reveal. One component, three modes:
  *
- * - `<Reveal>` — animates itself on mount.
+ * - `<Reveal delay={…}>` — animates itself on mount, after `delay` seconds.
+ *   This is how dashboard components reveal: each takes a `revealDelay` prop
+ *   and its parent hands out stepped delays (see `revealDelayAt` and
+ *   `nestedRevealDelayAt` in `src/lib/motion.js`).
  * - `<Reveal stagger>` — a container whose `item` children cascade.
  * - `<Reveal item>` — a child of a `stagger` container. It deliberately sets
  *   no `initial`/`animate`, because framer-motion only orchestrates children
  *   that inherit their state from the parent.
  *
  * Respects `prefers-reduced-motion`: the movement is dropped and only a short
- * fade remains, so the interface never animates at someone who asked it not to.
+ * fade remains, with no delay, so the interface never animates at someone who
+ * asked it not to.
+ *
+ * `as` takes a tag name, or a motion component made once at module level
+ * (e.g. `MotionTableRow`) — never one created during render.
  */
 export default function Reveal({
   children,
@@ -35,7 +42,8 @@ export default function Reveal({
 }) {
   const shouldReduceMotion = useReducedMotion();
 
-  const Component = motion?.[as] ?? motion.div;
+  const Component =
+    typeof as === "string" ? (motion?.[as] ?? motion.div) : (as ?? motion.div);
   const staggerSeconds = typeof stagger === "number" ? stagger : REVEAL_STAGGER;
 
   const variants = {
@@ -49,7 +57,7 @@ export default function Reveal({
       transition: {
         duration: shouldReduceMotion ? 0.2 : REVEAL_DURATION,
         ease: REVEAL_EASE,
-        delay,
+        delay: shouldReduceMotion ? 0 : delay,
         ...(stagger
           ? {
               staggerChildren: shouldReduceMotion ? 0 : staggerSeconds,
