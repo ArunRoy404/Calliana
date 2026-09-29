@@ -1,5 +1,3 @@
-import { gooeyToast } from "goey-toast";
-
 import { addAgentData } from "@/data/admin/add-agent.data";
 import {
   addAgentDefaultValues,
@@ -9,8 +7,9 @@ import { useAgentsStore } from "@/store/admin/useAgentsStore";
 import { createFormStore } from "@/store/createFormStore";
 
 /**
- * The add-agent form — Figma 198:32312. Values, validation and touched state
- * come from `createFormStore`; this adds the panel's own actions.
+ * The add-agent form — Figma 198:32312. Values, validation, touched state and
+ * the drawer's cancel / submit come from `createFormStore`; this adds the
+ * working-hours setter.
  *
  * There is no backend yet, so a valid submit closes the panel and says so,
  * rather than pretending an invite went out.
@@ -18,6 +17,11 @@ import { createFormStore } from "@/store/createFormStore";
 export const useAddAgentFormStore = createFormStore({
   schema: addAgentSchema,
   defaultValues: addAgentDefaultValues,
+  closePanel: () => useAgentsStore.getState()?.setAddOpen?.(false),
+  notFunctional: {
+    message: addAgentData?.notFunctionalMessage,
+    description: addAgentData?.notFunctionalDescription,
+  },
   extend: (set, get) => ({
     content: addAgentData,
 
@@ -27,20 +31,5 @@ export const useAddAgentFormStore = createFormStore({
         ...hours,
         [day]: { ...hours?.[day], [edge]: value },
       })),
-
-    cancel: () => {
-      useAgentsStore.getState()?.setAddOpen?.(false);
-      get()?.reset?.();
-    },
-
-    submitInvite: () => {
-      if (!get()?.submit?.()) return false;
-
-      gooeyToast.info(addAgentData?.notFunctionalMessage, {
-        description: addAgentData?.notFunctionalDescription,
-      });
-      get()?.cancel?.();
-      return true;
-    },
   }),
 });

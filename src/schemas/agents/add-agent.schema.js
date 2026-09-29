@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { emailField } from "@/schemas/auth/shared.schema";
+import { emailField, phoneField } from "@/schemas/auth/shared.schema";
 
 /**
  * Validation for the add-agent panel — Figma 198:32312.
@@ -14,11 +14,7 @@ const timeRange = z.object({
 });
 
 export const addAgentSchema = z.object({
-  phone: z
-    .string()
-    .trim()
-    .min(1, "Enter a phone number")
-    .regex(/^\+?[\d\s()-]{7,}$/, "That doesn’t look like a phone number"),
+  phone: phoneField,
   email: emailField,
   role: z.string().min(1, "Choose a role"),
   availability: z.string().min(1, "Choose an availability"),

@@ -1,51 +1,15 @@
 "use client";
 
-import Button from "@/components/atoms/Button";
 import AddAgentFields from "@/components/agents/add/AddAgentFields";
-import SidePanel from "@/components/overlays/SidePanel";
-import { useStoreParams } from "@/hooks/useUrlParams";
+import FormPanel from "@/components/overlays/FormPanel";
 import { useAddAgentFormStore } from "@/store/admin/useAddAgentFormStore";
 import { useAgentsStore } from "@/store/admin/useAgentsStore";
 
-/**
- * "Add new agent account" — Figma 198:32312, on the shared `SidePanel`.
- * Whether it is open is the URL's `?panel=add`, read through the agents
- * store; the form's values live in its own store.
- */
+/** "Add new agent account" — Figma 198:32312, on the shared `FormPanel`. */
 export default function AddAgentPanel() {
-  const params = useStoreParams(useAgentsStore);
-  const isOpen = useAgentsStore((state) => state.isAddOpen(params));
-  const setOpen = useAgentsStore((state) => state.setAddOpen);
-  const content = useAddAgentFormStore((state) => state.content);
-  const cancel = useAddAgentFormStore((state) => state.cancel);
-  const submitInvite = useAddAgentFormStore((state) => state.submitInvite);
-
   return (
-    <SidePanel
-      open={isOpen}
-      onOpenChange={setOpen}
-      title={content?.title}
-      subtitle={content?.subtitle}
-      footer={
-        <>
-          <p className="text-body-sm mr-auto text-text-secondary">
-            <span className="text-status-error">
-              {content?.footer?.requiredMark}
-            </span>{" "}
-            {content?.footer?.requiredNote}
-          </p>
-          <div className="flex flex-wrap items-center gap-4">
-            <Button variant="neutral" onClick={cancel}>
-              {content?.footer?.cancelLabel}
-            </Button>
-            <Button onClick={submitInvite}>
-              {content?.footer?.submitLabel}
-            </Button>
-          </div>
-        </>
-      }
-    >
+    <FormPanel useListStore={useAgentsStore} useFormStore={useAddAgentFormStore}>
       <AddAgentFields />
-    </SidePanel>
+    </FormPanel>
   );
 }

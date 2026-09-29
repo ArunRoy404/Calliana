@@ -1,19 +1,18 @@
 "use client";
 
 import FormSelect from "@/components/forms/FormSelect";
-import { useAddAgentFormStore } from "@/store/admin/useAddAgentFormStore";
 
 /**
- * One select of the add-agent form, bound to the form store by its `name`
- * (role, availability, client, queue), so each field reads only its own value
- * and error.
+ * A form select bound to a `createFormStore` store by its `name`, so each one
+ * reads only its own value and error. `select` is a data config: `{ name,
+ * label, options, placeholder }`.
  */
-export default function AddAgentSelect({ select }) {
+export default function StoreSelect({ useStore, select }) {
   const name = select?.name;
-  const value = useAddAgentFormStore((state) => state.values?.[name]);
-  const error = useAddAgentFormStore((state) => state.visibleErrors?.[name]);
-  const setField = useAddAgentFormStore((state) => state.setField);
-  const touchField = useAddAgentFormStore((state) => state.touchField);
+  const value = useStore((state) => state.values?.[name]);
+  const error = useStore((state) => state.visibleErrors?.[name]);
+  const setField = useStore((state) => state.setField);
+  const touchField = useStore((state) => state.touchField);
 
   return (
     <FormSelect

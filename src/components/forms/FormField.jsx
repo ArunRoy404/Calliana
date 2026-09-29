@@ -1,6 +1,7 @@
 "use client";
 
 import InputField from "@/components/forms/InputField";
+import TextAreaField from "@/components/forms/TextAreaField";
 
 /**
  * Binds a field config from the content store to an `InputField`.
@@ -10,11 +11,15 @@ import InputField from "@/components/forms/InputField";
  * that wiring lives here once instead of in each form.
  */
 export default function FormField({ field, value, error, onChange, onBlur }) {
+  const isTextArea = field?.type === "textarea";
+  const Control = isTextArea ? TextAreaField : InputField;
+
   return (
-    <InputField
+    <Control
       label={field?.label}
       name={field?.name}
-      type={field?.type}
+      type={isTextArea ? undefined : field?.type}
+      rows={field?.rows}
       autoComplete={field?.autoComplete}
       placeholder={field?.placeholder}
       value={value ?? ""}

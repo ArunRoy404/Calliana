@@ -1,3 +1,4 @@
+import { gooeyToast } from "goey-toast";
 import { create } from "zustand";
 
 import { toFieldErrors } from "@/lib/toFieldErrors";
@@ -29,8 +30,19 @@ function visibleFrom(errors, touched) {
  * Validation is live rather than submit-driven: a field validates once it has
  * been blurred, then on every keystroke after. Submitting marks everything
  * touched so any outstanding error becomes visible.
+ *
+ * `cancel` resets the form and, for a form in a drawer, calls `closePanel`.
+ * `submitAndClose` validates, then — with no backend yet — shows the
+ * `notFunctional` (`{ message, description }`) toast and cancels, never
+ * pretending the save happened.
  */
-export function createFormStore({ schema, defaultValues, extend }) {
+export function createFormStore({
+  schema,
+  defaultValues,
+  closePanel,
+  notFunctional,
+  extend,
+}) {
   return create((set, get, store) => ({
     values: defaultValues,
     errors: {},
@@ -96,6 +108,21 @@ export function createFormStore({ schema, defaultValues, extend }) {
         visibleErrors: {},
         isSubmitting: false,
       }),
+
+    cancel: () => {
+      closePanel?.();
+      get()?.reset?.();
+    },
+
+    submitAndClose: () => {
+      if (!get()?.submit?.()) return false;
+
+      gooeyToast.info(notFunctional?.message, {
+        description: notFunctional?.description,
+      });
+      get()?.cancel?.();
+      return true;
+    },
 
     ...(extend?.(set, get, store) ?? {}),
   }));

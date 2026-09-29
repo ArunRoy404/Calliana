@@ -1,9 +1,10 @@
 "use client";
 
-import AddAgentSelect from "@/components/agents/add/AddAgentSelect";
 import NoticeCard from "@/components/cards/NoticeCard";
-import FormField from "@/components/forms/FormField";
 import FieldShell from "@/components/forms/FieldShell";
+import FormSection from "@/components/forms/FormSection";
+import StoreField from "@/components/forms/StoreField";
+import StoreSelect from "@/components/forms/StoreSelect";
 import TimeRangeField from "@/components/forms/TimeRangeField";
 import Reveal from "@/components/motion/Reveal";
 import { revealDelayAt } from "@/lib/motion";
@@ -16,88 +17,57 @@ import { useAddAgentFormStore } from "@/store/admin/useAddAgentFormStore";
  */
 export default function AddAgentFields() {
   const content = useAddAgentFormStore((state) => state.content);
-  const phone = useAddAgentFormStore((state) => state.values?.phone);
-  const email = useAddAgentFormStore((state) => state.values?.email);
   const hours = useAddAgentFormStore((state) => state.values?.hours);
-  const phoneError = useAddAgentFormStore(
-    (state) => state.visibleErrors?.phone,
-  );
-  const emailError = useAddAgentFormStore(
-    (state) => state.visibleErrors?.email,
-  );
   const hoursError = useAddAgentFormStore(
     (state) => state.visibleErrors?.hours,
   );
-  const setField = useAddAgentFormStore((state) => state.setField);
-  const touchField = useAddAgentFormStore((state) => state.touchField);
   const setHour = useAddAgentFormStore((state) => state.setHour);
 
   const hoursConfig = content?.workingHours;
+  const store = useAddAgentFormStore;
 
   return (
     <>
       <Reveal delay={revealDelayAt(0, 0)}>
-        <FormField
-          field={content?.fields?.phone}
-          value={phone}
-          error={phoneError}
-          onChange={setField}
-          onBlur={touchField}
-        />
+        <StoreField useStore={store} field={content?.fields?.phone} />
       </Reveal>
 
       <Reveal delay={revealDelayAt(0, 1)}>
-        <FormField
-          field={content?.fields?.email}
-          value={email}
-          error={emailError}
-          onChange={setField}
-          onBlur={touchField}
-        />
+        <StoreField useStore={store} field={content?.fields?.email} />
       </Reveal>
 
-      <Reveal
-        as="section"
-        delay={revealDelayAt(0, 2)}
-        className="flex flex-col gap-6"
+      <FormSection
+        title={content?.sections?.access}
+        revealDelay={revealDelayAt(0, 2)}
       >
-        <h3 className="text-body-lg text-text-secondary">
-          {content?.sections?.access}
-        </h3>
-        <AddAgentSelect select={content?.selects?.role} />
-        <AddAgentSelect select={content?.selects?.availability} />
-      </Reveal>
+        <StoreSelect useStore={store} select={content?.selects?.role} />
+        <StoreSelect useStore={store} select={content?.selects?.availability} />
+      </FormSection>
 
-      <Reveal
-        as="section"
-        delay={revealDelayAt(0, 3)}
-        className="flex flex-col gap-6"
+      <FormSection
+        title={content?.sections?.assignment}
+        revealDelay={revealDelayAt(0, 3)}
       >
-        <h3 className="text-body-lg text-text-secondary">
-          {content?.sections?.assignment}
-        </h3>
-        <div className="flex flex-col gap-4">
-          <AddAgentSelect select={content?.selects?.client} />
-          <AddAgentSelect select={content?.selects?.queue} />
+        <StoreSelect useStore={store} select={content?.selects?.client} />
+        <StoreSelect useStore={store} select={content?.selects?.queue} />
 
-          <FieldShell label={hoursConfig?.label} error={hoursError}>
-            <div className="mt-2.5 flex flex-col gap-4">
-              {hoursConfig?.days?.map((day) => (
-                <TimeRangeField
-                  key={day?.id}
-                  label={day?.label}
-                  separator={hoursConfig?.separator}
-                  fromLabel={hoursConfig?.fromLabel}
-                  toLabel={hoursConfig?.toLabel}
-                  from={hours?.[day?.id]?.from}
-                  to={hours?.[day?.id]?.to}
-                  onChange={(edge, value) => setHour?.(day?.id, edge, value)}
-                />
-              ))}
-            </div>
-          </FieldShell>
-        </div>
-      </Reveal>
+        <FieldShell label={hoursConfig?.label} error={hoursError}>
+          <div className="mt-2.5 flex flex-col gap-4">
+            {hoursConfig?.days?.map((day) => (
+              <TimeRangeField
+                key={day?.id}
+                label={day?.label}
+                separator={hoursConfig?.separator}
+                fromLabel={hoursConfig?.fromLabel}
+                toLabel={hoursConfig?.toLabel}
+                from={hours?.[day?.id]?.from}
+                to={hours?.[day?.id]?.to}
+                onChange={(edge, value) => setHour?.(day?.id, edge, value)}
+              />
+            ))}
+          </div>
+        </FieldShell>
+      </FormSection>
 
       <NoticeCard
         icon={content?.notice?.icon}
