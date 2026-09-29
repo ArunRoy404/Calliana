@@ -17,11 +17,27 @@ import { cn } from "@/lib/cn";
  * `size` picks the shared control height: `sm` (default — filter bars) or
  * `md` (a select inside a form).
  *
+ * `variant` picks the trigger's look; the dropdown list is the same for both:
+ * - `filter` — the grey chip of a table toolbar, Figma 198:22847.
+ * - `field` — an input-shaped trigger for forms, Figma 198:32325. `FormSelect`
+ *   wraps it with a label and error.
+ *
  * shadcn's Select supplies the behaviour (keyboard, typeahead, focus return,
  * portal); the look is the design's: a grey chip that opens a flat list whose
  * current and hovered option fill with the primary blue.
  */
-const ARROW_ICON = { src: "/icons/arrow-down-bold.svg", width: 16, height: 16 };
+const VARIANTS = {
+  filter: {
+    trigger:
+      "text-label-md gap-4 rounded-4 border-brand-gray bg-brand-track text-brand-black hover:border-border-strong",
+    icon: { src: "/icons/arrow-down-bold.svg", width: 16, height: 16 },
+  },
+  field: {
+    trigger:
+      "text-body-md w-full gap-2 rounded-4 border-border-default bg-surface-base text-text-primary hover:border-border-strong data-[placeholder]:text-text-primary",
+    icon: { src: "/icons/arrow-down.svg", width: 16, height: 16 },
+  },
+};
 
 /**
  * The control heights, written against shadcn's own `data-[size=default]:h-9`
@@ -37,28 +53,42 @@ export default function FilterSelect({
   options = [],
   value,
   onValueChange,
+  variant = "filter",
   size = "sm",
+  placeholder,
+  id,
+  invalid = false,
+  onBlur,
   className,
 }) {
+  const look = VARIANTS?.[variant] ?? VARIANTS?.filter;
+
   return (
-    <Select value={value} onValueChange={onValueChange}>
+    <Select
+      value={value || undefined}
+      onValueChange={onValueChange}
+      onOpenChange={(open) => !open && onBlur?.()}
+    >
       <SelectTrigger
+        id={id}
         aria-label={label}
+        aria-invalid={invalid || undefined}
         icon={
           <AppImage
-            src={ARROW_ICON.src}
-            width={ARROW_ICON.width}
-            height={ARROW_ICON.height}
+            src={look?.icon?.src}
+            width={look?.icon?.width}
+            height={look?.icon?.height}
             className="transition-transform duration-200 ease-reveal group-data-[state=open]:rotate-180"
           />
         }
         className={cn(
-          "group text-label-md cursor-pointer gap-4 rounded-4 border-brand-gray bg-brand-track px-3 py-0 text-brand-black shadow-none hover:border-border-strong focus-visible:border-border-focus focus-visible:ring-2 focus-visible:ring-border-focus/30",
+          "group cursor-pointer px-3 py-0 shadow-none transition-colors duration-200 ease-out focus-visible:border-border-focus focus-visible:ring-2 focus-visible:ring-border-focus/30",
+          look?.trigger,
           TRIGGER_HEIGHT?.[size] ?? TRIGGER_HEIGHT?.sm,
           className,
         )}
       >
-        <SelectValue />
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
 
       <SelectContent
