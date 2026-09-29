@@ -22,3 +22,10 @@ export const CONTROL_SIZE_HEIGHT = {
   sm: "h-control-sm",
   md: "h-control",
 };
+
+/**
+ * How long a controlled search box waits after the last keystroke before it
+ * commits its query (to the URL, for a table) — one write per pause, not per
+ * key, while the box itself updates instantly.
+ */
+export const SEARCH_COMMIT_DELAY_MS = 250;
