@@ -10,21 +10,22 @@ Also binding, in full in AGENTS.md:
 - **Rule 15** — controls use a `size` prop, never a raw height: `md`
   (`h-control`, 44px) for forms and the top bar, `sm` (`h-control-sm`, 36px)
   for filter bars; search has no `⌘K` hint.
-- **Rule 16** — every list uses `components/tables/` + `createTableStore`, 10
-  rows per page by default, with a rows-per-page select beside the filter.
-- **Rule 17** — below `xl` a table becomes `<Name>Card` / `<Name>CardContainer`
+- **Rule 16** — every list is `tables/TableDirectory` over a `createTableStore`
+  store; filters and row actions are data; 10 rows per page by default.
+- **Rule 17** — below `xl` a table becomes `TableCardList` / `TableRowCard`,
   built from the table's own cell renderers; a reveal never flashes a scrollbar.
 - **Rule 18** — the sidebar is 232px with inset rows; keep that language.
 - **Rule 19** — search the project for an existing component first; when none
   fits, start from a shadcn primitive, wrapped once in a project component.
 - **Rule 20** — every add/edit/detail drawer is `overlays/SidePanel` (shadcn
-  `sheet`); open state lives in the store.
+  `sheet`); an add drawer is `overlays/FormPanel`; open state lives in the URL.
 - **Rule 21** — every person picture is `atoms/UserAvatar` (shadcn `avatar`),
   falling back to initials derived from the name.
 - **Rule 22** — when a request carries a lasting preference, add it to
   AGENTS.md as a rule (plus a pointer here) in the same change.
-- **Rule 23** — forms: fields sit in `FieldShell`; state is `createFormStore`
-  + a Zod schema; submit/cancel are store actions.
+- **Rule 23** — forms: fields sit in `FieldShell`, bound with `StoreField` /
+  `StoreSelect`; state is `createFormStore` + a Zod schema; submit/cancel are
+  store actions.
 - **Rule 24** — light theme only, enforced by `@custom-variant dark` in
   `globals.css`; never write a `dark:` class.
 - **Rule 25** — icons are data (`{ src }` asset or `{ lucide }`) rendered by
@@ -32,6 +33,11 @@ Also binding, in full in AGENTS.md:
 - **Rule 26** — view state (search, filters, page, size, open panel, tab)
   lives in the URL via the `src/lib/url/` service, `useUrlParams` /
   `useTableView` and a Zod params schema; URL-driven pages render per request.
+- **Rule 27** — a record with its own design page is a route
+  (`/<role>/<list>/[id]`) that 404s unknown ids, keeps its tab in the URL and
+  is built from the shared detail pieces.
+- **Rule 28** — assets are stored once (`public/icons/shared/` for shared
+  icons); textures go through `TextureLayer`; missing tints become tokens.
 
 <!--
   The project rules live in AGENTS.md and are imported above, so there is exactly

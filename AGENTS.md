@@ -79,24 +79,27 @@ it rather than letting it grow.
 
 | Folder                       | Holds                                                        |
 | ---------------------------- | ------------------------------------------------------------ |
-| `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, AssetIcon, ToneIcon, UserAvatar, StatusBadge, TextLink, IconTile, StatusPill |
-| `components/forms/`          | Inputs and form compositions — FieldShell, InputField, FormField, FormSelect, FilterSelect, TimeRangeField, SearchField, FormOptionsRow |
-| `components/overlays/`       | SidePanel — the one drawer every add/edit/detail panel is built on |
+| `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, AssetIcon, ToneIcon, UserAvatar, StatusBadge, MetaLine, TextLink, IconTile, StatusPill |
+| `components/forms/`          | Inputs and form compositions — FieldShell, InputField, TextAreaField, FormField, StoreField, FormSelect, StoreSelect, FilterSelect, FormSection, TimeRangeField, SearchField, FormOptionsRow |
+| `components/overlays/`       | SidePanel — the one drawer every add/edit/detail panel is built on; FormPanel (an add drawer) and its FormPanelFooter |
+| `components/actions/`        | ActionBar — a record's row of action buttons                   |
+| `components/lists/`          | StaggerList — a list whose rows reveal one after another       |
 | `components/tabs/`           | UnderlineTabs                                                  |
-| `components/timeline/`       | TimelineEvent (audit trail, agent activities)                  |
+| `components/timeline/`       | Timeline and TimelineEvent (audit trail, agent and client activities) |
 | `components/charts/`         | MeterRow and other small data graphics                         |
-| `components/tables/`         | The reusable data table — TableCard, TableToolbar, DataTable, TablePagination, EmptyMessage, and `cells/` (one renderer per column `type`) |
-| `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard, CardField, DetailSection, InfoTile, MetricRow, NoticeCard, RowCard, StatFigure |
-| `components/agents/`         | Agent compositions — AgentCard, AgentCardContainer; `add/` (AddAgentPanel) and `detail/` (AgentDetailPanel, its tabs and rows) |
+| `components/tables/`         | The reusable list screen — TableDirectory (the whole screen), TableCard, TableToolbar, DataTable, TablePagination, TableCardList / TableRowCard (the card view), EmptyMessage, and `cells/` (one renderer per column `type`) |
+| `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard, CardField, DetailSection, InfoTile, InstructionCard, MetricRow, NoticeCard, RowCard, StatFigure, StatTile |
+| `components/agents/`         | Agent compositions — `add/` (AddAgentPanel, AddAgentFields) and `detail/` (AgentDetailPanel, its tabs and rows) |
+| `components/clients/`        | Client compositions — `add/` (AddClientPanel, AddClientFields) and `detail/` (ClientDetailView, its header, tabs and rows) |
 | `components/dashboard/`      | Dashboard sections, one folder per feature — `stats/`, `live-calls/`, `attention/`, `agents/`, `audit/` |
-| `components/nav/`            | Sidebar, top bar and the account menu                         |
+| `components/nav/`            | Sidebar, top bar, account menu and Breadcrumbs                |
 | `components/notifications/`  | Notification popover and its rows                             |
 | `components/motion/`         | Reveal, MotionTableRow and other shared transitions           |
-| `components/layout/`         | Page shells — ViewportShell, ScrollableCenter                 |
+| `components/layout/`         | Page shells — DashboardShell, ViewportShell, ScrollableCenter |
 | `components/shadcn/`         | shadcn primitives. Edit only to fix a defect or bind it to our tokens, and say why in a comment |
 | `components/features/`       | Feature/marketing list rows — FeatureItem, FeatureList         |
 | `components/auth/`           | Auth-specific compositions — AuthCard, AuthHeroPanel, AuthHeroCopy |
-| `components/decor/`          | Purely decorative, `aria-hidden` pieces                       |
+| `components/decor/`          | Purely decorative, `aria-hidden` pieces — TextureLayer and the auth backdrops |
 | `components/brand/`          | Logo and brand marks                                          |
 | `components/providers/`      | Client providers mounted at the root — ToasterProvider, UrlRouterBridge |
 
@@ -134,7 +137,8 @@ All button behaviour lives in `src/components/atoms/Button.jsx`. Never style a
 raw `<button>` at a call site.
 
 - Variants: `primary`, `secondary`, `danger`, `ghost`, `link`, `outline`,
-  `toolbar`. Sizes: `none`, `xs`, `compact`, `sm`, `md`, `lg`.
+  `neutral`, `info`, `toolbar`. Sizes: `none`, `xs`, `compact`, `square`,
+  `sm`, `md`, `lg`.
 - `isDisabled` — disables and dims.
 - `isLoading` — disables and shows a smoothly rotating spinner.
 - `notFunctional` — for UI that has no backend yet. `onClick` still runs (so
@@ -240,7 +244,9 @@ reads as a page load; things arriving one after another reads as premium.
   primary.length)`, then each panel a step after the last, and every panel's
   rows nested after their panel.
 - A list or table row is a reveal too: `<Reveal as="li">`, and for shadcn's
-  table `<Reveal as={MotionTableRow}>`. `as` takes a tag name or a motion
+  table `<Reveal as={MotionTableRow}>`. A vertical list of rows is
+  `lists/StaggerList`, which hands each row its delay — never map
+  `nestedRevealDelayAt` by hand. `as` takes a tag name or a motion
   component made once at module level — never `motion.create()` in render.
 - Timing lives in `src/lib/motion.js` (`REVEAL_STEP`, `REVEAL_NESTED_OFFSET`,
   `REVEAL_DURATION`, `REVEAL_EASE`). Change the feel there, once, for the
@@ -269,10 +275,19 @@ Controls that sit in a row share one of two heights, set by tokens in
 
 ## 16. Every list is a reusable table
 
-- A list screen is built from `components/tables/` (`TableCard`,
-  `TableToolbar`, `DataTable`, `TablePagination`) and a store made by
-  `createTableStore` (`src/store/createTableStore.js`). Never hand-build a
-  table or its search/filter/paging logic.
+- A list screen is `tables/TableDirectory` over a store made by
+  `createTableStore` (`src/store/createTableStore.js`). The directory draws the
+  toolbar (search, one select per filter, rows-per-page, add action), the
+  table, the card view and the pager from the store's `content`; a page adds
+  only its drawers. Never hand-build a table or its search/filter/paging
+  logic. The agents and clients pages are the reference.
+- Filters are data: `filters: [{ param, field, allValue, label, options }]` —
+  the URL key, the row field it compares to, the "all" value and the select.
+  A list can have any number; `filterParamsFrom(filters)` gives the URL
+  schema the same set.
+- Row actions are data too: an `action` column's `actions: [{ id, label,
+  icon, iconOnly, variant, hrefField, props }]`. `hrefField` makes it a real
+  link (a record's own page); `props` carry `notFunctional` and its copy.
 - The table is data-driven: columns (label, `type`, row field, alignment) and
   rows live in the data file. A new kind of cell is one file in
   `components/tables/cells/` plus one entry in `TableCellContent`.
@@ -290,11 +305,12 @@ Controls that sit in a row share one of two heights, set by tokens in
 Wide tables do not scroll sideways on phones and tablets. Below `xl` a list
 renders as cards; from `xl` up, as the table.
 
-- Each list gets a `<Name>Card` and `<Name>CardContainer` (the agents list is
-  the reference: `components/agents/`). The card draws every value with the
-  table's own cell renderers (`TableCellContent`) and labels fields with
-  `CardField`, following the `card` layout in the data file — title, status,
-  subtitle, fields, action.
+- The card view is `tables/TableCardList` of `tables/TableRowCard`, for every
+  list. The card draws every value with the table's own cell renderers
+  (`TableCellContent`) and labels fields with `CardField`, following the
+  `card` layout in the data file — title, status, subtitle, fields, action.
+  A list gets its own card component only if its layout genuinely cannot be
+  expressed by `card`.
 - Both views render the store's same `visibleRows`, so search, filter,
   rows-per-page and paging are shared; the toolbar and pager serve both.
 - The container is one column on a phone, two from `sm`; cards reveal one by
@@ -341,6 +357,10 @@ Add, edit and detail drawers — for any entity — are all built on
 the header (title, subtitle, close), the scrolling body, the sticky footer and
 the motion; a feature supplies only its content.
 
+- An add drawer is `overlays/FormPanel`: give it the list store and the form
+  store, and the fields as children. The list's schema declares `addPanel:
+  true` and `createTableStore` supplies `isAddOpen` / `openAdd` /
+  `setAddOpen`.
 - Which panel is open (and its tab) lives in the URL (`?agent=<id>&tab=…`,
   `?panel=add` — rule 26), read through the feature's store and written by its
   actions; never in `useState`. Keep the closing panel's content with
@@ -370,11 +390,15 @@ in a past conversation is lost.
   `InputField` takes a `trailingIcon`, and `type="time"` opens the native
   picker from anywhere in the box.
 - A form's state is a `createFormStore` store; its rules are a Zod schema in
-  `src/schemas/<domain>/`. Submit, cancel and reset are store actions — the
-  component only binds fields (`FormField`, or a small bound wrapper like
-  `AddAgentSelect`) and calls them.
-- With no backend, a valid submit closes the panel and shows the
-  not-wired-up toast; it never pretends the action happened.
+  `src/schemas/<domain>/` (shared field rules — email, phone, password — in
+  `src/schemas/auth/shared.schema.js`). Submit, cancel and reset are store
+  actions — the component only binds fields and calls them.
+- Bind fields with `forms/StoreField` and `forms/StoreSelect` (they take the
+  store and a data config, and read their own value and error); group them
+  with `forms/FormSection`. `type: "textarea"` is a multi-line field.
+- A drawer's form store passes `closePanel` and `notFunctional`; it then has
+  `cancel` and `submitAndClose`. With no backend, a valid submit shows the
+  not-wired-up toast and closes; it never pretends the action happened.
 
 ## 24. Light theme is enforced, not assumed
 
@@ -430,3 +454,39 @@ The pieces, all reusable — never hand-roll `URLSearchParams` or
   keys.
 - Components never know key names: a store exposes readers over params
   (`isAddOpen(params)`, `selectedAgent(params)`) and actions that write them.
+
+## 27. A record with its own design page gets its own route
+
+When the design gives a record a full page (a client — Figma 198:30338)
+rather than a drawer, it is a route: `/<role>/<list>/[id]`, e.g.
+`/admin/clients/laura-alegre-clinic`. The client module is the reference.
+
+- `page.js` is a server component: `await connection()`, read the id from
+  `await params`, look the record up through the store's `…ById` reader and
+  call `notFound()` for an unknown id — a real 404, not an empty page. Its
+  `generateMetadata` names the record. It renders one client view with the id.
+- The list links to it through an action with `hrefField` (a real `<a>`).
+- The page's tab is `?tab=` (rule 26): a small Zod schema beside the list's
+  (`clientDetailParamsSchema`), read with `useUrlParams`, written by a store
+  action. Tab badges count the list each tab shows, so they cannot drift.
+- An edge-to-edge page cancels the dashboard padding with `MAIN_BLEED`
+  (`src/lib/layout.js`) — never with hand-written negative margins.
+- Build it from the shared pieces: `nav/Breadcrumbs`, `actions/ActionBar`,
+  `tabs/UnderlineTabs` (`spacing="wide"`, counts), `cards/DetailSection`
+  (`size="lg"`, `subtitle`, `action`), `StatTile`, `InfoTile`,
+  `InstructionCard`, `lists/StaggerList`, `timeline/Timeline`, and a
+  `RowCard` variant (`boxed`, `emphasis`, `ruled`, `divider`, `rounded`,
+  `outlined`, `compact`) for each row. A new row look is a new `RowCard`
+  variant, not a new bordered `li`.
+- A nav section stays lit on its inner pages (`isNavActive`).
+
+## 28. Assets are stored once
+
+- Before adding a downloaded asset, compare it with what `public/` already has
+  (same bytes → reuse the existing file). An icon two features use lives in
+  `public/icons/shared/`; one feature's own icons in `public/icons/<feature>/`.
+- A faint background image is `decor/TextureLayer` (`scrim` for the page
+  wash). Check whether an export already has its opacity baked into its alpha
+  (the stat-card texture does) before applying the design's opacity again.
+- A tint the tokens lack (avatar chips) becomes a token in `globals.css` and
+  a tone map entry in `src/lib/tones.js` — never a hex in a component.
