@@ -14,6 +14,9 @@ export const TONE_TEXT = {
   info: "text-status-info",
   primary: "text-action-primary",
   neutral: "text-text-tertiary",
+  accent: "text-action-accent",
+  /** Quiet figures — a zero count. */
+  muted: "text-text-disabled",
 };
 
 /** Solid fill — status dots. */
@@ -24,6 +27,7 @@ export const TONE_DOT = {
   info: "bg-status-info",
   primary: "bg-action-primary",
   neutral: "bg-text-disabled",
+  accent: "bg-action-accent",
 };
 
 /**
@@ -38,6 +42,7 @@ export const TONE_TAG_DOT = {
   info: "bg-action-primary",
   primary: "bg-action-primary",
   neutral: "bg-text-secondary",
+  accent: "bg-action-accent",
 };
 
 /** Tinted background — badges and attention rows. */
@@ -48,6 +53,7 @@ export const TONE_SURFACE = {
   info: "bg-status-info-bg",
   primary: "bg-surface-selected",
   neutral: "bg-surface-subtle",
+  accent: "bg-teal-50",
 };
 
 /** Hairline that matches a tint. */
@@ -58,6 +64,18 @@ export const TONE_BORDER = {
   info: "border-status-info/20",
   primary: "border-action-primary/20",
   neutral: "border-border-default",
+  accent: "border-action-accent/20",
+};
+
+/** Full-strength outline — the bordered "Status" pill, Figma 198:34761. */
+export const TONE_OUTLINE = {
+  success: "border-status-success",
+  error: "border-status-error",
+  warning: "border-status-warning",
+  info: "border-status-info",
+  primary: "border-action-primary",
+  neutral: "border-border-strong",
+  accent: "border-action-accent",
 };
 
 /** Ring colour — the halo around a timeline marker. */
@@ -68,6 +86,7 @@ export const TONE_RING = {
   info: "ring-status-info",
   primary: "ring-action-primary",
   neutral: "ring-text-disabled",
+  accent: "ring-action-accent",
 };
 
 /**
@@ -81,6 +100,7 @@ export const TONE_STROKE = {
   info: "var(--action-primary)",
   primary: "var(--action-primary)",
   neutral: "var(--text-tertiary)",
+  accent: "var(--action-accent)",
 };
 
 export const DEFAULT_TONE = "neutral";

@@ -6,6 +6,13 @@
    the overlays simply pop into place. */
 @import "tw-animate-css";
 
+/* Light theme only. Tailwind's default `dark:` follows the OS setting, so
+   every `dark:` class shadcn ships (tabs, select, input…) would switch on for
+   a visitor whose system is in dark mode — the active tab lost its blue that
+   way. Binding the variant to a `.dark` class this app never sets turns all of
+   them off at the root. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ==========================================================================
    CALLIANA — DESIGN TOKENS
    Source: Figma "New Testing Project" (file 9foyDETn5IOj3mfPLg6qQl)
