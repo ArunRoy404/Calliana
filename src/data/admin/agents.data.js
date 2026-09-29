@@ -6,7 +6,7 @@
  * carry only values. The same `DataTable` renders any other list in the app
  * from a different pair of arrays.
  *
- * `availability` on a row is the key the status filter matches against; it is
+ * `availability` on a row is the field the status filter matches against; it is
  * separate from the call-state label because "On Call" and "Busy" both count
  * as busy for filtering.
  */
@@ -85,7 +85,7 @@ const ACTION = {
   id: "action",
   label: "Action",
   type: "action",
-  actionLabel: "View Agent",
+  actions: [{ id: "view", label: "View Agent" }],
   align: "center",
 };
 
@@ -97,17 +97,26 @@ export const agentsData = {
     placeholder: "Search...",
   },
 
-  filter: {
-    label: "Filter by availability",
-    allValue: "all",
-    options: [
+  /**
+   * The toolbar's select filters, in order. `param` is the filter's key in the
+   * URL, `field` the row field it compares to, `allValue` the option that
+   * switches it off.
+   */
+  filters: [
+    {
+      param: "status",
+      field: "availability",
+      label: "Filter by availability",
+      allValue: "all",
+      options: [
       { value: "all", label: "All Availability Statuses" },
       { value: "available", label: "Available (Taking Calls)" },
       { value: "busy", label: "Busy (In Call / Wrap-up)" },
       { value: "away", label: "Away" },
       { value: "offline", label: "Offline" },
-    ],
-  },
+      ],
+    },
+  ],
 
   addAction: {
     label: "Add New Agent",
@@ -136,7 +145,7 @@ export const agentsData = {
   ],
 
   /**
-   * Below `xl` the table becomes a list of cards (`AgentCardContainer`). The
+   * Below `xl` the table becomes a list of cards (`TableCardList`). The
    * card reuses the same column definitions — and so the same cell renderers —
    * in its own arrangement: a title with a status, a subtitle, a grid of
    * labelled fields and the action.

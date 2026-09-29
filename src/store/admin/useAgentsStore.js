@@ -1,13 +1,13 @@
 import { agentDetailData } from "@/data/admin/agent-detail.data";
 import { agentsData } from "@/data/admin/agents.data";
 import {
-  AGENTS_PANELS,
   AGENTS_PARAM_KEYS,
   agentsParamsSchema,
 } from "@/schemas/agents/agents-params.schema";
+import { PANEL_PARAM } from "@/schemas/url/list-params.schema";
 import { createTableStore } from "@/store/createTableStore";
 
-const { agent: AGENT, tab: TAB, panel: PANEL } = AGENTS_PARAM_KEYS;
+const { agent: AGENT, tab: TAB } = AGENTS_PARAM_KEYS;
 
 /**
  * Overlay one agent's own row (name, contact, live status) on the sample
@@ -47,18 +47,18 @@ const agentDetails = new Map(
  * link opens the page with that agent on that tab, and Back / Forward move
  * through it. Opening one panel closes the other.
  *
- * `setAddOpen` / `setDetailOpen` take the panel's own open flag, so they plug
- * straight into `SidePanel`'s `onOpenChange`.
+ * The add drawer's actions come from `createTableStore`; `setDetailOpen`
+ * takes the panel's own open flag, so it plugs straight into `SidePanel`'s
+ * `onOpenChange`.
  */
 export const useAgentsStore = createTableStore({
   content: agentsData,
   rows: agentsData?.rows,
   searchFields: ["name", "extension", "email"],
-  filterField: "availability",
-  filterParam: AGENTS_PARAM_KEYS.filter,
-  allValue: agentsData?.filter?.allValue,
+  filters: agentsData?.filters,
   paramsSchema: agentsParamsSchema,
   summaryTemplate: agentsData?.pagination?.summary,
+  addPanelClears: [AGENT, TAB],
   extend: (set, get) => ({
     detailContent: agentDetailData,
 
@@ -67,22 +67,12 @@ export const useAgentsStore = createTableStore({
      * never need to know the key names. An unknown `?agent=` id reads as no
      * agent, and the panel stays closed.
      */
-    isAddOpen: (params) => params?.[PANEL] === AGENTS_PANELS.add,
     selectedAgent: (params) => agentDetails.get(params?.[AGENT]) ?? null,
     detailTab: (params) => params?.[TAB],
 
-    openAdd: () =>
-      get()?.setParams?.({
-        [PANEL]: AGENTS_PANELS.add,
-        [AGENT]: null,
-        [TAB]: null,
-      }),
-    setAddOpen: (open) =>
-      get()?.setParams?.({ [PANEL]: open ? AGENTS_PANELS.add : null }),
-
     /** A newly opened agent always starts on the first tab. */
     openAgent: (row) =>
-      get()?.setParams?.({ [AGENT]: row?.id, [TAB]: null, [PANEL]: null }),
+      get()?.setParams?.({ [AGENT]: row?.id, [TAB]: null, [PANEL_PARAM]: null }),
     setDetailOpen: (open) => {
       if (!open) get()?.setParams?.({ [AGENT]: null, [TAB]: null });
     },

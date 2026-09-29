@@ -1,20 +1,20 @@
 "use client";
 
-import AgentCard from "@/components/agents/AgentCard";
 import Reveal from "@/components/motion/Reveal";
 import EmptyMessage from "@/components/tables/EmptyMessage";
+import TableRowCard from "@/components/tables/TableRowCard";
 import { cn } from "@/lib/cn";
 import { nestedRevealDelayAt } from "@/lib/motion";
 
 /**
- * The agents list as cards — what the table becomes below `xl`. One column on
- * a phone, two from `sm`.
+ * A list as cards — what a table becomes below `xl`. One column on a phone,
+ * two from `sm`.
  *
- * It renders the same page of rows the table does, so search, filter,
+ * It renders the same page of rows the table does, so search, filters,
  * rows-per-page and paging all carry over untouched. Cards reveal one by one
  * after `revealDelay`.
  */
-export default function AgentCardContainer({
+export default function TableCardList({
   rows = [],
   layout,
   emptyLabel,
@@ -27,7 +27,7 @@ export default function AgentCardContainer({
     <ul className={cn("grid grid-cols-1 gap-3 p-4 sm:grid-cols-2", className)}>
       {rows?.length ? (
         rows?.map((row, index) => (
-          <AgentCard
+          <TableRowCard
             key={row?.id}
             row={row}
             layout={layout}

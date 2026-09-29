@@ -1,5 +1,6 @@
 import ActionCell from "@/components/tables/cells/ActionCell";
 import BadgeCell from "@/components/tables/cells/BadgeCell";
+import CountCell from "@/components/tables/cells/CountCell";
 import IconTextCell from "@/components/tables/cells/IconTextCell";
 import StackCell from "@/components/tables/cells/StackCell";
 import TextCell from "@/components/tables/cells/TextCell";
@@ -12,6 +13,7 @@ const CELL_COMPONENTS = {
   text: TextCell,
   stack: StackCell,
   badge: BadgeCell,
+  count: CountCell,
   "icon-text": IconTextCell,
   action: ActionCell,
 };

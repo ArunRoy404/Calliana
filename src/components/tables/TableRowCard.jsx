@@ -3,15 +3,15 @@ import Reveal from "@/components/motion/Reveal";
 import TableCellContent from "@/components/tables/TableCellContent";
 
 /**
- * One agent as a card — the table row's content rearranged for narrow
- * screens.
+ * One table row as a card — the row's content rearranged for narrow screens.
  *
- * `layout` names which of the table's columns go where (see `card` in
- * `src/data/admin/agents.data.js`), and every value is drawn by the same cell
- * renderer the table uses, so a badge or a duration looks identical in both
- * views. Reveals itself after `revealDelay`.
+ * `layout` names which of the table's columns go where (see `card` in a list's
+ * data file, e.g. `src/data/admin/agents.data.js`), and every value is drawn
+ * by the same cell renderer the table uses, so a badge or a duration looks
+ * identical in both views. The action column stretches across the card.
+ * Reveals itself after `revealDelay`.
  */
-export default function AgentCard({
+export default function TableRowCard({
   row,
   layout,
   onRowAction,
@@ -50,7 +50,8 @@ export default function AgentCard({
           column={layout?.action}
           row={row}
           onRowAction={onRowAction}
-          actionProps={{ ...actionProps, fullWidth: true }}
+          actionProps={actionProps}
+          stretch
         />
       )}
     </Reveal>
