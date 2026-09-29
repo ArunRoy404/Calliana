@@ -47,6 +47,10 @@ say so explicitly instead of silently working around it.
   that re-renders on every store change.
 - `useState` is allowed only for state that is genuinely local and visual, and
   that nothing else could ever need (e.g. a password reveal toggle).
+- **Exception — view state belongs in the URL** (rule 26). Search, filters,
+  page, page size, the open panel and its tab are search params, not store
+  fields. The store still owns the logic: it derives the view from the params
+  and its actions write them.
 
 ## 3. Validation lives in `src/schemas` (Zod)
 
@@ -94,13 +98,15 @@ it rather than letting it grow.
 | `components/auth/`           | Auth-specific compositions — AuthCard, AuthHeroPanel, AuthHeroCopy |
 | `components/decor/`          | Purely decorative, `aria-hidden` pieces                       |
 | `components/brand/`          | Logo and brand marks                                          |
-| `components/providers/`      | Client providers mounted at the root                          |
+| `components/providers/`      | Client providers mounted at the root — ToasterProvider, UrlRouterBridge |
 
 Add a folder when a new concern appears (`tables/`, `modals/`, `charts/`…)
 rather than widening an existing one. A folder that grows past a handful of
 files splits by feature, the way `dashboard/` does.
 
-Shared hooks live in `src/hooks/`.
+Shared hooks live in `src/hooks/` (`useUrlParams`, `useTableView`,
+`useDebouncedDraft`, `useRetainedValue`…); shared non-React services in
+`src/lib/` (`src/lib/url/` for the URL state service).
 
 - Domain folders (`auth/`, later `agent/`, `client/`, `admin/`) hold
   compositions tied to that domain. Anything a second domain needs moves down
@@ -274,6 +280,8 @@ Controls that sit in a row share one of two heights, set by tokens in
   `src/data/tables/table-defaults.data.js`). Every table's toolbar has a
   **rows-per-page select beside its filter**, fed by the store's
   `pageSizeOptions` / `setPageSize`.
+- Its query, filter, page and size live in the URL (rule 26): components read
+  them with `useTableView(useStore)`, never from store fields.
 - Declare each column once as a named constant and reference it from both
   `columns` and `card`, so the table and card views can never drift.
 
@@ -333,8 +341,10 @@ Add, edit and detail drawers — for any entity — are all built on
 the header (title, subtitle, close), the scrolling body, the sticky footer and
 the motion; a feature supplies only its content.
 
-- Open/close state lives in the feature's store (`isAddOpen`,
-  `selectedAgentId`…), never in `useState`.
+- Which panel is open (and its tab) lives in the URL (`?agent=<id>&tab=…`,
+  `?panel=add` — rule 26), read through the feature's store and written by its
+  actions; never in `useState`. Keep the closing panel's content with
+  `useRetainedValue` so it does not blank while sliding away.
 - The body scrolls on its own; header and footer stay put.
 - Never style a raw `SheetContent` at a call site.
 
@@ -385,3 +395,38 @@ never write a `dark:` class.
 - Actions without a backend spread `notFunctionalProps(content)` from
   `src/lib/notFunctional.js` rather than rebuilding the props object.
 
+## 26. View state lives in the URL, through one service
+
+Anything a user would expect a link, a refresh or the Back button to keep —
+search, filters, sort, page, page size, the open panel, the active tab — is a
+**search param**, on every page and module. Never hold it in `useState` or a
+store field. Pasting the link must reopen the page exactly as it was, rendered
+that way on the server.
+
+The pieces, all reusable — never hand-roll `URLSearchParams` or
+`history.pushState` in a feature:
+
+| Piece | Where | Does |
+| ----- | ----- | ---- |
+| URL schema | `src/schemas/url/list-params.schema.js` → `src/schemas/<domain>/<page>-params.schema.js` | `createListParamsSchema` gives the shared list keys (`q`, the filter, `page`, `size`); `extra` adds page keys with `optionalIdParam`, `enumParam`, `optionalEnumParam`. Every field `.catch()`es its default, so a bad link falls back instead of breaking. |
+| Parse / merge | `src/lib/url/searchParams.js` | Isomorphic: `parseSearchParams(schema, source)` (server `searchParams`, a query string or `URLSearchParams`), `mergeSearchParams`, `searchParamDefaults`. Defaults and empty values are dropped from the URL. |
+| Write | `src/lib/url/urlState.js` | `writeUrlParams(patch, { defaults, history, shallow })`, called from store actions. Shallow (history API, no server trip) by default; `shallow: false` navigates through the router `UrlRouterBridge` registers, so server components re-fetch. |
+| Read | `src/hooks/useUrlParams.js` | `useUrlParams(schema)` / `useStoreParams(useStore)` — typed params from `useSearchParams`, memoised on the query string. |
+| Tables | `createTableStore({ paramsSchema, filterParam, … })` + `src/hooks/useTableView.js` | The store holds content and a pure `deriveView(params, serverPage?)`; its actions write the URL (a new query, filter or size resets the page). `useTableView(useStore)` returns the current view. |
+| Search box | `forms/SearchField` + `useDebouncedDraft` | Types into a draft, commits after `SEARCH_COMMIT_DELAY_MS`; follows the URL when it changes from outside. |
+
+- **SSR.** A page whose client components read the URL renders per request:
+  its `page.js` calls `await connection()` (or reads `searchParams`). Never let
+  it prerender and flash the default view. Module-level Zustand stores are
+  shared by every request on the server, so request-specific state must never
+  be written into them — derive it from the URL instead.
+- **API-ready.** When a list comes from an API, `page.js` does
+  `parseSearchParams(schema, await searchParams)`, fetches with those params,
+  and passes `{ rows, totalCount }` down as `useTableView`'s `serverPage`; the
+  store is made with `shallow: false`. Components do not change.
+- **URL hygiene.** Short, readable keys; values are ids or enum slugs, never
+  labels; the resting state is a bare path. `history: "replace"` by default,
+  so typing and paging do not flood Back. Opening one panel clears another's
+  keys.
+- Components never know key names: a store exposes readers over params
+  (`isAddOpen(params)`, `selectedAgent(params)`) and actions that write them.

@@ -29,6 +29,9 @@ Also binding, in full in AGENTS.md:
   `globals.css`; never write a `dark:` class.
 - **Rule 25** — icons are data (`{ src }` asset or `{ lucide }`) rendered by
   `AssetIcon`; broken Figma exports fall back to lucide.
+- **Rule 26** — view state (search, filters, page, size, open panel, tab)
+  lives in the URL via the `src/lib/url/` service, `useUrlParams` /
+  `useTableView` and a Zod params schema; URL-driven pages render per request.
 
 <!--
   The project rules live in AGENTS.md and are imported above, so there is exactly
