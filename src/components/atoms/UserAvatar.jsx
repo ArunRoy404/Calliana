@@ -7,7 +7,7 @@ import {
 } from "@/components/shadcn/avatar";
 import { cn } from "@/lib/cn";
 import { initialsFrom } from "@/lib/initials";
-import { DEFAULT_TONE, TONE_DOT } from "@/lib/tones";
+import { AVATAR_TONE, DEFAULT_TONE, TONE_DOT } from "@/lib/tones";
 
 /**
  * A person's picture — shadcn's Avatar, so a missing or broken `src` falls
@@ -19,20 +19,43 @@ import { DEFAULT_TONE, TONE_DOT } from "@/lib/tones";
  *
  * `status` adds a presence dot in the corner (a tone name — "success" for an
  * available agent), as on the agent panel header, Figma 198:34782.
+ *
+ * `tone` tints the initials fallback (`AVATAR_TONE` — a note author's chip,
+ * Figma 202:30956); without it the fallback is the primary blue.
  */
 const SIZE_CLASSES = {
-  xs: "size-6 text-label-sm",
-  sm: "size-8 text-label-md",
-  md: "size-9 text-label-md",
-  lg: "size-12 text-label-lg",
-  xl: "size-14 text-[18px] font-bold",
+  xs: "size-6",
+  /** A note author's chip — Figma 202:30956. */
+  chip: "size-7",
+  sm: "size-8",
+  md: "size-9",
+  /** A message row — Figma 202:30626. */
+  row: "size-10",
+  lg: "size-12",
+  xl: "size-14",
+};
+
+/**
+ * The initials' type for each size. It goes on the fallback itself: shadcn's
+ * fallback sets its own `text-sm`, which would beat a size on the root.
+ */
+const INITIALS_CLASSES = {
+  xs: "text-label-sm",
+  chip: "text-[11px] leading-[16.5px] font-semibold",
+  sm: "text-label-md",
+  md: "text-label-md",
+  row: "text-label-md",
+  lg: "text-label-lg",
+  xl: "text-[18px] font-bold",
 };
 
 /** The `sizes` hint for each avatar size, so next/image fetches a fitting file. */
 const IMAGE_SIZES = {
   xs: "24px",
+  chip: "28px",
   sm: "32px",
   md: "36px",
+  row: "40px",
   lg: "48px",
   xl: "56px",
 };
@@ -40,8 +63,10 @@ const IMAGE_SIZES = {
 /** The presence dot grows with the avatar; `xl` matches the design's 16px. */
 const STATUS_SIZE = {
   xs: "size-2",
+  chip: "size-2",
   sm: "size-2.5",
   md: "size-2.5",
+  row: "size-2.5",
   lg: "size-3",
   xl: "size-4",
 };
@@ -51,6 +76,7 @@ export default function UserAvatar({
   src,
   size = "md",
   status,
+  tone,
   className,
 }) {
   return (
@@ -74,7 +100,12 @@ export default function UserAvatar({
           />
         </AvatarImage>
       )}
-      <AvatarFallback className="bg-surface-selected text-action-primary">
+      <AvatarFallback
+        className={cn(
+          INITIALS_CLASSES?.[size] ?? INITIALS_CLASSES?.md,
+          AVATAR_TONE?.[tone] ?? AVATAR_TONE?.primary,
+        )}
+      >
         {initialsFrom(name)}
       </AvatarFallback>
 

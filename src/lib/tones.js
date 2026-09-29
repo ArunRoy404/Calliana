@@ -28,6 +28,7 @@ export const TONE_DOT = {
   primary: "bg-action-primary",
   neutral: "bg-text-disabled",
   accent: "bg-action-accent",
+  muted: "bg-text-disabled",
 };
 
 /**
@@ -43,6 +44,7 @@ export const TONE_TAG_DOT = {
   primary: "bg-action-primary",
   neutral: "bg-text-secondary",
   accent: "bg-action-accent",
+  muted: "bg-text-disabled",
 };
 
 /** Tinted background — badges and attention rows. */
@@ -54,6 +56,8 @@ export const TONE_SURFACE = {
   primary: "bg-surface-selected",
   neutral: "bg-surface-subtle",
   accent: "bg-teal-50",
+  /** A quiet, low-priority tag — "Low", "Waiting" (Figma 202:30861). */
+  muted: "bg-surface-subtle",
 };
 
 /** Hairline that matches a tint. */
@@ -104,3 +108,15 @@ export const TONE_STROKE = {
 };
 
 export const DEFAULT_TONE = "neutral";
+
+/**
+ * An initials avatar's tint — Figma 202:30956 (support notes: a red, an amber
+ * and a violet chip). Stronger than the badge tints so the letters read at
+ * 28px. Without a tone, an avatar uses the primary blue.
+ */
+export const AVATAR_TONE = {
+  primary: "bg-surface-selected text-action-primary",
+  error: "bg-tint-red text-tint-red-ink",
+  warning: "bg-tint-amber text-tint-amber-ink",
+  violet: "bg-tint-violet text-tint-violet-ink",
+};

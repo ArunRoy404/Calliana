@@ -103,6 +103,14 @@
   --brand-text-black: #0d0b09; /* Figma "Black Text" — warmer than text-primary */
   --brand-track: #f3f4f8; /* Figma "background" — scrollbar track */
 
+  /* Avatar tints — a person's initials chip (Figma 202:30956). */
+  --tint-red: #fee2e2;
+  --tint-red-ink: #991b1b;
+  --tint-amber: #fef3c7;
+  --tint-amber-ink: #92400e;
+  --tint-violet: #f3e8ff;
+  --tint-violet-ink: #6b21a8;
+
   /* The wordmark's own gradient, read from the logo SVG's stops — use these
      when brand-coloured type or artwork is called for. */
   --brand-gradient-start: #5146d8; /* indigo */
@@ -250,6 +258,12 @@
   --color-brand-text-black: var(--brand-text-black);
   --color-brand-track: var(--brand-track);
   --color-brand-border: var(--brand-border);
+  --color-tint-red: var(--tint-red);
+  --color-tint-red-ink: var(--tint-red-ink);
+  --color-tint-amber: var(--tint-amber);
+  --color-tint-amber-ink: var(--tint-amber-ink);
+  --color-tint-violet: var(--tint-violet);
+  --color-tint-violet-ink: var(--tint-violet-ink);
   --color-brand-error: var(--brand-error);
   --color-brand-success: var(--brand-success);
   --color-brand-white: var(--brand-white);
