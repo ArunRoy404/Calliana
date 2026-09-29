@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 import { TABLE_DEFAULTS } from "@/data/tables/table-defaults.data";
+import { searchParamDefaults } from "@/lib/url/searchParams";
+import { readUrlParams, writeUrlParams } from "@/lib/url/urlState";
 
 /**
  * Fill `{name}` placeholders in a copy template from `values`.
@@ -13,37 +15,52 @@ function fillTemplate(template, values) {
   );
 }
 
+/** The list keys `reset` clears; a table's own extras (panels, tabs) stay. */
+const LIST_KEYS = ["q", "page", "size"];
+
 /**
- * Build a Zustand store for a searchable, filterable, paginated table.
+ * Build a Zustand store for a searchable, filterable, paginated table whose
+ * state lives in the URL.
  *
  * Every list screen needs the same machinery — a search query, one select
  * filter, a rows-per-page choice, page navigation and a summary line — so it
- * lives here once and each table supplies only its rows and which fields to
- * match. Pass `extend` for actions unique to one table.
+ * lives here once and each table supplies only its rows, the fields to match
+ * and its URL schema (`createListParamsSchema`).
  *
- * Page size defaults to `TABLE_DEFAULTS.pageSize` (10) and can be changed at
- * runtime from `pageSizeOptions`, which the toolbar's rows-per-page select
- * renders as-is.
+ * **The URL is the state.** Query, filter, page and page size are search
+ * params, never store fields: a link reproduces the view, Back and Forward
+ * work, and the server renders the same page the browser will. (A module-level
+ * store is shared by every request on the server, so request-specific state
+ * must not live in it.) The store holds what is the same for everyone —
+ * content, rows, options — plus:
  *
- * The visible page is held in state and recomputed by the actions, never
- * derived in a selector: a selector that filters on every call returns a new
- * array each render, which Zustand treats as a change and loops on.
+ * - `deriveView(params, serverPage?)` — pure: the page of rows, page count and
+ *   summary for a set of params. `useTableView` calls it with the URL's params.
+ *   Once a page is fetched on the server, pass `{ rows, totalCount }` as
+ *   `serverPage` and it is used as-is instead of filtering locally.
+ * - actions (`setQuery`, `setFilter`, `setPageSize`, `goToPage`, …) that write
+ *   the URL through `writeUrlParams`. A new query, filter or size starts back
+ *   on page one. `setParams` writes any other key the schema declares.
  *
- * - `searchFields` — row fields the query is matched against (case-insensitive).
- * - `filterField` — the row field the select filter compares to; `allValue`
- *   switches the filter off.
+ * `shallow` / `history` pick how the URL is written (see `urlState.js`); set
+ * `shallow: false` when the page's data comes from the server.
  */
 export function createTableStore({
   content,
   rows = [],
   searchFields = [],
   filterField,
+  filterParam = "filter",
   allValue = "all",
-  pageSize: initialPageSize = TABLE_DEFAULTS?.pageSize,
+  paramsSchema,
   pageSizeOptions: sizes = TABLE_DEFAULTS?.pageSizeOptions,
   summaryTemplate,
+  shallow = true,
+  history = "replace",
   extend,
 }) {
+  const defaults = searchParamDefaults(paramsSchema);
+
   function matches(row, query, filter) {
     const passesFilter =
       !filterField || filter === allValue || row?.[filterField] === filter;
@@ -64,64 +81,71 @@ export function createTableStore({
       label: fillTemplate(TABLE_DEFAULTS?.pageSizeOptionLabel, { count }),
     })) ?? [];
 
-  function derive({ query, filter, page, pageSize }) {
-    const filtered = rows?.filter?.((row) => matches(row, query, filter)) ?? [];
-    const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
-    const currentPage = Math.min(Math.max(1, page ?? 1), pageCount);
-    const start = (currentPage - 1) * pageSize;
+  function deriveView(params, serverPage) {
+    const query = params?.q ?? defaults?.q;
+    const filter = params?.[filterParam] ?? allValue;
+    const pageSize = params?.size ?? defaults?.size;
+
+    const filtered = serverPage
+      ? null
+      : (rows?.filter?.((row) => matches(row, query, filter)) ?? []);
+    const totalCount = serverPage?.totalCount ?? filtered?.length ?? 0;
+    const pageCount = Math.max(1, Math.ceil(totalCount / pageSize));
+    const page = Math.min(Math.max(1, params?.page ?? 1), pageCount);
+    const start = (page - 1) * pageSize;
 
     return {
-      page: currentPage,
+      query,
+      filter,
+      pageSize,
+      page,
       pageCount,
-      totalCount: filtered.length,
-      visibleRows: filtered.slice(start, start + pageSize),
+      totalCount,
+      visibleRows:
+        serverPage?.rows ?? filtered?.slice(start, start + pageSize) ?? [],
       summary: fillTemplate(summaryTemplate, {
-        total: filtered.length,
-        page: currentPage,
+        total: totalCount,
+        page,
         pages: pageCount,
       }),
     };
   }
 
+  function setParams(patch, options) {
+    writeUrlParams(patch, { defaults, shallow, history, ...options });
+  }
+
+  /** The view as the URL has it right now — for actions that step from it. */
+  const currentView = () => deriveView(readUrlParams(paramsSchema));
+
   return create((set, get, store) => ({
     content,
     pageSizeLabel: TABLE_DEFAULTS?.pageSizeLabel,
     pageSizeOptions,
-    query: "",
-    filter: allValue,
-    pageSize: initialPageSize,
-    ...derive({ query: "", filter: allValue, page: 1, pageSize: initialPageSize }),
+    paramsSchema,
+    paramDefaults: defaults,
+    deriveView,
+    setParams,
 
-    /** A new query or filter always starts back on the first page. */
-    setQuery: (query) =>
-      set((state) => ({ query, ...derive({ ...state, query, page: 1 }) })),
+    setQuery: (q) => setParams({ q, page: null }),
+    setFilter: (value) => setParams({ [filterParam]: value, page: null }),
+    /** Takes the select's string value. */
+    setPageSize: (size) => setParams({ size, page: null }),
 
-    setFilter: (filter) =>
-      set((state) => ({ filter, ...derive({ ...state, filter, page: 1 }) })),
-
-    /** Takes the select's string value; a new size starts back on page one. */
-    setPageSize: (value) =>
-      set((state) => {
-        const pageSize = Number(value) || initialPageSize;
-        return { pageSize, ...derive({ ...state, pageSize, page: 1 }) };
-      }),
-
-    goToPage: (page) => set((state) => derive({ ...state, page })),
-    nextPage: () => get()?.goToPage?.((get()?.page ?? 1) + 1),
-    previousPage: () => get()?.goToPage?.((get()?.page ?? 1) - 1),
+    goToPage: (page) => setParams({ page }),
+    nextPage: () => {
+      const { page, pageCount } = currentView();
+      setParams({ page: Math.min(page + 1, pageCount) });
+    },
+    previousPage: () =>
+      setParams({ page: Math.max(currentView().page - 1, 1) }),
 
     reset: () =>
-      set({
-        query: "",
-        filter: allValue,
-        pageSize: initialPageSize,
-        ...derive({
-          query: "",
-          filter: allValue,
-          page: 1,
-          pageSize: initialPageSize,
-        }),
-      }),
+      setParams(
+        Object.fromEntries(
+          [...LIST_KEYS, filterParam].map((key) => [key, null]),
+        ),
+      ),
 
     ...(extend?.(set, get, store) ?? {}),
   }));
