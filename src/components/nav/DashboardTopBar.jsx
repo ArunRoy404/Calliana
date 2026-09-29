@@ -16,12 +16,16 @@ import { useDashboardStore } from "@/store/dashboard/useDashboardStore";
  * search below `xl`, and the language, status and appearance tiles below `md` —
  * leaving the title and the bell on a phone. The account menu is not here: it
  * lives in the sidebar footer, which is one tap away on every size.
+ *
+ * Sticky, so the title and controls stay put while the page scrolls under it.
+ * Its height is `--dashboard-bar-height`, shared with the sidebar's logo header
+ * so the two bottom borders line up.
  */
 export default function DashboardTopBar({ role }) {
   const topBar = useDashboardStore((state) => state.topBar?.[role]);
 
   return (
-    <header className="relative z-10 flex min-h-[78px] items-center gap-3 overflow-hidden border-b border-solid border-border-default bg-surface-elevated px-4 py-3 sm:px-6">
+    <header className="sticky top-0 z-20 flex h-(--dashboard-bar-height) shrink-0 items-center gap-3 overflow-hidden border-b border-solid border-border-default bg-surface-elevated px-4 py-3 sm:px-6">
       {topBar?.texture && (
         <AppImage
           src={topBar?.texture}

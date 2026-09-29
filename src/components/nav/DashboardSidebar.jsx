@@ -38,7 +38,8 @@ export default function DashboardSidebar({ role }) {
         />
       )}
 
-      <SidebarHeader className="relative items-center border-b border-solid border-border-strong p-0 pt-4 pb-4 group-data-[collapsible=icon]:hidden">
+      {/* Same height as the top bar, so the two bottom borders meet. */}
+      <SidebarHeader className="relative h-(--dashboard-bar-height) shrink-0 items-center justify-center border-b border-solid border-border-strong p-0 group-data-[collapsible=icon]:hidden">
         <CallianaLogo />
       </SidebarHeader>
 

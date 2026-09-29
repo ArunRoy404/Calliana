@@ -156,6 +156,11 @@
      never inherits them, which leaves the root as the only way to reach it.
      ------------------------------------------------------------------ */
   --sidebar-width-mobile: 260px;
+
+  /* The top bar and the sidebar's logo header share one height, so their
+     bottom borders meet in a single unbroken line. It lives on the root for the
+     same portal reason: the mobile sheet's header must match too. Figma 167:49829. */
+  --dashboard-bar-height: 78px;
 }
 
 /* ==========================================================================
