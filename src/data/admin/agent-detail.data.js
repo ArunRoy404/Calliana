@@ -33,7 +33,7 @@ export const agentDetailData = {
       id: "edit",
       label: "Edit Agent",
       variant: "neutral",
-      icon: ICON("/icons/agent/edit.svg"),
+      icon: ICON("/icons/shared/edit.svg"),
     },
     {
       id: "reset",
@@ -46,7 +46,7 @@ export const agentDetailData = {
       id: "deactivate",
       label: "Deactivate",
       variant: "danger",
-      icon: ICON("/icons/agent/user-remove-white.svg"),
+      icon: ICON("/icons/shared/user-remove-white.svg"),
     },
   ],
 
@@ -77,18 +77,18 @@ export const agentDetailData = {
 
   /** Which facts the Profile tab shows, and with which icon. */
   personalFields: [
-    { id: "fullName", label: "Full Name", icon: ICON("/icons/agent/user.svg") },
-    { id: "phone", label: "Phone", icon: ICON("/icons/agent/call.svg") },
-    { id: "email", label: "Work Email", icon: ICON("/icons/agent/sms.svg") },
+    { id: "fullName", label: "Full Name", icon: ICON("/icons/shared/user.svg") },
+    { id: "phone", label: "Phone", icon: ICON("/icons/shared/call.svg") },
+    { id: "email", label: "Work Email", icon: ICON("/icons/shared/sms.svg") },
     {
       id: "address",
       label: "Address",
-      icon: ICON("/icons/agent/location.svg"),
+      icon: ICON("/icons/shared/location.svg"),
     },
     {
       id: "department",
       label: "Role",
-      icon: ICON("/icons/agent/buildings.svg"),
+      icon: ICON("/icons/shared/buildings.svg"),
     },
     { id: "timezone", label: "Timezone", icon: ICON("/icons/agent/clock.svg") },
   ],
@@ -100,7 +100,7 @@ export const agentDetailData = {
     { id: "lastLogin", label: "Last Login" },
   ],
 
-  calendarIcon: ICON("/icons/agent/calendar.svg"),
+  calendarIcon: ICON("/icons/shared/calendar.svg"),
 
   sample: {
     role: "Support Agent",
