@@ -490,3 +490,107 @@ rather than a drawer, it is a route: `/<role>/<list>/[id]`, e.g.
   (the stat-card texture does) before applying the design's opacity again.
 - A tint the tokens lack (avatar chips) becomes a token in `globals.css` and
   a tone map entry in `src/lib/tones.js` — never a hex in a component.
+
+## 29. Pieces the calls/tasks/roles/routing/audit/profile/settings build added
+
+Building those seven modules needed a few genuinely new, generic pieces.
+Reach for these before adding anything similar:
+
+- A pill-button filter (not a dropdown) is `forms/SegmentedFilter`, wired in
+  by giving that filter `variant: "segmented"` in its data file —
+  `TableDirectory` picks it over `FilterSelect` automatically. Used by the
+  tasks due-date filter and the users role filter.
+- A toolbar action that is not the add drawer (an export, a compliance
+  download) is `content.secondaryAction` (`{ label, icon,
+  notFunctionalMessage, notFunctionalDescription }`) next to `addAction` in a
+  list's data file — `TableDirectory` renders both, `secondaryAction` first.
+- Selecting several people or accounts at once is `forms/MultiSelectList`
+  (checkbox rows, an avatar and an optional `meta` line — assigning
+  operators) or `forms/MultiSelectChips` (toggle pills — linking client
+  accounts). Both take plain `value`/`onChange`; bind them to a form store by
+  hand in the fields component, the way `AddAgentFields` binds
+  `TimeRangeField` — they are not `StoreField`/`StoreSelect` configs.
+- A table column showing a person is `type: "user"` (`tables/cells/UserCell`,
+  rule 21's `UserAvatar` plus the name) rather than plain text.
+- An `icon-text` column whose icon differs per row (calls' Direction:
+  incoming vs. outgoing) sets `column.iconField` to the row field holding
+  that row's icon, instead of one fixed `column.icon` for the whole column.
+- An on/off setting is `atoms/Switch` (shadcn `switch`, wrapped per rule 10);
+  a settings/profile row of label (+ description) and a value, a "Change"
+  link or a `Switch` is `cards/SettingRow`. `InfoTile` takes an optional
+  trailing `action` node for the same "EDIT" pattern outside a settings list
+  (the profile page's personal-information tiles).
+- A read-only "here is the current configuration" drawer only applies when
+  the design itself shows plain values — check first (rule 30). When Figma
+  draws the value inside a bordered field-height box (Edit Routing Rules,
+  376:28372, `h-[38px]` boxes matching the create form's own selects), it
+  means the field is editable: build it as a real `FormSelect`/`StoreSelect`,
+  not `CardField` text. "Read-only for now" is only correct when the source
+  itself has no field chrome around the value.
+
+## 30. Pixel fidelity is mandatory, not "close enough"
+
+"Adapt to the project's conventions" (rule 19's shadcn guidance) is about
+*implementation* — components, state, structure. It is never licence to
+approximate spacing, type size, weight, or colour. Before building a screen
+that has a Figma link, call `get_design_context` on the specific node (not a
+parent) and match what it returns — font size, weight, line-height, colour,
+padding — not the nearest existing type-scale class that seems close.
+
+- **Every text style has three numbers that must all match: size, weight,
+  colour.** A component's default (`DetailSection`'s `text-h4`, `TextCell`'s
+  `text-label-md`) is a starting point, not the answer — check it against the
+  node's actual `font-size`/`font-weight`/`text-[...]` before shipping. When
+  it doesn't match, override on that call site (`cn("text-body-lg",
+  "font-semibold")` reliably wins on weight — `font-*` utilities live in
+  Tailwind's utilities layer, the type scale's own weight in `@layer
+  components`, so utilities always win regardless of class order) rather
+  than accepting the mismatch.
+- **A row of section-header/value pairs in a side panel is often much
+  smaller than a page's `DetailSection`** (Figma routinely runs these at
+  10–12px, not the 20px `text-h4` default) — check the actual size per
+  screen; do not assume every `DetailSection` title is the same size as the
+  agent panel's.
+- **Read every column's actual colour**, not just its weight — a table
+  column can carry a tint (`AFFECTED RESOURCE` and `IP ORIGIN` in the audit
+  log are `text-status-info` blue; `DESCRIPTION` is `text-text-tertiary`
+  gray) that a bare `TextCell` default (plain `text-brand-black`) misses
+  entirely. `TextCell` takes optional `column.tone` (a `src/lib/tones.js`
+  key) and `column.weight` (`"regular"|"medium"|"semibold"`) for exactly
+  this — set them from the node's real colour/weight rather than leaving
+  every column looking the same.
+- **A centred dialog is not a `SidePanel`.** Figma sometimes shows a
+  screen-centre modal (backdrop blur, box centred both axes — Change
+  Password, 319:34461) rather than a right-edge drawer. That is
+  `overlays/Modal` (shadcn `dialog`, not `sheet`) — check whether a "Dialog"
+  frame is centred or right-aligned before picking which one to build on.
+- **Verify against a real render, not just the codegen dump.** Figma's
+  dev-mode code panel can resolve a component instance to its *master*
+  default rather than that instance's actual override — the sidebar's nav
+  icons all codegen to the same placeholder glyph even though the rendered
+  screenshot shows fourteen distinct ones. When codegen output looks
+  suspiciously uniform across supposedly-different instances, pull
+  `get_screenshot` (or `download_assets`) and check the pixels before
+  concluding the source has no more detail to give.
+- Before calling a screen done, take a real screenshot of the running page
+  (rule from the `run` skill) and diff it against the Figma screenshot side
+  by side. "It compiles and looks roughly right" is not the bar.
+
+## 31. Icons redrawn, not resolved, get a comment saying so
+
+When `get_design_context`/`download_assets` cannot resolve a specific icon
+(rule 30's placeholder-glyph problem) but the rendered screenshot shows it
+clearly enough to redraw by hand by eye, the resulting icon component's
+header comment must say so explicitly — `// redrawn to match the rendered
+screenshot; not an exact Figma export` — so a future pass knows which icons
+in `components/icons/` are verified exports and which are close visual
+matches still owed a real export once one becomes available.
+
+## 32. A due date or scheduled time is a real date/time control
+
+`InputField`'s `type="time"` already opens the native picker from anywhere
+in the box (rule 23). Any field holding a date or a time — a task's due
+date, a schedule slot — uses `type="date"` / `type="time"` (or both, as a
+pair) on `StoreField`'s `field` config, never a bare `type="text"` with a
+placeholder like `"e.g. Tomorrow 11:00 AM"`. Free text that looks like a
+date is not a date field.
