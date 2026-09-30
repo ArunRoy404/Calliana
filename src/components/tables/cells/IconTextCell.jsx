@@ -1,18 +1,17 @@
-import AppImage from "@/components/atoms/AppImage";
+import AssetIcon from "@/components/atoms/AssetIcon";
 
 /**
- * Value led by a small icon — Figma 198:22888 (clock + duration).
- * `column.icon` is `{ src, width, height }`.
+ * Value led by a small icon — Figma 198:22888 (clock + duration). `column.icon`
+ * is a fixed icon for every row (`{ src, width, height }` or `{ lucide, size
+ * }`); `column.iconField` instead reads a per-row icon (the calls table's
+ * Direction column, incoming vs. outgoing).
  */
 export default function IconTextCell({ column, row }) {
+  const icon = column?.iconField ? row?.[column?.iconField] : column?.icon;
+
   return (
     <span className="flex min-w-0 flex-1 items-center gap-2">
-      <AppImage
-        src={column?.icon?.src}
-        width={column?.icon?.width}
-        height={column?.icon?.height}
-        className="shrink-0"
-      />
+      <AssetIcon icon={icon} className="shrink-0" />
       <span className="text-label-md min-w-0 flex-1 truncate text-brand-black">
         {row?.[column?.field]}
       </span>

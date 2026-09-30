@@ -10,6 +10,7 @@ import { cn } from "@/lib/cn";
 export default function InfoTile({
   icon,
   label,
+  action,
   children,
   revealDelay = 0,
   className,
@@ -34,6 +35,8 @@ export default function InfoTile({
           {children}
         </div>
       </div>
+
+      {action && <span className="shrink-0">{action}</span>}
     </Reveal>
   );
 }

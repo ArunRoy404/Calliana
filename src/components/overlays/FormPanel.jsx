@@ -12,8 +12,14 @@ import { useStoreParams } from "@/hooks/useUrlParams";
  * Whether it is open is the list's `?panel=add`, read through `useListStore`
  * (a `createTableStore` store). The copy and the cancel / submit actions come
  * from `useFormStore` (a `createFormStore` store made with `closePanel`).
+ *
+ * `header` overrides the default title/subtitle block for a drawer whose
+ * header is its own composition (the dialer's status pill and operator
+ * line, 202:38997) rather than plain text — same escape hatch `SidePanel`
+ * itself offers. `className` is for a genuine per-instance width need (the
+ * dialer's keypad-beside-fields layout needs more than the default 700px).
  */
-export default function FormPanel({ useListStore, useFormStore, children }) {
+export default function FormPanel({ useListStore, useFormStore, header, className, children }) {
   const params = useStoreParams(useListStore);
   const isOpen = useListStore((state) => state.isAddOpen(params));
   const setOpen = useListStore((state) => state.setAddOpen);
@@ -27,6 +33,8 @@ export default function FormPanel({ useListStore, useFormStore, children }) {
       onOpenChange={setOpen}
       title={content?.title}
       subtitle={content?.subtitle}
+      header={header}
+      className={className}
       footer={
         <FormPanelFooter
           footer={content?.footer}

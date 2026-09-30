@@ -1,4 +1,4 @@
-import AppImage from "@/components/atoms/AppImage";
+import AssetIcon from "@/components/atoms/AssetIcon";
 import { cn } from "@/lib/cn";
 
 /**
@@ -23,11 +23,7 @@ export default function IconTile({ icon, tone = "primary", className }) {
         className,
       )}
     >
-      <AppImage
-        src={icon?.src}
-        width={icon?.width}
-        height={icon?.height}
-      />
+      <AssetIcon icon={icon} className="text-text-on-primary" />
     </div>
   );
 }

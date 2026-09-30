@@ -4,6 +4,7 @@ import CountCell from "@/components/tables/cells/CountCell";
 import IconTextCell from "@/components/tables/cells/IconTextCell";
 import StackCell from "@/components/tables/cells/StackCell";
 import TextCell from "@/components/tables/cells/TextCell";
+import UserCell from "@/components/tables/cells/UserCell";
 
 /**
  * Picks a cell renderer from the column's `type`. A new kind of cell is one
@@ -15,6 +16,7 @@ const CELL_COMPONENTS = {
   badge: BadgeCell,
   count: CountCell,
   "icon-text": IconTextCell,
+  user: UserCell,
   action: ActionCell,
 };
 

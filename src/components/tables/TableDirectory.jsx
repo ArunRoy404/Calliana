@@ -4,6 +4,7 @@ import AssetIcon from "@/components/atoms/AssetIcon";
 import Button from "@/components/atoms/Button";
 import FilterSelect from "@/components/forms/FilterSelect";
 import SearchField from "@/components/forms/SearchField";
+import SegmentedFilter from "@/components/forms/SegmentedFilter";
 import DataTable from "@/components/tables/DataTable";
 import TableCard from "@/components/tables/TableCard";
 import TableCardList from "@/components/tables/TableCardList";
@@ -50,15 +51,24 @@ export default function TableDirectory({ useStore, onRowAction, actionProps }) {
                 size="sm"
                 className="w-full sm:w-[350px]"
               />
-              {content?.filters?.map((filter) => (
-                <FilterSelect
-                  key={filter?.param}
-                  label={filter?.label}
-                  options={filter?.options}
-                  value={filters?.[filter?.param]}
-                  onValueChange={(value) => setFilter?.(filter?.param, value)}
-                />
-              ))}
+              {content?.filters?.map((filter) =>
+                filter?.variant === "segmented" ? (
+                  <SegmentedFilter
+                    key={filter?.param}
+                    options={filter?.options}
+                    value={filters?.[filter?.param]}
+                    onValueChange={(value) => setFilter?.(filter?.param, value)}
+                  />
+                ) : (
+                  <FilterSelect
+                    key={filter?.param}
+                    label={filter?.label}
+                    options={filter?.options}
+                    value={filters?.[filter?.param]}
+                    onValueChange={(value) => setFilter?.(filter?.param, value)}
+                  />
+                ),
+              )}
               <FilterSelect
                 label={pageSizeLabel}
                 options={pageSizeOptions}
@@ -68,11 +78,27 @@ export default function TableDirectory({ useStore, onRowAction, actionProps }) {
             </>
           }
           end={
-            content?.addAction && (
-              <Button variant="toolbar" size="sm" onClick={openAdd}>
-                <AssetIcon icon={content?.addAction?.icon} />
-                {content?.addAction?.label}
-              </Button>
+            (content?.addAction || content?.secondaryAction) && (
+              <>
+                {content?.secondaryAction && (
+                  <Button
+                    variant="toolbar"
+                    size="sm"
+                    notFunctional
+                    notFunctionalMessage={content?.secondaryAction?.notFunctionalMessage}
+                    notFunctionalDescription={content?.secondaryAction?.notFunctionalDescription}
+                  >
+                    <AssetIcon icon={content?.secondaryAction?.icon} />
+                    {content?.secondaryAction?.label}
+                  </Button>
+                )}
+                {content?.addAction && (
+                  <Button variant="toolbar" size="sm" onClick={openAdd}>
+                    <AssetIcon icon={content?.addAction?.icon} />
+                    {content?.addAction?.label}
+                  </Button>
+                )}
+              </>
             )
           }
         />
