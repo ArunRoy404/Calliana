@@ -20,6 +20,7 @@ const ROLE_SECTIONS = {
       "tasks",
     ],
     management: ["roles", "routing", "reports", "audit"],
+    account: ["profile"],
     system: ["settings"],
   },
   agent: {

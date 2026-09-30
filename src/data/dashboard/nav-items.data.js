@@ -6,40 +6,42 @@
  * own route, so one entry serves `/admin/calls`, `/agent/calls` and
  * `/client/calls`.
  *
- * Icons are lucide names rather than exported assets: Figma's export collapses
- * every nav row to one generic glyph, so the file cannot supply the twelve
- * distinct icons the design actually shows. lucide is already here as shadcn's
- * icon set and matches the design's weight at 20px.
+ * `icon` is a key into `components/icons`' `SIDEBAR_ICONS` registry (rule 1:
+ * data files hold literals, so the lookup — not a component reference —
+ * lives here). Every icon there is redrawn from Figma 202:41243's rendered
+ * sidebar (see AGENTS.md rule 30 for which ones are exact exports vs.
+ * closely matched).
  */
 export const NAV_ITEMS = {
-  dashboard: { label: "DASHBOARD", icon: "LayoutGrid", path: "" },
-  agents: { label: "AGENTS", icon: "Users", path: "agents" },
-  clients: { label: "CLIENTS", icon: "Building2", path: "clients" },
-  calls: { label: "CALLS", icon: "Phone", path: "calls", badge: "01" },
-  voicemail: { label: "VOICEMAIL", icon: "AudioLines", path: "voicemail" },
+  dashboard: { label: "DASHBOARD", icon: "dashboard", path: "" },
+  agents: { label: "AGENTS", icon: "agents", path: "agents" },
+  clients: { label: "CLIENTS", icon: "clients", path: "clients" },
+  calls: { label: "CALLS", icon: "calls", path: "calls", badge: "01" },
+  voicemail: { label: "VOICEMAIL", icon: "voicemail", path: "voicemail" },
   messages: {
     label: "MESSAGES",
-    icon: "MessageSquare",
+    icon: "messages",
     path: "messages",
     badge: "01",
   },
   appointments: {
     label: "APPOINTMENTS",
-    icon: "CalendarDays",
+    icon: "appointments",
     path: "appointments",
   },
   tasks: {
     label: "TASK & FOLLOW-UPS",
-    icon: "SquareCheckBig",
+    icon: "tasks",
     path: "tasks",
     badge: "01",
   },
-  roles: { label: "USER & ROLES", icon: "UserCog", path: "roles" },
-  routing: { label: "CALL ROUTING", icon: "Share2", path: "routing" },
-  reports: { label: "REPORTS", icon: "ChartNoAxesColumn", path: "reports" },
-  audit: { label: "AUDIT LOG", icon: "Clock", path: "audit" },
-  billing: { label: "BILLING", icon: "CreditCard", path: "billing" },
-  settings: { label: "SETTINGS", icon: "Settings", path: "settings" },
+  roles: { label: "USER & ROLES", icon: "roles", path: "roles" },
+  routing: { label: "CALL ROUTING", icon: "routing", path: "routing" },
+  reports: { label: "REPORTS", icon: "reports", path: "reports" },
+  audit: { label: "AUDIT LOG", icon: "audit", path: "audit" },
+  billing: { label: "BILLING", icon: "billing", path: "billing" },
+  profile: { label: "PROFILE", icon: "profile", path: "profile" },
+  settings: { label: "SETTINGS", icon: "settings", path: "settings" },
 };
 
 /** Section headings, so a role names a section rather than spelling one. */
