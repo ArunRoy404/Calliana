@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import Icon from "@/components/atoms/Icon";
+import { SIDEBAR_ICONS } from "@/components/icons";
 import {
   SidebarMenuBadge,
   SidebarMenuButton,
@@ -24,6 +24,7 @@ import { isNavActive } from "@/lib/navActive";
 export default function SidebarNavItem({ item }) {
   const pathname = usePathname();
   const isActive = isNavActive(pathname, item?.href);
+  const ItemIcon = SIDEBAR_ICONS?.[item?.icon];
 
   return (
     <SidebarMenuItem
@@ -49,7 +50,7 @@ export default function SidebarNavItem({ item }) {
         )}
       >
         <Link href={item?.href ?? "#"}>
-          <Icon name={item?.icon} />
+          {ItemIcon && <ItemIcon />}
           <span className="min-w-0 flex-1 truncate group-data-[collapsible=icon]:hidden">
             {item?.label}
           </span>

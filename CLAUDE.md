@@ -38,6 +38,27 @@ Also binding, in full in AGENTS.md:
   is built from the shared detail pieces.
 - **Rule 28** — assets are stored once (`public/icons/shared/` for shared
   icons); textures go through `TextureLayer`; missing tints become tokens.
+- **Rule 29** — reuse the pieces the calls/tasks/roles/routing/audit/profile/
+  settings build added: `forms/SegmentedFilter` (pill filters),
+  `content.secondaryAction` (a non-add toolbar action), `forms/MultiSelectList`
+  / `MultiSelectChips`, the `"user"` cell type, `IconTextCell`'s
+  `column.iconField`, `atoms/Switch`, `cards/SettingRow`, `InfoTile`'s
+  `action` prop. A read-only "edit" drawer is only correct when Figma's
+  values genuinely have no field chrome around them — a bordered,
+  select-height box means build a real editable `FormSelect`, not
+  `CardField` text.
+- **Rule 30** — pixel fidelity is mandatory: pull `get_design_context` on the
+  specific node and match size/weight/colour exactly, not the nearest
+  type-scale class. `TextCell` takes `column.tone` / `column.weight` for
+  per-column colour and weight overrides. A centred dialog is
+  `overlays/Modal` (shadcn `dialog`), not `SidePanel`. Verify against a real
+  screenshot, not just the codegen dump — it can resolve an instance to its
+  master default instead of that instance's real override.
+- **Rule 31** — an icon redrawn by eye from a screenshot (because Figma's
+  codegen wouldn't resolve it) gets a comment saying so, so it reads as
+  "close match, not a verified export."
+- **Rule 32** — a due date or scheduled time is a real `type="date"` /
+  `type="time"` field, never free text with a date-shaped placeholder.
 
 <!--
   The project rules live in AGENTS.md and are imported above, so there is exactly

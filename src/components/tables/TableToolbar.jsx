@@ -7,7 +7,7 @@ export default function TableToolbar({ start, end }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 bg-action-primary-hover p-4">
       <div className="flex min-w-0 flex-wrap items-center gap-4">{start}</div>
-      {end && <div className="flex items-center">{end}</div>}
+      {end && <div className="flex items-center gap-2">{end}</div>}
     </div>
   );
 }
