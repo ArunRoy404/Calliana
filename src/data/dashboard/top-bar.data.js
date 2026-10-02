@@ -30,6 +30,14 @@ const SHARED = {
       title: "Clients",
       subtitle: "Manage all client accounts on the platform.",
     },
+    messages: {
+      title: "Client Messages & Inbox",
+      subtitle: "Reply to client conversations across SMS and voicemail.",
+    },
+    appointments: {
+      title: "Appointments & Calendar",
+      subtitle: "Book, review and reschedule client appointments.",
+    },
   },
 };
 
