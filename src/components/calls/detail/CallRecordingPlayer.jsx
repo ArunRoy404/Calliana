@@ -1,47 +1,50 @@
+"use client";
+
 import AssetIcon from "@/components/atoms/AssetIcon";
 import Button from "@/components/atoms/Button";
 import Reveal from "@/components/motion/Reveal";
-import { cn } from "@/lib/cn";
 
 /**
- * A static waveform with a play button and the call's duration — Figma
- * 202:39243 ("Call Recording Audio"). There is no audio backend yet, so the
- * waveform is decorative and Play is `notFunctional`.
+ * A call's recording — Figma 202:39212: a round primary play button beside a
+ * primary-blue waveform, in a hairline box. The bars come from
+ * `content.waveform`; each bar's height is a percentage, set inline because
+ * it is data, not a class.
+ *
+ * Playback has no backend yet, so the button carries `notFunctional`.
+ * Reveals after `revealDelay`.
  */
-const BAR_HEIGHTS = [
-  40, 60, 30, 70, 45, 80, 35, 55, 65, 40, 30, 50, 70, 45, 60, 35, 55, 40, 65,
-  50, 30, 60, 45, 70, 40, 55, 35, 65, 50, 30, 45, 60,
-];
+export default function CallRecordingPlayer({
+  content,
+  notFunctional,
+  revealDelay = 0,
+}) {
+  const waveform = content?.waveform;
 
-export default function CallRecordingPlayer({ call, content, notFunctional, revealDelay = 0 }) {
   return (
     <Reveal
       delay={revealDelay}
-      className="flex items-center gap-4 rounded-8 border border-solid border-border-default bg-surface-canvas p-4"
+      className="flex items-center gap-3 rounded-8 border border-solid border-border-default bg-surface-base p-3"
     >
       <Button
-        variant="info"
-        size="square"
+        size="round"
         aria-label={content?.labels?.playLabel}
         {...notFunctional}
       >
-        <AssetIcon icon={content?.playIcon} />
+        <AssetIcon icon={content?.playIcon} className="fill-current" />
       </Button>
 
-      <div aria-hidden className="flex h-10 min-w-0 flex-1 items-end gap-0.5">
-        {BAR_HEIGHTS?.map((height, index) => (
+      <div
+        aria-hidden
+        className="flex h-9 min-w-0 flex-1 items-center justify-between gap-px overflow-hidden"
+      >
+        {waveform?.bars?.map((height, index) => (
           <span
             key={index}
             style={{ height: `${height}%` }}
-            className={cn(
-              "min-w-[2px] flex-1 rounded-999",
-              index < 10 ? "bg-action-primary" : "bg-action-primary/25",
-            )}
+            className="w-0.75 shrink-0 rounded-999 bg-action-primary"
           />
         ))}
       </div>
-
-      <span className="text-label-md shrink-0 text-text-secondary">{call?.duration}</span>
     </Reveal>
   );
 }

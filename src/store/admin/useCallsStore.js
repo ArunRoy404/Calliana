@@ -1,5 +1,6 @@
 import { callDetailData } from "@/data/admin/call-detail.data";
 import { callsData } from "@/data/admin/calls.data";
+import { fillTemplate } from "@/lib/fillTemplate";
 import { CALLS_PARAM_KEYS, callsParamsSchema } from "@/schemas/calls/calls-params.schema";
 import { PANEL_PARAM } from "@/schemas/url/list-params.schema";
 import { createTableStore } from "@/store/createTableStore";
@@ -25,6 +26,8 @@ function buildCallDetail(row) {
     duration: row?.duration,
     status: row?.callStatus,
     followUp: row?.followUp,
+    panelTitle: fillTemplate(callDetailData?.panelTitleTemplate, row),
+    panelSubtitle: fillTemplate(callDetailData?.panelSubtitleTemplate, row),
   };
 }
 

@@ -1,36 +1,31 @@
 "use client";
 
-import AssetIcon from "@/components/atoms/AssetIcon";
 import Button from "@/components/atoms/Button";
-import StatusBadge from "@/components/atoms/StatusBadge";
+import CallInfoCard from "@/components/calls/detail/CallInfoCard";
 import CallRecordingPlayer from "@/components/calls/detail/CallRecordingPlayer";
-import CardField from "@/components/cards/CardField";
 import DetailSection from "@/components/cards/DetailSection";
-import Reveal from "@/components/motion/Reveal";
 import SidePanel from "@/components/overlays/SidePanel";
 import Timeline from "@/components/timeline/Timeline";
 import { useRetainedValue } from "@/hooks/useRetainedValue";
 import { useStoreParams } from "@/hooks/useUrlParams";
 import { cn } from "@/lib/cn";
-import { revealDelayAt } from "@/lib/motion";
+import { nestedRevealDelayAt, revealDelayAt } from "@/lib/motion";
 import { notFunctionalProps } from "@/lib/notFunctional";
-import { DEFAULT_TONE, TONE_TEXT } from "@/lib/tones";
+import { TONE_TEXT } from "@/lib/tones";
 import { useCallsStore } from "@/store/admin/useCallsStore";
 
 /**
- * One call's details — Figma 202:38997, on the shared `SidePanel`. Section
- * titles here run at 16px semibold, not `DetailSection`'s 20px `text-h4`
- * default, so every title is passed as a styled node rather than a bare
- * string (rule 30) — `SECTION_TITLE_CLASS` keeps that one override in one
- * place for the five sections below.
+ * One call's details — Figma 202:38997 / 202:39212, on the shared
+ * `SidePanel`. The info card sits on top, then one
+ * outlined `DetailSection` per block: recording, summary, agent notes, and —
+ * when the call has them — the amber triage note and the event timeline.
  *
  * The call is the URL's `?call=<id>`, read through the calls store, so the
- * panel opens straight from a shared link. On close the last call is kept on
- * screen while the panel slides away.
+ * panel opens straight from a shared link; on close the last call is kept on
+ * screen while the panel slides away. Sections reveal in reading order and
+ * their delays follow the sections actually shown, so an absent triage note
+ * leaves no gap in the sequence.
  */
-const SECTION_TITLE_CLASS = "text-body-lg font-semibold text-brand-ink-black";
-const EDIT_LINK_CLASS = "text-body-md font-semibold";
-
 export default function CallDetailPanel() {
   const params = useStoreParams(useCallsStore);
   const selectedCall = useCallsStore((state) => state.selectedCall(params));
@@ -41,16 +36,70 @@ export default function CallDetailPanel() {
   const notFunctional = notFunctionalProps(content);
   const labels = content?.labels;
 
+  const editNotesAction = (
+    <Button
+      variant="link"
+      size="none"
+      className="text-body-md font-semibold"
+      {...notFunctional}
+    >
+      {labels?.editNotes}
+    </Button>
+  );
+
+  const sections = [
+    {
+      id: "recording",
+      title: labels?.recordingTitle,
+      icon: content?.recordingIcon,
+      iconTone: "primary",
+      action: call?.duration && (
+        <span className="text-label-lg text-brand-ink-black">
+          {call?.duration}
+        </span>
+      ),
+      render: (delay) => (
+        <CallRecordingPlayer
+          content={content}
+          notFunctional={notFunctional}
+          revealDelay={nestedRevealDelayAt(delay, 0)}
+        />
+      ),
+    },
+    { id: "summary", title: labels?.summaryTitle, text: call?.summary },
+    {
+      id: "agentNotes",
+      title: labels?.agentNotesTitle,
+      action: editNotesAction,
+      text: call?.agentNotes,
+    },
+    call?.triageNote && {
+      id: "triage",
+      title: labels?.triageNotesTitle,
+      icon: content?.lockIcon,
+      tone: "warning",
+      text: call?.triageNote,
+    },
+    call?.timeline && {
+      id: "timeline",
+      title: labels?.timelineTitle,
+      render: (delay) => (
+        <Timeline events={call?.timeline} emphasis revealDelay={delay} />
+      ),
+    },
+  ].filter(Boolean);
+
   return (
     <SidePanel
       open={Boolean(selectedCall)}
       onOpenChange={setOpen}
-      title={`Call Details: ${call?.caller ?? ""}`}
-      subtitle={`${call?.startTime ?? ""} • Duration ${call?.duration ?? ""}`}
+      title={call?.panelTitle}
+      subtitle={call?.panelSubtitle}
       footer={content?.footerActions?.map((action) => (
         <Button
           key={action?.id}
           variant={action?.variant}
+          className={action?.className}
           href={action?.hrefField ? call?.[action?.hrefField] : undefined}
           {...(!action?.hrefField ? notFunctional : undefined)}
         >
@@ -58,89 +107,39 @@ export default function CallDetailPanel() {
         </Button>
       ))}
     >
-      <Reveal className="flex flex-col gap-4 rounded-8 border border-solid border-border-default bg-surface-base p-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <StatusBadge variant="tag" label={call?.status?.label} tone={call?.status?.tone} />
-          <StatusBadge
-            variant="tag"
-            label={call?.followUp?.label}
-            tone={call?.followUp?.tone}
-            showDot={false}
-          />
-        </div>
+      <CallInfoCard
+        call={call}
+        fields={content?.infoFields}
+        revealDelay={revealDelayAt(0, 0)}
+      />
 
-        <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {content?.infoFields?.map((field) => (
-            <CardField key={field?.id} label={field?.label}>
-              <span
+      {sections?.map((section, index) => {
+        const delay = revealDelayAt(0, index + 1);
+
+        return (
+          <DetailSection
+            key={section?.id}
+            variant="outlined"
+            title={section?.title}
+            icon={section?.icon}
+            iconTone={section?.iconTone}
+            tone={section?.tone}
+            action={section?.action}
+            revealDelay={delay}
+          >
+            {section?.render?.(delay) ?? (
+              <p
                 className={cn(
-                  "text-body-lg truncate font-semibold",
-                  field?.tone ? (TONE_TEXT?.[field?.tone] ?? TONE_TEXT?.[DEFAULT_TONE]) : "text-brand-black",
+                  "text-body-md",
+                  TONE_TEXT?.[section?.tone] ?? "text-text-secondary",
                 )}
               >
-                {call?.[field?.id]}
-              </span>
-            </CardField>
-          ))}
-        </dl>
-      </Reveal>
-
-      <DetailSection
-        title={<span className={SECTION_TITLE_CLASS}>{labels?.recordingTitle}</span>}
-        action={<span className="text-body-md font-semibold text-text-secondary">{call?.duration}</span>}
-        revealDelay={revealDelayAt(0, 1)}
-      >
-        <CallRecordingPlayer call={call} content={content} notFunctional={notFunctional} />
-      </DetailSection>
-
-      <DetailSection
-        title={<span className={SECTION_TITLE_CLASS}>{labels?.summaryTitle}</span>}
-        action={<span className="text-body-md font-semibold text-text-secondary">{call?.duration}</span>}
-        revealDelay={revealDelayAt(0, 2)}
-      >
-        <p className="text-body-md text-text-secondary">{call?.summary}</p>
-      </DetailSection>
-
-      <DetailSection
-        title={<span className={SECTION_TITLE_CLASS}>{labels?.agentNotesTitle}</span>}
-        action={
-          <Button variant="link" size="none" className={EDIT_LINK_CLASS} {...notFunctional}>
-            {labels?.editNotes}
-          </Button>
-        }
-        revealDelay={revealDelayAt(0, 3)}
-      >
-        <p className="text-body-md text-text-secondary">{call?.agentNotes}</p>
-      </DetailSection>
-
-      <DetailSection
-        title={
-          <span className={cn(SECTION_TITLE_CLASS, "inline-flex items-center gap-1.5 text-status-warning")}>
-            <AssetIcon icon={content?.lockIcon} />
-            {labels?.triageNotesTitle}
-          </span>
-        }
-        action={
-          <Button variant="link" size="none" className={EDIT_LINK_CLASS} {...notFunctional}>
-            {labels?.editNotes}
-          </Button>
-        }
-        revealDelay={revealDelayAt(0, 4)}
-      >
-        <p className="text-body-md text-status-warning">{call?.triageNote}</p>
-      </DetailSection>
-
-      <DetailSection
-        title={<span className={SECTION_TITLE_CLASS}>{labels?.timelineTitle}</span>}
-        action={
-          <Button variant="link" size="none" className={EDIT_LINK_CLASS} {...notFunctional}>
-            {labels?.editNotes}
-          </Button>
-        }
-        revealDelay={revealDelayAt(0, 5)}
-      >
-        <Timeline events={call?.timeline} emphasis revealDelay={revealDelayAt(0, 5)} />
-      </DetailSection>
+                {section?.text}
+              </p>
+            )}
+          </DetailSection>
+        );
+      })}
     </SidePanel>
   );
 }

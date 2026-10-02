@@ -7,6 +7,10 @@
 export const callDetailData = {
   closeLabel: "Close",
 
+  /** The panel's heading, filled from each call by `useCallsStore`. */
+  panelTitleTemplate: "Call Details: {caller}",
+  panelSubtitleTemplate: "{startTime} • Duration {duration}",
+
   labels: {
     phone: "PHONE",
     clientAccount: "CLIENT ACCOUNT",
@@ -29,6 +33,18 @@ export const callDetailData = {
   ],
 
   playIcon: { lucide: "Play", size: 20 },
+  recordingIcon: { lucide: "AudioLines", size: 16 },
+
+  /**
+   * The recording's static waveform — each bar's height as a percentage of
+   * the strip. Decorative until real audio exists.
+   */
+  waveform: {
+    bars: [
+      40, 60, 30, 70, 45, 80, 35, 55, 65, 40, 30, 50, 70, 45, 60, 35, 55, 40,
+      65, 50, 30, 60, 45, 70, 40, 55, 35, 65, 50, 30, 45, 60,
+    ],
+  },
   soundIcon: { lucide: "Volume2", size: 20 },
   lockIcon: { lucide: "Lock", size: 16 },
 

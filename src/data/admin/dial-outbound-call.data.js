@@ -9,8 +9,10 @@ export const dialOutboundCallData = {
     icon: { lucide: "Phone", size: 20 },
     title: "Outbound CTI Softphone & Dialer",
     status: { label: "PBX SIP Online", tone: "success" },
-    operatorLabel: "Operator: {operator}",
-    operator: "Marcus Sterling (Ext. 101)",
+    /** "Operator: **Marcus Sterling** (Ext. 101)" — the name is emphasised. */
+    operatorLabel: "Operator:",
+    operator: "Marcus Sterling",
+    operatorExtension: "(Ext. 101)",
   },
 
   tabs: [
@@ -20,6 +22,7 @@ export const dialOutboundCallData = {
 
   keypad: {
     clearLabel: "Clear number",
+    clearIcon: { lucide: "Delete", size: 18 },
     digits: [
       { value: "1", letters: "" },
       { value: "2", letters: "ABC" },
@@ -38,6 +41,7 @@ export const dialOutboundCallData = {
       name: "recipientName",
       label: "Recipient / Caller Name",
       icon: { lucide: "User", size: 16 },
+      emptyValue: "—",
     },
   },
 
@@ -94,12 +98,15 @@ export const dialOutboundCallData = {
   autoRecord: {
     name: "autoRecord",
     label: "Auto-Record Outbound Call",
+    icon: { lucide: "Mic", size: 16 },
+    iconTone: "error",
   },
 
   contacts: {
     searchLabel: "Search directory",
     search: { placeholder: "Search directory contacts, clinic patients, or VIPs…" },
     selectAndDialLabel: "Select & Dial",
+    dialIcon: { lucide: "Phone", size: 14 },
     options: [
       {
         id: "isabel-gomez",
