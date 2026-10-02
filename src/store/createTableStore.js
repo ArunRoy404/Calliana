@@ -1,20 +1,10 @@
 import { create } from "zustand";
 
 import { TABLE_DEFAULTS } from "@/data/tables/table-defaults.data";
+import { fillTemplate } from "@/lib/fillTemplate";
 import { searchParamDefaults } from "@/lib/url/searchParams";
 import { readUrlParams, writeUrlParams } from "@/lib/url/urlState";
 import { ADD_PANEL, PANEL_PARAM } from "@/schemas/url/list-params.schema";
-
-/**
- * Fill `{name}` placeholders in a copy template from `values`.
- * Kept here rather than in the data file because the numbers are derived.
- */
-function fillTemplate(template, values) {
-  return (template ?? "").replace(
-    /\{(\w+)\}/g,
-    (match, key) => `${values?.[key] ?? match}`,
-  );
-}
 
 /** The list keys `reset` clears; a table's own extras (panels, tabs) stay. */
 const LIST_KEYS = ["q", "page", "size"];

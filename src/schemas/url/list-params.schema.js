@@ -82,3 +82,9 @@ export function filterParamsFrom(filters = []) {
     })) ?? []
   );
 }
+
+/**
+ * An optional calendar day (`?date=2026-08-13`), `YYYY-MM-DD` and a real
+ * date — `2026-02-30` reads as `undefined` like any other bad value.
+ */
+export const optionalIsoDateParam = z.iso.date().optional().catch(undefined);
