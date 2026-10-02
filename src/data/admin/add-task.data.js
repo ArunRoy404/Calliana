@@ -1,3 +1,4 @@
+import { CLIENT_ACCOUNT_OPTIONS } from "@/data/admin/client-accounts.data";
 import { TASK_TYPE_OPTIONS } from "@/data/admin/tasks.data";
 
 /**
@@ -22,14 +23,7 @@ export const addTaskData = {
       name: "client",
       label: "CLIENT ACCOUNT",
       placeholder: "Select client…",
-      options: [
-        { value: "laura-alegre-clinic", label: "Laura Alegre Clinic" },
-        { value: "martinez-dental-care", label: "Martinez Dental Care" },
-        { value: "vanguard-wealth-partners", label: "Vanguard Wealth Partners" },
-        { value: "catalunya-tech-legal", label: "Catalunya Tech Legal" },
-        { value: "dental-care-center", label: "Dental Care Center" },
-        { value: "clinica-bienestar", label: "Clínica Bienestar" },
-      ],
+      options: CLIENT_ACCOUNT_OPTIONS,
     },
     taskType: {
       name: "taskType",
