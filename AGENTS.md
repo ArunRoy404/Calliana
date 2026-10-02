@@ -79,9 +79,9 @@ it rather than letting it grow.
 
 | Folder                       | Holds                                                        |
 | ---------------------------- | ------------------------------------------------------------ |
-| `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, AssetIcon, ToneIcon, UserAvatar, StatusBadge, MetaLine, TextLink, IconTile, StatusPill |
+| `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, AssetIcon, ToneIcon, UserAvatar, StatusBadge, MetaLine, TextLink, IconTile, StatusPill, CountBadge |
 | `components/forms/`          | Inputs and form compositions — FieldShell, InputField, TextAreaField, FormField, StoreField, FormSelect, StoreSelect, FilterSelect, FormSection, TimeRangeField, SearchField, FormOptionsRow |
-| `components/overlays/`       | SidePanel — the one drawer every add/edit/detail panel is built on; FormPanel (an add drawer) and its FormPanelFooter |
+| `components/overlays/`       | SidePanel — the one drawer every add/edit/detail panel is built on; Modal — the one centred dialog; FormPanel (an add form, drawer or modal) and its FormPanelFooter |
 | `components/actions/`        | ActionBar — a record's row of action buttons                   |
 | `components/lists/`          | StaggerList — a list whose rows reveal one after another       |
 | `components/tabs/`           | UnderlineTabs                                                  |
@@ -91,6 +91,9 @@ it rather than letting it grow.
 | `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard, CardField, DetailSection, InfoTile, InstructionCard, MetricRow, NoticeCard, RowCard, StatFigure, StatTile |
 | `components/agents/`         | Agent compositions — `add/` (AddAgentPanel, AddAgentFields) and `detail/` (AgentDetailPanel, its tabs and rows) |
 | `components/clients/`        | Client compositions — `add/` (AddClientPanel, AddClientFields) and `detail/` (ClientDetailView, its header, tabs and rows) |
+| `components/calls/`          | Call compositions — `add/` (the outbound dialer: DialOutboundCallPanel, its header, keypad and quick contacts) and `detail/` (CallDetailPanel, CallInfoCard, CallRecordingPlayer) |
+| `components/messages/`       | The inbox — MessagesInbox (the whole screen), ConversationList / ConversationRow, ConversationThread with its header, bubbles and composer, ClientInfoPanel |
+| `components/appointments/`   | The calendar — AppointmentsCalendar (the whole screen), CalendarToolbar, the day / week / month views and their event rows, AppointmentDetailPanel, ScheduleAppointmentPanel |
 | `components/dashboard/`      | Dashboard sections, one folder per feature — `stats/`, `live-calls/`, `attention/`, `agents/`, `audit/` |
 | `components/nav/`            | Sidebar, top bar, account menu and Breadcrumbs                |
 | `components/notifications/`  | Notification popover and its rows                             |
@@ -594,3 +597,41 @@ date, a schedule slot — uses `type="date"` / `type="time"` (or both, as a
 pair) on `StoreField`'s `field` config, never a bare `type="text"` with a
 placeholder like `"e.g. Tomorrow 11:00 AM"`. Free text that looks like a
 date is not a date field.
+
+## 33. Pieces the calls/messages/appointments build added
+
+A module whose whole screen is one composition (the inbox, the calendar)
+lives in `components/<module>/` and its `page.js` renders it directly — no
+`_components/` wrapper. Reach for these before adding anything similar:
+
+- **A backdrop-centred add form** is still `FormPanel`, with
+  `overlay="modal"` (`variant="sectioned"` for header/footer bands and a
+  scrolling body — the dialer). `Modal` takes a custom `header` like
+  `SidePanel`. A footer with no `requiredNote` drops the note.
+- **Copy with placeholders** (`"Scheduled for {date} at {start}"`) is filled
+  by `fillTemplate` (`src/lib/fillTemplate.js`) in a store — never
+  `.replace("{x}", …)` in a component.
+- **Calendar days** are ISO strings (`2026-08-13`) handled by
+  `src/lib/calendarDates.js` (UTC, so server and browser agree); a day in the
+  URL is `optionalIsoDateParam`. Date formats are `Intl` options in the data
+  file.
+- **A page that fills the viewport** with independently scrolling columns
+  adds `MAIN_FILL_HEIGHT` (`src/lib/layout.js`).
+- **List rows that are one button** are `RowCard variant="flush"` around a
+  `Button variant="row" size="row"` (`aria-current` tints the open one); a
+  list inside one bordered box is `RowCard variant="listed"`; a tinted strip
+  with a solid left edge is `accent` / `accent-compact`.
+- Variants added rather than new components: `Button` `success` / `row` /
+  `plain` and sizes `icon` (filter-bar-height square) / `round` / `row` /
+  `stack`; `DetailSection` `variant="outlined"`, `icon`, `tone`; `InfoTile`
+  `size="sm"`, `tone`, `as`; `ActionBar` `layout="stack"`, `size`;
+  `SegmentedFilter` `variant="soft"`; `Checkbox` `variant="row"` with an
+  `icon`; `MetaLine` `size`; `TextAreaField` `bareSize`; `UserAvatar`
+  `maxInitials`. An unread count is `atoms/CountBadge`.
+- **A side column with no room at a breakpoint** steps aside and opens as
+  a `SidePanel` drawer instead, its body shared by both
+  (`ClientInfoDetails` → `ClientInfoPanel` column from `xl`,
+  `ClientInfoDrawer` between `md` and `xl`, `?panel=client`).
+- `InputField`'s `trailingIcon` is any data icon (`{ src }` or `{ lucide }`),
+  and `FormField` passes it from the field config.
+

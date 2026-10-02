@@ -59,6 +59,11 @@ Also binding, in full in AGENTS.md:
   "close match, not a verified export."
 - **Rule 32** — a due date or scheduled time is a real `type="date"` /
   `type="time"` field, never free text with a date-shaped placeholder.
+- **Rule 33** — reuse the pieces the calls/messages/appointments build
+  added: `FormPanel overlay="modal"`, `fillTemplate`, `calendarDates` +
+  `optionalIsoDateParam`, `MAIN_FILL_HEIGHT`, the `flush`/`listed`/`accent`
+  `RowCard`s, `CountBadge`, and the new variants on `Button`,
+  `DetailSection`, `InfoTile`, `ActionBar`, `SegmentedFilter`, `Checkbox`.
 
 <!--
   The project rules live in AGENTS.md and are imported above, so there is exactly
