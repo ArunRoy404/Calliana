@@ -9,14 +9,21 @@ import { cn } from "@/lib/cn";
  * A multi-line field — Figma 202:31095 ("Support Instructions / Notes"). The
  * same frame, border and states as `InputField`, taller and resizable only
  * vertically. `bare` drops the label frame for a textarea that sits inside
- * its own card (the notes composer, 202:30951).
+ * its own card (the notes composer, 202:30951); `bareSize` sets its type —
+ * `lg` there, `md` for the inbox's one-line reply box (167:51527).
  */
+const BARE_SIZE_CLASSES = {
+  lg: "text-body-lg text-text-secondary",
+  md: "text-body-md text-text-primary",
+};
+
 export default function TextAreaField({
   label,
   helperText,
   error,
   rows = 4,
   bare = false,
+  bareSize = "lg",
   className,
   ...props
 }) {
@@ -35,7 +42,10 @@ export default function TextAreaField({
           (error
             ? "border-status-error"
             : "border-border-default focus:border-border-focus"),
-        bare && "text-body-lg resize-none text-text-secondary",
+        bare && [
+          "resize-none",
+          BARE_SIZE_CLASSES?.[bareSize] ?? BARE_SIZE_CLASSES?.lg,
+        ],
         className,
       )}
       {...props}

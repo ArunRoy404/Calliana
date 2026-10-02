@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 
 import AppImage from "@/components/atoms/AppImage";
+import AssetIcon from "@/components/atoms/AssetIcon";
 import FieldShell from "@/components/forms/FieldShell";
 import { cn } from "@/lib/cn";
 
@@ -13,9 +14,13 @@ import { cn } from "@/lib/cn";
  * The reveal toggle is the one piece of local `useState` here: it is purely
  * visual and nothing outside this field could ever need it.
  *
- * `trailingIcon` (`{ src, width, height }`) sits at the right of the box — the
- * clock on a working-hours time field, Figma 198:32497.
+ * `trailingIcon` (`{ src, width, height }` or `{ lucide, size }`, rule 25)
+ * sits at the right of the box — the clock on a working-hours time field,
+ * Figma 198:32497. A `date` or `time` field opens its native picker from
+ * anywhere in the box (rule 32).
  */
+const PICKER_TYPES = ["date", "time"];
+
 const REVEAL_ICON = { src: "/icons/eye-slash.svg", width: 16, height: 16 };
 
 export default function InputField({
@@ -32,7 +37,7 @@ export default function InputField({
   const [isRevealed, setIsRevealed] = useState(false);
 
   const isPassword = type === "password";
-  const isTime = type === "time";
+  const isPicker = PICKER_TYPES.includes(type);
   const resolvedType = isPassword && isRevealed ? "text" : type;
 
   // Error wins over success; both override the default hairline.
@@ -60,14 +65,17 @@ export default function InputField({
           id={id}
           type={resolvedType}
           aria-invalid={Boolean(error) || undefined}
-          // A time field opens its native picker from anywhere in the box; the
-          // browser's own indicator is hidden in favour of the design's icon.
+          // A date or time field opens its native picker from anywhere in the
+          // box; the browser's own indicator is hidden in favour of the
+          // design's icon.
           onClick={
-            isTime ? (event) => event?.currentTarget?.showPicker?.() : undefined
+            isPicker
+              ? (event) => event?.currentTarget?.showPicker?.()
+              : undefined
           }
           className={cn(
             "text-body-md min-w-0 flex-1 bg-transparent text-text-primary outline-none placeholder:text-text-tertiary disabled:cursor-not-allowed disabled:text-text-disabled",
-            isTime &&
+            isPicker &&
               "cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden",
           )}
           {...props}
@@ -89,11 +97,9 @@ export default function InputField({
         )}
 
         {trailingIcon && (
-          <AppImage
-            src={trailingIcon?.src}
-            width={trailingIcon?.width}
-            height={trailingIcon?.height}
-            className="pointer-events-none shrink-0"
+          <AssetIcon
+            icon={trailingIcon}
+            className="pointer-events-none shrink-0 text-text-tertiary"
           />
         )}
       </div>

@@ -22,6 +22,7 @@ export default function FormField({ field, value, error, onChange, onBlur }) {
       rows={field?.rows}
       autoComplete={field?.autoComplete}
       placeholder={field?.placeholder}
+      {...(!isTextArea && { trailingIcon: field?.trailingIcon })}
       value={value ?? ""}
       error={error}
       onChange={(event) => onChange?.(field?.name, event?.target?.value)}

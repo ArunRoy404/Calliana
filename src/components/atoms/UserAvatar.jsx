@@ -22,6 +22,9 @@ import { AVATAR_TONE, DEFAULT_TONE, TONE_DOT } from "@/lib/tones";
  *
  * `tone` tints the initials fallback (`AVATAR_TONE` — a note author's chip,
  * Figma 202:30956); without it the fallback is the primary blue.
+ *
+ * `maxInitials` caps the fallback's letters — `1` for the dialer's
+ * single-letter contacts (Figma 202:38997).
  */
 const SIZE_CLASSES = {
   xs: "size-6",
@@ -77,6 +80,7 @@ export default function UserAvatar({
   size = "md",
   status,
   tone,
+  maxInitials = 2,
   className,
 }) {
   return (
@@ -106,7 +110,7 @@ export default function UserAvatar({
           AVATAR_TONE?.[tone] ?? AVATAR_TONE?.primary,
         )}
       >
-        {initialsFrom(name)}
+        {initialsFrom(name, maxInitials)}
       </AvatarFallback>
 
       {status && (

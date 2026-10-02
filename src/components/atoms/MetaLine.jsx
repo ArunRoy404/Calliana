@@ -7,14 +7,24 @@ import { cn } from "@/lib/cn";
  * Dr. Laura Alegre • +34 934 112 900 • contact@…"). `items` are nodes or
  * strings; empty ones are skipped so no separator is left dangling. The
  * separators are decorative, so screen readers skip them.
+ *
+ * `size` is `md` (a page header) or `sm` (a thread header, Figma 167:51527).
  */
-export default function MetaLine({ items = [], separator = "•", className }) {
+const SIZE_CLASSES = { sm: "text-body-sm", md: "text-body-md" };
+
+export default function MetaLine({
+  items = [],
+  separator = "•",
+  size = "md",
+  className,
+}) {
   const present = items?.filter(Boolean) ?? [];
 
   return (
     <p
       className={cn(
-        "text-body-md flex flex-wrap items-center gap-x-2 gap-y-1 text-text-secondary",
+        "flex flex-wrap items-center gap-x-2 gap-y-1 text-text-secondary",
+        SIZE_CLASSES?.[size] ?? SIZE_CLASSES?.md,
         className,
       )}
     >
