@@ -14,9 +14,14 @@ const { call: CALL } = CALLS_PARAM_KEYS;
  */
 function buildCallDetail(row) {
   const sample = callDetailData?.sample;
+  const hasTiming = Boolean(row?.startTime && row?.duration);
 
   return {
     ...sample,
+    panelTitle: fillTemplate(callDetailData?.titleTemplate, row),
+    panelSubtitle: hasTiming
+      ? fillTemplate(callDetailData?.subtitleTemplate, row)
+      : undefined,
     id: row?.id,
     caller: row?.caller,
     phone: row?.phone,
@@ -26,8 +31,6 @@ function buildCallDetail(row) {
     duration: row?.duration,
     status: row?.callStatus,
     followUp: row?.followUp,
-    panelTitle: fillTemplate(callDetailData?.panelTitleTemplate, row),
-    panelSubtitle: fillTemplate(callDetailData?.panelSubtitleTemplate, row),
   };
 }
 

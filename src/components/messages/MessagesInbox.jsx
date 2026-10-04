@@ -16,17 +16,20 @@ import { useMessagesStore } from "@/store/admin/useMessagesStore";
 
 /**
  * Client Messages & Inbox — Figma 167:51527: the conversation list, the open
- * thread and the client's info in one bordered box that fills the height
- * under the top bar, each column scrolling on its own. The list and the
- * thread sit side by side from `md` up; the client-info column joins them
- * from `xl`, where there is room for three. On a phone all three stack.
+ * thread and the client's info, side by side in one bordered box from `xl`
+ * up, each column scrolling on its own.
  *
- * Search, filter and the open conversation are the URL's (rule 26), read
- * once here through the store and handed down. Nothing is open on arrival:
- * until a conversation is chosen (writing `?conversation=<id>`), a
- * placeholder spans the thread and client-info columns. The columns reveal
- * left to right. Between `md` and `xl` the client info opens as a drawer
- * instead of a column (`?panel=client`).
+ * Below `xl` the three cannot fit across a phone, so it becomes the two panes
+ * every inbox has: the list fills the box until a conversation is chosen,
+ * then the thread takes its place, with a back button in its header and the
+ * client info a tap away in `ClientInfoDrawer`. Nothing is open on arrival:
+ * until a conversation is chosen (writing `?conversation=<id>`), no thread is
+ * shown, and a placeholder spans the thread and client-info columns from `xl`
+ * up. The box fills the height under the top bar at every size, so the panes
+ * scroll inside it rather than growing the page.
+ *
+ * Search, filter and the open conversation are the URL's (rule 26), read once
+ * here through the store and handed down. The columns reveal left to right.
  */
 export default function MessagesInbox() {
   const params = useStoreParams(useMessagesStore);
@@ -42,67 +45,67 @@ export default function MessagesInbox() {
   const setQuery = useMessagesStore((state) => state.setQuery);
   const setFilter = useMessagesStore((state) => state.setFilter);
   const openConversation = useMessagesStore((state) => state.openConversation);
-  const isClientInfoOpen = useMessagesStore((state) =>
-    state.isClientInfoOpen(params),
+  const closeConversation = useMessagesStore(
+    (state) => state.closeConversation,
   );
-  const setClientInfoOpen = useMessagesStore(
-    (state) => state.setClientInfoOpen,
-  );
+  const openClientInfo = useMessagesStore((state) => state.openClientInfo);
 
   const conversations = useMemo(
     () => deriveConversations?.(params) ?? [],
     [deriveConversations, params],
   );
   const notFunctional = notFunctionalProps(content);
+  const hasConversation = Boolean(conversation);
 
   return (
-    <div
-      className={cn(
-        "flex flex-col overflow-hidden rounded-8 border border-solid border-border-default bg-surface-base md:grid md:grid-cols-[280px_minmax(0,1fr)] md:grid-rows-[minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)_300px]",
-        MAIN_FILL_HEIGHT,
-      )}
-    >
-      <ConversationList
-        content={content}
-        conversations={conversations}
-        activeId={conversation?.id}
-        query={query}
-        filter={filter}
-        onQueryChange={setQuery}
-        onFilterChange={setFilter}
-        onOpen={openConversation}
-        revealDelay={revealDelayAt(0, 0)}
-      />
-      {conversation ? (
-        <>
-          <ConversationThread
-            conversation={conversation}
-            content={content}
-            notFunctional={notFunctional}
-            onOpenClientInfo={() => setClientInfoOpen?.(true)}
-            revealDelay={revealDelayAt(0, 1)}
-          />
-          <ClientInfoPanel
-            client={conversation?.client}
-            content={content}
-            notFunctional={notFunctional}
-            revealDelay={revealDelayAt(0, 2)}
-          />
-        </>
-      ) : (
-        <ThreadPlaceholder
-          placeholder={content?.noConversation}
-          revealDelay={revealDelayAt(0, 1)}
+    <>
+      <div
+        className={cn(
+          "flex flex-col overflow-hidden rounded-8 border border-solid border-border-default bg-surface-base xl:grid xl:grid-cols-[280px_minmax(0,1fr)_300px]",
+          MAIN_FILL_HEIGHT,
+        )}
+      >
+        <ConversationList
+          content={content}
+          conversations={conversations}
+          activeId={conversation?.id}
+          query={query}
+          filter={filter}
+          onQueryChange={setQuery}
+          onFilterChange={setFilter}
+          onOpen={openConversation}
+          revealDelay={revealDelayAt(0, 0)}
+          className={cn(hasConversation && "max-xl:hidden")}
         />
-      )}
 
-      <ClientInfoDrawer
-        open={isClientInfoOpen && Boolean(conversation)}
-        onOpenChange={setClientInfoOpen}
-        client={conversation?.client}
-        content={content}
-        notFunctional={notFunctional}
-      />
-    </div>
+        {conversation ? (
+          <>
+            <ConversationThread
+              conversation={conversation}
+              content={content}
+              notFunctional={notFunctional}
+              onBack={closeConversation}
+              onOpenInfo={openClientInfo}
+              revealDelay={revealDelayAt(0, 1)}
+            />
+            <ClientInfoPanel
+              client={conversation?.client}
+              content={content}
+              notFunctional={notFunctional}
+              revealDelay={revealDelayAt(0, 2)}
+              className="max-xl:hidden"
+            />
+          </>
+        ) : (
+          <ThreadPlaceholder
+            placeholder={content?.noConversation}
+            revealDelay={revealDelayAt(0, 1)}
+            className="max-xl:hidden"
+          />
+        )}
+      </div>
+
+      <ClientInfoDrawer />
+    </>
   );
 }

@@ -8,9 +8,13 @@ import { cn } from "@/lib/cn";
  * strings; empty ones are skipped so no separator is left dangling. The
  * separators are decorative, so screen readers skip them.
  *
- * `size` is `md` (a page header) or `sm` (a thread header, Figma 167:51527).
+ * `size` is `md` (default) or `sm` — a 12px tertiary line under a heading
+ * (the inbox thread's "Laura Alegre Clinic • SMS").
  */
-const SIZE_CLASSES = { sm: "text-body-sm", md: "text-body-md" };
+const SIZE_CLASSES = {
+  md: "text-body-md text-text-secondary",
+  sm: "text-body-sm text-text-tertiary",
+};
 
 export default function MetaLine({
   items = [],
@@ -23,7 +27,7 @@ export default function MetaLine({
   return (
     <p
       className={cn(
-        "flex flex-wrap items-center gap-x-2 gap-y-1 text-text-secondary",
+        "flex flex-wrap items-center gap-x-2 gap-y-1",
         SIZE_CLASSES?.[size] ?? SIZE_CLASSES?.md,
         className,
       )}

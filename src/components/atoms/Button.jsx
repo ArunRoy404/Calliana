@@ -29,20 +29,22 @@ const VARIANT_CLASSES = {
   /** White, hairline-bordered secondary action — Figma 198:32344 (Cancel). */
   neutral:
     "border border-solid border-border-default bg-surface-base text-text-primary hover:border-border-strong hover:bg-surface-subtle",
+  /** Green-ruled confirming action — the inbox's "Mark Resolved". */
+  success:
+    "border border-solid border-status-success bg-status-success-bg text-status-success hover:bg-status-success/10",
+  /**
+   * A whole list row as one button — an inbox conversation. Transparent until
+   * hovered; `aria-current` marks the open one with the same tint.
+   */
+  row: "bg-transparent text-left hover:bg-surface-subtle aria-[current=true]:bg-surface-subtle",
+  /**
+   * No chrome of its own — the content keeps its own colours (a calendar
+   * event, tinted by the strip it sits in). It dims a touch on hover.
+   */
+  plain: "bg-transparent text-left hover:opacity-80",
   /** Light action on a dark toolbar strip — Figma 198:22851. */
   toolbar:
     "rounded-4 bg-brand-track font-medium text-brand-black hover:bg-surface-base",
-  /** A positive confirm — the inbox's "Mark Resolved", Figma 167:51527. */
-  success:
-    "bg-status-success text-text-on-primary hover:bg-status-success-strong",
-  /**
-   * A whole list row that is one button (an inbox conversation): left
-   * aligned, no press scale, tinted while hovered and while it is the open
-   * one (`aria-current`).
-   */
-  row: "w-full items-start justify-start rounded-0 text-left hover:bg-surface-subtle active:scale-100 aria-[current=true]:bg-surface-selected",
-  /** No look of its own — the box around it (a tinted calendar event) has it. */
-  plain: "bg-transparent",
 };
 
 const SIZE_CLASSES = {
@@ -55,14 +57,15 @@ const SIZE_CLASSES = {
     "text-body-md gap-1.5 rounded-8 px-3 py-1.5 font-medium leading-[19.5px]",
   /** A 28px icon-only square — Figma 198:31047 (a page's back button). */
   square: "size-7 shrink-0 rounded-4 p-0",
-  /** An icon-only square at the filter-bar height (rule 15) — the calendar's arrows, the inbox's send. */
-  icon: "size-control-sm shrink-0 p-0",
-  /** A 40px circle — the call recording's play button, Figma 202:39212. */
-  round: "size-10 shrink-0 rounded-999 p-0",
-  /** A list row's padding, for `variant="row"`. */
-  row: "gap-3 px-4 py-3",
-  /** Stacked lines, left aligned, filling the box — a calendar event's title over its client. */
-  stack: "w-full flex-col items-start gap-0.5 text-left",
+  /** A filter-bar-height icon-only square — the inbox's send button. */
+  icon: "size-control-sm shrink-0 rounded-6 p-0",
+  /** Fills its row, content top-left — pairs with the `row` variant. */
+  row: "w-full items-start justify-start gap-3 rounded-none p-4",
+  /** Lines stacked top-left, filling the width — a calendar event's title
+   * over its client, with `plain`. */
+  stack: "w-full flex-col items-start justify-start gap-1 rounded-none p-0",
+  /** A 36px icon-only circle — a recording's play button. */
+  round: "size-9 shrink-0 rounded-999 p-0",
   /** `sm` and `md` are row controls: filter-bar and form heights. */
   sm: "text-body-sm h-control-sm px-4",
   md: "text-button h-control px-6",

@@ -4,6 +4,7 @@ import MessageBubble from "@/components/messages/MessageBubble";
 import MessageComposer from "@/components/messages/MessageComposer";
 import ThreadHeader from "@/components/messages/ThreadHeader";
 import Reveal from "@/components/motion/Reveal";
+import { cn } from "@/lib/cn";
 import { nestedRevealDelayAt } from "@/lib/motion";
 
 /**
@@ -11,17 +12,21 @@ import { nestedRevealDelayAt } from "@/lib/motion";
  * messages (scrolling on their own, under a "Conversation Started …" line),
  * the Schedule / Create Task / Call back row and the reply box.
  *
- * The message list is keyed by conversation, so opening another one
- * replays its reveal and starts it from the top. Reveals after
- * `revealDelay`; its messages, then its actions, follow it in.
- * `onOpenClientInfo` is the header's "Client info" button.
+ * On a phone it takes the list's place and fills the pane, so its header
+ * carries the back button (`onBack`) and the client-details button
+ * (`onOpenInfo`) there; from `xl` up those are hidden and it sits beside the
+ * list and the client column. The message list is keyed by conversation, so
+ * opening another one replays its reveal and starts it from the top. Reveals
+ * after `revealDelay`; its messages, then its actions, follow it in.
  */
 export default function ConversationThread({
   conversation,
   content,
   notFunctional,
-  onOpenClientInfo,
+  onBack,
+  onOpenInfo,
   revealDelay = 0,
+  className,
 }) {
   const thread = content?.thread;
   const messageCount = conversation?.messages?.length ?? 0;
@@ -30,13 +35,17 @@ export default function ConversationThread({
     <Reveal
       as="section"
       delay={revealDelay}
-      className="flex h-160 min-h-0 min-w-0 flex-col border-b border-solid border-border-default md:h-auto md:border-b-0 xl:border-r"
+      className={cn(
+        "flex min-h-0 min-w-0 flex-1 flex-col xl:border-r xl:border-solid xl:border-border-default",
+        className,
+      )}
     >
       <ThreadHeader
         conversation={conversation}
         thread={thread}
         notFunctional={notFunctional}
-        onOpenClientInfo={onOpenClientInfo}
+        onBack={onBack}
+        onOpenInfo={onOpenInfo}
       />
 
       <div

@@ -81,7 +81,7 @@ it rather than letting it grow.
 | ---------------------------- | ------------------------------------------------------------ |
 | `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, AssetIcon, ToneIcon, UserAvatar, StatusBadge, MetaLine, TextLink, IconTile, StatusPill, CountBadge |
 | `components/forms/`          | Inputs and form compositions — FieldShell, InputField, TextAreaField, FormField, StoreField, FormSelect, StoreSelect, FilterSelect, FormSection, TimeRangeField, SearchField, FormOptionsRow |
-| `components/overlays/`       | SidePanel — the one drawer every add/edit/detail panel is built on; Modal — the one centred dialog; FormPanel (an add form, drawer or modal) and its FormPanelFooter |
+| `components/overlays/`       | SidePanel — the one drawer every add/edit/detail panel is built on; FormPanel (an add drawer) and its FormPanelFooter |
 | `components/actions/`        | ActionBar — a record's row of action buttons                   |
 | `components/lists/`          | StaggerList — a list whose rows reveal one after another       |
 | `components/tabs/`           | UnderlineTabs                                                  |
@@ -91,9 +91,8 @@ it rather than letting it grow.
 | `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard, CardField, DetailSection, InfoTile, InstructionCard, MetricRow, NoticeCard, RowCard, StatFigure, StatTile |
 | `components/agents/`         | Agent compositions — `add/` (AddAgentPanel, AddAgentFields) and `detail/` (AgentDetailPanel, its tabs and rows) |
 | `components/clients/`        | Client compositions — `add/` (AddClientPanel, AddClientFields) and `detail/` (ClientDetailView, its header, tabs and rows) |
-| `components/calls/`          | Call compositions — `add/` (the outbound dialer: DialOutboundCallPanel, its header, keypad and quick contacts) and `detail/` (CallDetailPanel, CallInfoCard, CallRecordingPlayer) |
-| `components/messages/`       | The inbox — MessagesInbox (the whole screen), ConversationList / ConversationRow, ConversationThread with its header, bubbles and composer, ClientInfoPanel |
-| `components/appointments/`   | The calendar — AppointmentsCalendar (the whole screen), CalendarToolbar, the day / week / month views and their event rows, AppointmentDetailPanel, ScheduleAppointmentPanel |
+| `components/messages/`       | The inbox — MessagesInbox (the three columns), ConversationList / ConversationRow, ConversationThread with ThreadHeader, MessageBubble and MessageComposer, ClientInfoPanel |
+| `components/appointments/`   | The calendar — AppointmentsCalendar (on `TableCard`), CalendarToolbar, CalendarDayCard (Today), CalendarWeekView (time grid), CalendarMonthView / CalendarMonthCell (month grid), CalendarEventRow, AppointmentDetailPanel, ScheduleAppointmentPanel / ScheduleAppointmentFields |
 | `components/dashboard/`      | Dashboard sections, one folder per feature — `stats/`, `live-calls/`, `attention/`, `agents/`, `audit/` |
 | `components/nav/`            | Sidebar, top bar, account menu and Breadcrumbs                |
 | `components/notifications/`  | Notification popover and its rows                             |
@@ -185,6 +184,10 @@ shadcn components are primitives we adopt, not a second design system.
   `@import "tw-animate-css"` in `globals.css`, `animate-in`, `slide-in-from-*`
   and `fade-in-0` are dead classes and every overlay pops into place with no
   motion — it looks like a missing animation, not a missing dependency.
+- Both overlays' scrims are one string, `SCRIM_CLASSES` in
+  `src/lib/overlay.js` (the ink at 40% under a 6px blur, so the page behind
+  a drawer reads as background). Change the backdrop there, never in one
+  primitive.
 - Overlay motion uses the project's own curve, not shadcn's defaults:
   `ease-reveal` (the `--ease-reveal` token, matching `REVEAL_EASE` in
   `src/lib/motion.js`), and the exit is always quicker than the entrance.
@@ -274,6 +277,11 @@ Controls that sit in a row share one of two heights, set by tokens in
 - Never give a control its own height (`h-9`, `h-11`, `py-3` for height).
   The `h-control*` classes are registered with `cn()`, so they override cleanly.
 - Change a height once, in its token, for the whole app.
+- A control whose rows may wrap (`SegmentedFilter` when its options outrun a
+  phone's width) takes the `min-h` form of its size (`CONTROL_MIN_SIZE_HEIGHT`)
+  and its inner segments the control height less the strip's own inset
+  (`CONTROL_SEGMENT_HEIGHT`) — so a single row is pixel-identical and a wrapped
+  one grows instead of clipping. Both live in `src/lib/controls.js`.
 - Search fields carry no keyboard-shortcut hint (no `⌘K` chip) — anywhere.
 
 ## 16. Every list is a reusable table
@@ -455,6 +463,16 @@ The pieces, all reusable — never hand-roll `URLSearchParams` or
   labels; the resting state is a bare path. `history: "replace"` by default,
   so typing and paging do not flood Back. Opening one panel clears another's
   keys.
+- **Dates in the URL** are ISO days (`?date=2026-08-10`) through
+  `optionalIsoDateParam`; all date maths goes through `src/lib/calendarDates.js`
+  (UTC, so server and browser agree on the day). The default day is left out
+  of the URL, so the resting state stays a bare path.
+- **No silent default selection.** A screen never shows a record as open
+  (a conversation, a row's detail) unless the URL names it. With no id in
+  the URL, nothing is selected and the screen says so with a prompt to pick
+  one (the inbox's `ThreadPlaceholder`); choosing one writes its id
+  (`?conversation=<id>`). Defaulting to "the first one" puts a view on
+  screen that its link cannot reopen.
 - Components never know key names: a store exposes readers over params
   (`isAddOpen(params)`, `selectedAgent(params)`) and actions that write them.
 
@@ -502,7 +520,9 @@ Reach for these before adding anything similar:
 - A pill-button filter (not a dropdown) is `forms/SegmentedFilter`, wired in
   by giving that filter `variant: "segmented"` in its data file —
   `TableDirectory` picks it over `FilterSelect` automatically. Used by the
-  tasks due-date filter and the users role filter.
+  tasks due-date filter and the users role filter. Its solid strip wraps when
+  its options outrun a phone's width, so a long set (tasks' five due filters)
+  never pushes the page sideways.
 - A toolbar action that is not the add drawer (an export, a compliance
   download) is `content.secondaryAction` (`{ label, icon,
   notFunctionalMessage, notFunctionalDescription }`) next to `addAction` in a
@@ -523,6 +543,68 @@ Reach for these before adding anything similar:
   link or a `Switch` is `cards/SettingRow`. `InfoTile` takes an optional
   trailing `action` node for the same "EDIT" pattern outside a settings list
   (the profile page's personal-information tiles).
+- A side-panel block drawn as its own bordered card (the call detail
+  panel's recording, summary and notes) is `cards/DetailSection` with
+  `variant="outlined"`, plus `icon` (an `AssetIcon` descriptor), `iconTone`
+  for a coloured glyph beside a plain title, and `tone`, which on an
+  outlined section tints the whole card (the amber triage note) — never a
+  bordered `div` wrapped around a plain `DetailSection`. A round icon-only
+  button (a recording's play button) is `Button size="round"`. Copy with
+  per-record values in it ("Call Details: {caller}") is a data template
+  filled by the store with `src/lib/fillTemplate.js`.
+- A form the design draws backdrop-centred (the outbound dialer) is still
+  `overlays/FormPanel`, with `overlay="modal"` — the same store wiring and
+  `?panel=add` state on a centred `Modal` instead of a `SidePanel`. A tall
+  or multi-band dialog is `Modal variant="sectioned"`: edge-to-edge header
+  and footer rules, close in the header, a scrolling body and a
+  canvas-tinted footer. `FormPanelFooter` drops its note when the data has
+  no `requiredNote`, splits Cancel left / submit right with `footer.split`,
+  and leads the submit with `footer.submitIcon`.
+- A checkbox drawn as its own tinted row (label and icon left, box right) is
+  `atoms/Checkbox variant="row"` with `icon` / `iconTone`. One ruled list in
+  a single bordered box is `RowCard variant="listed"` inside a
+  `StaggerList` that draws the box. A single-letter avatar is `UserAvatar
+  maxInitials={1}` — still derived from the name (rule 21).
+- The inbox (Figma 167:51527) added: `Button` `variant="success"` (a
+  green-ruled confirm, "Mark Resolved"), `variant="row"` + `size="row"` (a
+  whole list row as one button, `aria-current` tinting the open one) and
+  `size="icon"` (a filter-bar-height icon square); `SegmentedFilter
+  variant="soft"` (bare text pills on a light tint); `ActionBar` `size` and
+  `layout="stack"`; `InfoTile size="sm"` and `as`; `MetaLine size="sm"`;
+  `TextAreaField bareSize`; `RowCard variant="flush"`; `atoms/CountBadge`
+  (an unread count); and `MAIN_FILL_HEIGHT` in `src/lib/layout.js` for a
+  page whose columns scroll on their own instead of growing the page (the
+  inbox fills it at every size, not only from `xl`, so a phone scrolls its
+  panes too — rule 33).
+- The calendar added: `RowCard variant="accent"` (a tinted strip with a 3px
+  left rule — the caller adds `TONE_SURFACE` / `TONE_OUTLINE` for the event
+  type's tone) and `variant="accent-compact"` (the same, sized to content,
+  for a grid cell), `RowCard`'s `style` (data geometry only — a week event's
+  `top` / `height`), `src/lib/calendarDates.js` and `optionalIsoDateParam`.
+  The store's `deriveCalendar(params)` returns each view's own shape (day
+  cards, the week's hour rows and columns, the month's whole weeks); a grid
+  wider than a phone scrolls sideways under `lg`, clipped vertically.
+  Calendar dates are computed, never copied from a mock-up — a design's
+  sample weekday or date that disagrees with the real calendar is a mock-up
+  slip, not a spec. A
+  non-table screen on the same white-under-texture paper as a table reuses
+  `tables/TableCard` with its own `toolbar`, rather than redrawing the
+  texture.
+- The appointment drawers added: `InfoTile` `tone` (tiles tinted in a
+  record's tone — an appointment's details in its event type's green);
+  `Button` `variant="plain"` + `size="stack"` (content that keeps its own
+  colours, stacked top-left — a clickable calendar event, so every event
+  opens its drawer as a real button); `InputField`'s `trailingIcon` is any
+  `AssetIcon` descriptor and a `date` field opens its picker like a `time`
+  one; `FormField` passes `trailingIcon` only to inputs. A list two forms
+  share (client accounts) lives once in `src/data/admin/client-accounts.data.js`.
+  An exported icon drawn for a dark tile (`/icons/calendar.svg`, near-white)
+  is not reused on a white field — use the lucide glyph and say why beside
+  the data entry.
+- A design that shows the dashboard chrome around a new screen is built as
+  the content only: the shell already draws the sidebar and top bar, and the
+  top bar's title is a `pages.<segment>` entry in `top-bar.data.js` — never
+  a heading re-drawn inside the page.
 - A read-only "here is the current configuration" drawer only applies when
   the design itself shows plain values — check first (rule 30). When Figma
   draws the value inside a bordered field-height box (Edit Routing Rules,
@@ -598,40 +680,25 @@ pair) on `StoreField`'s `field` config, never a bare `type="text"` with a
 placeholder like `"e.g. Tomorrow 11:00 AM"`. Free text that looks like a
 date is not a date field.
 
-## 33. Pieces the calls/messages/appointments build added
+## 33. A list-and-detail screen collapses to two panes on a phone
 
-A module whose whole screen is one composition (the inbox, the calendar)
-lives in `components/<module>/` and its `page.js` renders it directly — no
-`_components/` wrapper. Reach for these before adding anything similar:
+A screen the design draws as columns side by side — the inbox: conversation
+list, thread and client info (Figma 167:51527) — cannot show them all across
+a phone. Below the width at which they fit (`xl` for the inbox) it becomes
+the master–detail every list has: the list fills the pane until a record is
+chosen, then the record takes its place, with a back button in its header and
+the side columns reached from a header button in an `overlays/SidePanel`.
 
-- **A backdrop-centred add form** is still `FormPanel`, with
-  `overlay="modal"` (`variant="sectioned"` for header/footer bands and a
-  scrolling body — the dialer). `Modal` takes a custom `header` like
-  `SidePanel`. A footer with no `requiredNote` drops the note.
-- **Copy with placeholders** (`"Scheduled for {date} at {start}"`) is filled
-  by `fillTemplate` (`src/lib/fillTemplate.js`) in a store — never
-  `.replace("{x}", …)` in a component.
-- **Calendar days** are ISO strings (`2026-08-13`) handled by
-  `src/lib/calendarDates.js` (UTC, so server and browser agree); a day in the
-  URL is `optionalIsoDateParam`. Date formats are `Intl` options in the data
-  file.
-- **A page that fills the viewport** with independently scrolling columns
-  adds `MAIN_FILL_HEIGHT` (`src/lib/layout.js`).
-- **List rows that are one button** are `RowCard variant="flush"` around a
-  `Button variant="row" size="row"` (`aria-current` tints the open one); a
-  list inside one bordered box is `RowCard variant="listed"`; a tinted strip
-  with a solid left edge is `accent` / `accent-compact`.
-- Variants added rather than new components: `Button` `success` / `row` /
-  `plain` and sizes `icon` (filter-bar-height square) / `round` / `row` /
-  `stack`; `DetailSection` `variant="outlined"`, `icon`, `tone`; `InfoTile`
-  `size="sm"`, `tone`, `as`; `ActionBar` `layout="stack"`, `size`;
-  `SegmentedFilter` `variant="soft"`; `Checkbox` `variant="row"` with an
-  `icon`; `MetaLine` `size`; `TextAreaField` `bareSize`; `UserAvatar`
-  `maxInitials`. An unread count is `atoms/CountBadge`.
-- **A side column with no room at a breakpoint** steps aside and opens as
-  a `SidePanel` drawer instead, its body shared by both
-  (`ClientInfoDetails` → `ClientInfoPanel` column from `xl`,
-  `ClientInfoDrawer` between `md` and `xl`, `?panel=client`).
-- `InputField`'s `trailingIcon` is any data icon (`{ src }` or `{ lucide }`),
-  and `FormField` passes it from the field config.
-
+- Which pane shows is the URL's record key, never a `useState` flag (rule
+  26): no record means the list, a record means its detail, so a link reopens
+  exactly one pane. The back button clears the key (`closeConversation`); the
+  drawer is `?panel=…` (`isClientInfoOpen` / `openClientInfo`), and opening a
+  record clears it.
+- The back and drawer buttons live in the detail header and drop away at the
+  breakpoint (`xl:hidden`). The drawer's body is the same component the wide
+  layout renders as a column, through its `variant` prop
+  (`ClientInfoPanel` `column` / `panel`) — a second copy is a rule 0 defect.
+- The container fills the height under the top bar at every size
+  (`MAIN_FILL_HEIGHT`, `src/lib/layout.js`), so each pane scrolls inside it
+  rather than growing the page; a pane is hidden with `max-xl:hidden`, not
+  unmounted, so the list keeps its scroll position and its reveal.

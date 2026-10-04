@@ -13,26 +13,23 @@ import { cn } from "@/lib/cn";
  * (the queue detail panel's "Edit Rules", which opens another panel) is
  * wired instead of toasting not-wired-up. Reveals after `revealDelay`.
  *
- * - `layout` — `row` (default, wrapping), or `stack`: one full-width,
- *   left-aligned button per line (the inbox's "Contextual Actions",
- *   Figma 167:51527).
- * - `size` — the buttons' `Button` size; `sm` for a filter-bar-height row.
+ * `size` is every button's `Button` size. `layout` is `row` (default, a
+ * wrapping row) or `stack` (full-width buttons one above the other — the
+ * inbox's contextual actions).
  */
 const LAYOUT_CLASSES = {
   row: "flex-wrap items-center gap-2 sm:gap-4",
-  stack: "flex-col items-stretch gap-2",
+  stack: "flex-col items-stretch gap-3",
 };
 
 export default function ActionBar({
   actions = [],
   buttonProps,
+  size,
   layout = "row",
-  size = "md",
   revealDelay = 0,
   className,
 }) {
-  const isStack = layout === "stack";
-
   return (
     <Reveal
       delay={revealDelay}
@@ -47,8 +44,6 @@ export default function ActionBar({
           key={action?.id}
           variant={action?.variant}
           size={size}
-          fullWidth={isStack}
-          className={isStack ? "justify-start" : undefined}
           onClick={action?.onClick}
           {...(!action?.onClick ? buttonProps : undefined)}
         >

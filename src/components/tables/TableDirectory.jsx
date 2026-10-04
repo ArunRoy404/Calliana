@@ -11,6 +11,7 @@ import TableCardList from "@/components/tables/TableCardList";
 import TablePagination from "@/components/tables/TablePagination";
 import TableToolbar from "@/components/tables/TableToolbar";
 import { useTableView } from "@/hooks/useTableView";
+import { cn } from "@/lib/cn";
 
 /**
  * A whole list screen — Figma 198:22835 (agents) and 198:21625 (clients) —
@@ -42,6 +43,7 @@ export default function TableDirectory({ useStore, onRowAction, actionProps }) {
       texture={content?.texture}
       toolbar={
         <TableToolbar
+          className={content?.toolbarClassName}
           start={
             <>
               <SearchField
@@ -49,7 +51,10 @@ export default function TableDirectory({ useStore, onRowAction, actionProps }) {
                 value={query}
                 onValueChange={setQuery}
                 size="sm"
-                className="w-full sm:w-[350px]"
+                className={cn(
+                  "w-full sm:w-[350px]",
+                  content?.searchClassName,
+                )}
               />
               {content?.filters?.map((filter) =>
                 filter?.variant === "segmented" ? (
@@ -115,7 +120,12 @@ export default function TableDirectory({ useStore, onRowAction, actionProps }) {
         />
       }
     >
-      <div className="hidden xl:block">
+      <div
+        className={cn(
+          "hidden xl:block",
+          content?.tableBreakpoint === "lg" && "lg:block xl:block",
+        )}
+      >
         <DataTable
           columns={content?.columns}
           rows={visibleRows}
@@ -132,7 +142,10 @@ export default function TableDirectory({ useStore, onRowAction, actionProps }) {
         emptyLabel={content?.emptyLabel}
         onRowAction={onRowAction}
         actionProps={actionProps}
-        className="xl:hidden"
+        className={cn(
+          "xl:hidden",
+          content?.tableBreakpoint === "lg" && "lg:hidden xl:hidden",
+        )}
       />
     </TableCard>
   );

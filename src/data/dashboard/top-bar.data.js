@@ -30,13 +30,15 @@ const SHARED = {
       title: "Clients",
       subtitle: "Manage all client accounts on the platform.",
     },
-    messages: {
-      title: "Client Messages & Inbox",
-      subtitle: "Reply to client conversations across SMS and voicemail.",
-    },
     appointments: {
       title: "Appointments & Calendar",
-      subtitle: "Book, review and reschedule client appointments.",
+      subtitle:
+        "Coordinate callbacks, doctor consultations, and client meetings with live CTI synchronization.",
+    },
+    messages: {
+      title: "Client Messages & Inbox",
+      subtitle:
+        "Unified multi-channel communications across SMS, Voicemails, and Internal Dispatch.",
     },
   },
 };

@@ -16,16 +16,16 @@ export const MESSAGES_PARAM_KEYS = {
   panel: PANEL_PARAM,
 };
 
-/** `?panel=client` — the client-info drawer, opened where the column has no room. */
-export const CLIENT_INFO_PANEL = "client";
+/** The inbox's one drawer besides a conversation: the client's details. */
+export const CLIENT_INFO_PANEL = "info";
 
 /**
  * Everything the inbox keeps in its URL —
  * `/admin/messages?q=laura&filter=unread&conversation=laura-alegre`: the
- * list's search and filter, the open conversation and — between `md` and
- * `xl` — the client-info drawer (`&panel=client`). Every field
- * `.catch()`es its default, so a stale link falls back to the full list
- * with no conversation open.
+ * list's search and filter, and the open conversation — plus the phone-only
+ * client-details drawer (`&panel=info`), the way the third column is reached
+ * below `xl`. Every field `.catch()`es its default, so a stale link falls
+ * back to the full list with no conversation open.
  */
 export const messagesParamsSchema = z.object({
   [MESSAGES_PARAM_KEYS.query]: z.string().max(200).catch(""),

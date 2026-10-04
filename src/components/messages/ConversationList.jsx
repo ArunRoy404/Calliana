@@ -6,12 +6,15 @@ import StaggerList from "@/components/lists/StaggerList";
 import ConversationRow from "@/components/messages/ConversationRow";
 import Reveal from "@/components/motion/Reveal";
 import EmptyMessage from "@/components/tables/EmptyMessage";
+import { cn } from "@/lib/cn";
 
 /**
  * The inbox's left column — Figma 167:51527: the conversation search, the
  * All / Unread / Needs Reply / Resolved filter, then the conversations,
- * scrolling on their own. Search and filter are the URL's (rule 26); the
- * search box commits after a pause, like a table's. Reveals after
+ * scrolling on their own. On a phone it is the whole pane (the thread takes
+ * its place once one is opened), so it fills the height; from `xl` up it is
+ * the first of the three columns. Search and filter are the URL's (rule 26);
+ * the search box commits after a pause, like a table's. Reveals after
  * `revealDelay`, its rows following it in.
  */
 export default function ConversationList({
@@ -24,12 +27,16 @@ export default function ConversationList({
   onFilterChange,
   onOpen,
   revealDelay = 0,
+  className,
 }) {
   return (
     <Reveal
       as="aside"
       delay={revealDelay}
-      className="flex max-h-96 min-h-0 flex-col border-b border-solid border-border-default md:max-h-none md:border-r md:border-b-0"
+      className={cn(
+        "flex min-h-0 flex-1 flex-col xl:border-r xl:border-solid xl:border-border-default",
+        className,
+      )}
     >
       <div className="flex flex-col gap-3 border-b border-solid border-border-default p-3">
         <SearchField

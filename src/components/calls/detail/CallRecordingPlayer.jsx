@@ -35,13 +35,13 @@ export default function CallRecordingPlayer({
 
       <div
         aria-hidden
-        className="flex h-9 min-w-0 flex-1 items-center justify-between gap-px overflow-hidden"
+        className="flex h-9 min-w-0 flex-1 items-center gap-px overflow-hidden"
       >
         {waveform?.bars?.map((height, index) => (
           <span
             key={index}
             style={{ height: `${height}%` }}
-            className="w-0.75 shrink-0 rounded-999 bg-action-primary"
+            className="min-w-[1.5px] flex-1 rounded-999 bg-action-primary"
           />
         ))}
       </div>

@@ -5,11 +5,11 @@
  * `name`s match the keys in `src/schemas/calls/dial-outbound-call.schema.js`.
  */
 export const dialOutboundCallData = {
+  /** The operator's name reads in semibold between the label and extension. */
   header: {
-    icon: { lucide: "Phone", size: 20 },
+    icon: { lucide: "PhoneOutgoing", size: 20 },
     title: "Outbound CTI Softphone & Dialer",
     status: { label: "PBX SIP Online", tone: "success" },
-    /** "Operator: **Marcus Sterling** (Ext. 101)" — the name is emphasised. */
     operatorLabel: "Operator:",
     operator: "Marcus Sterling",
     operatorExtension: "(Ext. 101)",
@@ -22,7 +22,7 @@ export const dialOutboundCallData = {
 
   keypad: {
     clearLabel: "Clear number",
-    clearIcon: { lucide: "Delete", size: 18 },
+    clearIcon: { lucide: "Delete", size: 20 },
     digits: [
       { value: "1", letters: "" },
       { value: "2", letters: "ABC" },
@@ -59,10 +59,22 @@ export const dialOutboundCallData = {
       label: "Client Practice Account",
       placeholder: "Select client…",
       options: [
-        { value: "laura-alegre-clinic", label: "Laura Alegre Clinic (Medical & Dermatology)" },
-        { value: "martinez-dental-care", label: "Martinez Dental Care (Dental Practice)" },
-        { value: "vanguard-wealth-partners", label: "Vanguard Wealth Partners (Financial Advisory)" },
-        { value: "catalunya-tech-legal", label: "Catalunya Tech Legal (Legal Consultancy)" },
+        {
+          value: "laura-alegre-clinic",
+          label: "Laura Alegre Clinic (Medical & Dermatology)",
+        },
+        {
+          value: "martinez-dental-care",
+          label: "Martinez Dental Care (Dental Practice)",
+        },
+        {
+          value: "vanguard-wealth-partners",
+          label: "Vanguard Wealth Partners (Financial Advisory)",
+        },
+        {
+          value: "catalunya-tech-legal",
+          label: "Catalunya Tech Legal (Legal Consultancy)",
+        },
       ],
     },
     callerId: {
@@ -71,7 +83,10 @@ export const dialOutboundCallData = {
       options: [
         { value: "934112000", label: "+34 934 112 000 — Laura Alegre Clinic" },
         { value: "913445220", label: "+34 913 445 220 — Martinez Dental Care" },
-        { value: "918776331", label: "+34 918 776 331 — Vanguard Wealth Partners" },
+        {
+          value: "918776331",
+          label: "+34 918 776 331 — Vanguard Wealth Partners",
+        },
         { value: "932998100", label: "+34 932 998 100 — Catalunya Tech Legal" },
       ],
     },
@@ -79,8 +94,14 @@ export const dialOutboundCallData = {
       name: "purpose",
       label: "Call Purpose / Campaign",
       options: [
-        { value: "appointment-confirmation", label: "Appointment Confirmation" },
-        { value: "appointment-rescheduling", label: "Appointment Rescheduling" },
+        {
+          value: "appointment-confirmation",
+          label: "Appointment Confirmation",
+        },
+        {
+          value: "appointment-rescheduling",
+          label: "Appointment Rescheduling",
+        },
         { value: "billing", label: "Billing Inquiry" },
         { value: "follow-up", label: "Follow-up" },
         { value: "general", label: "General Inquiry" },
@@ -92,21 +113,24 @@ export const dialOutboundCallData = {
     name: "notes",
     label: "Pre-Call Brief / Agenda (Optional)",
     type: "textarea",
-    placeholder: "e.g. Confirming tomorrow’s 10:30 AM appointment and laser preparation checklist…",
+    placeholder:
+      "e.g. Confirming tomorrow’s 10:30 AM appointment and laser preparation checklist…",
   },
 
   autoRecord: {
     name: "autoRecord",
     label: "Auto-Record Outbound Call",
-    icon: { lucide: "Mic", size: 16 },
+    icon: { lucide: "CircleDot", size: 16 },
     iconTone: "error",
   },
 
   contacts: {
     searchLabel: "Search directory",
-    search: { placeholder: "Search directory contacts, clinic patients, or VIPs…" },
+    search: {
+      placeholder: "Search directory contacts, clinic patients, or VIPs…",
+    },
     selectAndDialLabel: "Select & Dial",
-    dialIcon: { lucide: "Phone", size: 14 },
+    dialIcon: { lucide: "Phone", size: 16 },
     options: [
       {
         id: "isabel-gomez",
@@ -136,15 +160,22 @@ export const dialOutboundCallData = {
         phone: "+34 912 334 112",
         account: "Catalunya Tech Legal",
       },
+      {
+        id: "elena-ferrer",
+        name: "Elena Ferrer",
+        tag: "Returning Patient",
+        phone: "+34 678 210 554",
+        account: "Laura Alegre Clinic",
+      },
     ],
   },
 
+  /** No required-fields note: Cancel at the left edge, the call at the right. */
   footer: {
-    requiredMark: "*",
-    requiredNote: "Required fields",
+    split: true,
     cancelLabel: "Cancel",
     submitLabel: "Start Outbound Call",
-    submitIcon: { lucide: "Phone", size: 16 },
+    submitIcon: { lucide: "PhoneCall", size: 16 },
   },
 
   notFunctionalMessage: "Dialer isn’t wired up yet",

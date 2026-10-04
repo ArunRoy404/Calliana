@@ -1,35 +1,42 @@
 "use client";
 
-import ClientInfoDetails from "@/components/messages/ClientInfoDetails";
+import ClientInfoPanel from "@/components/messages/ClientInfoPanel";
 import SidePanel from "@/components/overlays/SidePanel";
 import { useRetainedValue } from "@/hooks/useRetainedValue";
+import { useStoreParams } from "@/hooks/useUrlParams";
+import { notFunctionalProps } from "@/lib/notFunctional";
+import { useMessagesStore } from "@/store/admin/useMessagesStore";
 
 /**
- * The client's details on the shared `SidePanel` — for the widths between
- * `md` and `xl`, where the inbox drops its client-info column. Opened by the
- * thread header's "Client info" button (`?panel=client`, rule 20); the last
- * client stays on screen while the panel slides away.
+ * The open conversation's client, as a drawer — Figma 167:51527. On a phone
+ * the three columns cannot sit side by side, so the client info that is the
+ * third column from `xl` up is reached here instead, from the thread header's
+ * details button (`?panel=info`, rule 20). Built on the shared `SidePanel`,
+ * with the column's own `ClientInfoPanel` in its `panel` variant, and the
+ * last client kept on screen while it slides away.
  */
-export default function ClientInfoDrawer({
-  open,
-  onOpenChange,
-  client,
-  content,
-  notFunctional,
-}) {
-  const shown = useRetainedValue(open ? client : null);
-  const info = content?.clientInfo;
+export default function ClientInfoDrawer() {
+  const params = useStoreParams(useMessagesStore);
+  const conversation = useMessagesStore((state) =>
+    state.selectedConversation(params),
+  );
+  const isOpen = useMessagesStore((state) => state.isClientInfoOpen(params));
+  const setOpen = useMessagesStore((state) => state.setClientInfoOpen);
+  const content = useMessagesStore((state) => state.content);
+
+  const client = useRetainedValue(conversation?.client);
+  const notFunctional = notFunctionalProps(content);
 
   return (
     <SidePanel
-      open={open}
-      onOpenChange={onOpenChange}
-      title={info?.title}
-      subtitle={shown?.name}
+      open={isOpen && Boolean(conversation)}
+      onOpenChange={setOpen}
+      title={content?.clientInfo?.title}
     >
-      <ClientInfoDetails
-        client={shown}
-        info={info}
+      <ClientInfoPanel
+        variant="panel"
+        client={client}
+        content={content}
         notFunctional={notFunctional}
       />
     </SidePanel>

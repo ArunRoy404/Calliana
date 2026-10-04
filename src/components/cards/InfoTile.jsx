@@ -8,15 +8,25 @@ import { TONE_BORDER, TONE_SURFACE } from "@/lib/tones";
  * Alegre"). An optional icon sits in a small white box on the left; the value
  * can be text or a node (a status pill). Reveals after `revealDelay`.
  *
- * - `size` — `md`, or `sm` for a tighter tile with a small-caps label (the
- *   inbox's client info, Figma 167:51527; an appointment's details).
- * - `tone` — tints the tile in a `src/lib/tones.js` tone instead of grey (an
- *   appointment's details, in its event type's colour).
- * - `as` — the root element; `li` inside a `StaggerList`.
+ * `size="sm"` is the compact tile of a narrow side column — tighter padding,
+ * a 12px label over a 14px value (the inbox's client info). `as` sets the
+ * root tag — `li` when the tiles are a `StaggerList`'s rows. `tone` tints
+ * the tile's fill and hairline (an appointment's details in its event
+ * type's green).
  */
 const SIZE_CLASSES = {
-  md: { root: "p-4", body: "gap-2", label: "text-body-md", value: "text-body-lg" },
-  sm: { root: "px-3 py-2", body: "gap-1", label: "text-label-sm", value: "text-body-md" },
+  md: {
+    tile: "p-4",
+    body: "gap-2",
+    label: "text-body-md",
+    value: "text-body-lg",
+  },
+  sm: {
+    tile: "px-3 py-2",
+    body: "gap-1",
+    label: "text-body-sm",
+    value: "text-body-md",
+  },
 };
 
 export default function InfoTile({
@@ -30,7 +40,7 @@ export default function InfoTile({
   revealDelay = 0,
   className,
 }) {
-  const look = SIZE_CLASSES?.[size] ?? SIZE_CLASSES?.md;
+  const sizes = SIZE_CLASSES?.[size] ?? SIZE_CLASSES?.md;
 
   return (
     <Reveal
@@ -38,8 +48,9 @@ export default function InfoTile({
       delay={revealDelay}
       className={cn(
         "flex min-w-0 items-start gap-2 overflow-hidden rounded-4 border border-solid border-border-strong bg-action-secondary",
-        look?.root,
-        tone && [TONE_SURFACE?.[tone], TONE_BORDER?.[tone]],
+        sizes?.tile,
+        TONE_SURFACE?.[tone],
+        TONE_BORDER?.[tone],
         className,
       )}
     >
@@ -49,12 +60,12 @@ export default function InfoTile({
         </span>
       )}
 
-      <div className={cn("flex min-w-0 flex-1 flex-col", look?.body)}>
-        <p className={cn("text-text-secondary", look?.label)}>{label}</p>
+      <div className={cn("flex min-w-0 flex-1 flex-col", sizes?.body)}>
+        <p className={cn(sizes?.label, "text-text-secondary")}>{label}</p>
         <div
           className={cn(
+            sizes?.value,
             "flex min-w-0 items-center truncate text-brand-black",
-            look?.value,
           )}
         >
           {children}

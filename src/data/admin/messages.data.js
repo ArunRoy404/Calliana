@@ -38,9 +38,9 @@ export const messagesData = {
   thread: {
     startedTemplate: "Conversation Started {day}",
     resolveLabel: "Mark Resolved",
-    /** Shown only where the client-info column has no room (`md` to `xl`). */
-    clientInfoLabel: "Client info",
-    clientInfoIcon: { lucide: "PanelRightOpen", size: 16 },
+    /** Phone-only controls in the thread header. */
+    backLabel: "Back to conversations",
+    infoLabel: "Client details",
     separator: "•",
     deliveredIcon: { lucide: "CheckCheck", size: 12 },
     quickActions: [

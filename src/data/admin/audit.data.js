@@ -106,6 +106,9 @@ const OUTCOMES = {
 
 export const auditData = {
   texture: "/admin/table/table-texture.png",
+  tableBreakpoint: "lg",
+  searchClassName: "sm:w-[285px]",
+  toolbarClassName: "flex-nowrap gap-3 overflow-x-auto bg-action-primary",
 
   search: {
     label: "Search the audit log",
@@ -118,27 +121,27 @@ export const auditData = {
       field: "actorRoleKey",
       label: "Filter by user role",
       allValue: "all",
-      options: [{ value: "all", label: "All Users" }, ...AUDIT_ROLE_OPTIONS],
+      options: [{ value: "all", label: "User" }, ...AUDIT_ROLE_OPTIONS],
     },
     {
       param: "action",
       field: "actionCategory",
       label: "Filter by action",
       allValue: "all",
-      options: [{ value: "all", label: "All Actions" }, ...AUDIT_ACTION_OPTIONS],
+      options: [{ value: "all", label: "Action" }, ...AUDIT_ACTION_OPTIONS],
     },
     {
       param: "date",
       field: "dateBucket",
       label: "Filter by date",
       allValue: "all",
-      options: [{ value: "all", label: "All Dates" }, ...AUDIT_DATE_OPTIONS],
+      options: [{ value: "all", label: "Date" }, ...AUDIT_DATE_OPTIONS],
     },
   ],
 
   secondaryAction: {
     label: "Export Compliance Audit",
-    icon: { lucide: "Download", size: 16 },
+    icon: { lucide: "RotateCw", size: 16 },
     notFunctionalMessage: "Exporting isn’t wired up yet",
     notFunctionalDescription: "This action will work once the backend is connected.",
   },

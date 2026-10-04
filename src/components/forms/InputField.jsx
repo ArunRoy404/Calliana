@@ -14,13 +14,12 @@ import { cn } from "@/lib/cn";
  * The reveal toggle is the one piece of local `useState` here: it is purely
  * visual and nothing outside this field could ever need it.
  *
- * `trailingIcon` (`{ src, width, height }` or `{ lucide, size }`, rule 25)
- * sits at the right of the box — the clock on a working-hours time field,
- * Figma 198:32497. A `date` or `time` field opens its native picker from
- * anywhere in the box (rule 32).
+ * `trailingIcon` (an `AssetIcon` descriptor — `{ src }` or `{ lucide }`,
+ * rule 25; a glyph takes the secondary text colour) sits at the right of the box — the
+ * clock on a working-hours time field, Figma 198:32497, or the calendar on a
+ * date field. A `date` or `time` field opens its native picker from anywhere
+ * in the box, and the browser's own indicator gives way to that icon.
  */
-const PICKER_TYPES = ["date", "time"];
-
 const REVEAL_ICON = { src: "/icons/eye-slash.svg", width: 16, height: 16 };
 
 export default function InputField({
@@ -37,7 +36,7 @@ export default function InputField({
   const [isRevealed, setIsRevealed] = useState(false);
 
   const isPassword = type === "password";
-  const isPicker = PICKER_TYPES.includes(type);
+  const isPicker = type === "time" || type === "date";
   const resolvedType = isPassword && isRevealed ? "text" : type;
 
   // Error wins over success; both override the default hairline.
@@ -99,7 +98,7 @@ export default function InputField({
         {trailingIcon && (
           <AssetIcon
             icon={trailingIcon}
-            className="pointer-events-none shrink-0 text-text-tertiary"
+            className="pointer-events-none shrink-0 text-text-secondary"
           />
         )}
       </div>

@@ -20,11 +20,11 @@ import { AVATAR_TONE, DEFAULT_TONE, TONE_DOT } from "@/lib/tones";
  * `status` adds a presence dot in the corner (a tone name — "success" for an
  * available agent), as on the agent panel header, Figma 198:34782.
  *
+ * `maxInitials={1}` shows only the first initial (the dialer's quick
+ * contacts); the default is first and last.
+ *
  * `tone` tints the initials fallback (`AVATAR_TONE` — a note author's chip,
  * Figma 202:30956); without it the fallback is the primary blue.
- *
- * `maxInitials` caps the fallback's letters — `1` for the dialer's
- * single-letter contacts (Figma 202:38997).
  */
 const SIZE_CLASSES = {
   xs: "size-6",

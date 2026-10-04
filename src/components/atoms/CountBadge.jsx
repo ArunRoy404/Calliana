@@ -1,20 +1,12 @@
-import { cn } from "@/lib/cn";
-
 /**
- * A small filled count — a conversation's unread messages (Figma
- * 167:51527). Renders nothing at zero, so a read conversation carries no
- * empty bubble.
+ * A small filled count — an inbox conversation's unread messages. Renders
+ * nothing for zero or no count, so a call site never has to check.
  */
-export default function CountBadge({ count, className }) {
+export default function CountBadge({ count }) {
   if (!count) return null;
 
   return (
-    <span
-      className={cn(
-        "text-label-sm inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-999 bg-action-primary px-1.5 text-text-on-primary",
-        className,
-      )}
-    >
+    <span className="text-label-sm flex h-4 min-w-4 shrink-0 items-center justify-center rounded-999 bg-action-primary px-1 text-text-on-primary">
       {count}
     </span>
   );

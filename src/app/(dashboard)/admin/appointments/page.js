@@ -4,15 +4,17 @@ import AppointmentsCalendar from "@/components/appointments/AppointmentsCalendar
 
 export const metadata = {
   title: "Appointments · Calliana",
-  description: "Book, review and reschedule client appointments.",
+  description:
+    "Coordinate callbacks, doctor consultations and client meetings with live CTI synchronization.",
 };
 
 /**
- * Appointments & Calendar. The shell lives in the layout.
+ * Appointments & Calendar. The shell (sidebar, top bar and its heading)
+ * lives in the layout.
  *
- * The page's state lives in its URL, so it renders per request: a shared link
- * (`?view=week&date=2026-08-13&appointment=…`) arrives on that week with the
- * event's details open.
+ * The calendar's state lives in its URL, so it renders per request: a shared
+ * link (`?view=week&type=clinical&date=2026-08-13`) arrives already on that
+ * range, filter and day.
  */
 export default async function AppointmentsPage() {
   await connection();

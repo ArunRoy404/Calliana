@@ -40,7 +40,7 @@ export default function CalendarEventRow({
       className={cn(
         TONE_SURFACE?.[tone] ?? TONE_SURFACE?.[DEFAULT_TONE],
         TONE_OUTLINE?.[tone] ?? TONE_OUTLINE?.[DEFAULT_TONE],
-        positioned && "absolute inset-x-0.5",
+        positioned && "absolute left-0",
       )}
     >
       <Button variant="plain" size="stack" onClick={() => onOpen?.(event?.id)}>

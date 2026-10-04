@@ -13,17 +13,22 @@ import { cn } from "@/lib/cn";
  * - `divider` — no box or side padding, a rule underneath (messages, 202:30625);
  * - `rounded` — a softer, roomier box (appointments, 202:30717);
  * - `outlined` — a strong-ruled box (a client's tasks, 202:30805);
- * - `compact` — a tight hairline box (support notes, 202:30954);
- * - `listed` — one row of a list that sits in a single bordered box, ruled
- *   between rows (the dialer's quick contacts, 202:38997);
- * - `flush` — no box and no padding, a rule underneath; its content (a row
- *   `Button`) fills it (inbox conversations, 167:51527);
- * - `accent` / `accent-compact` — a tinted strip with a solid left edge, the
- *   caller adding the tone's surface and outline (calendar events: a day
- *   card's, and the tighter one inside a week or month grid).
+ * - `compact` — a tight hairline box (support notes, 202:30954).
+ * - `listed` — one row of a single bordered list, ruled off from the next
+ *   with a hairline and no rule after the last (the dialer's quick contacts);
+ *   the list itself draws the outer box.
+ * - `flush` — a hairline under the row and no padding of its own, for a row
+ *   that is a single full-bleed button (an inbox conversation).
+ * - `accent` — a tinted strip with a 3px rule down its left edge, title over
+ *   subtitle (a calendar event). The caller adds the tone's fill and rule
+ *   colour (`TONE_SURFACE` / `TONE_OUTLINE`).
+ * - `accent-compact` — the same strip sized to its content with a 2px rule,
+ *   for an event inside a calendar grid cell or hour slot.
  *
- * `style` is for geometry that is data, not a class — a calendar event's
- * `top` / `height` in its hour column. Reveals after `revealDelay`.
+ * `style` is for geometry that comes from data (a week event's `top` and
+ * `height` in its hour column) — never for look.
+ *
+ * Reveals after `revealDelay`.
  */
 const VARIANT_CLASSES = {
   boxed:
@@ -38,12 +43,13 @@ const VARIANT_CLASSES = {
     "flex-col items-stretch gap-2 rounded-10 border border-solid border-border-strong bg-surface-base p-3 hover:shadow-card",
   compact:
     "flex-col items-stretch gap-2 rounded-8 border border-solid border-border-default bg-surface-base p-2",
-  listed:
-    "gap-3 border-b border-solid border-border-default bg-surface-base px-4 py-3 last:border-b-0 hover:bg-surface-subtle",
-  flush: "items-stretch border-b border-solid border-border-default",
-  accent: "items-stretch rounded-4 border-l-4 border-solid p-3",
+  flush: "border-b border-solid border-border-default",
+  accent:
+    "flex-col items-stretch gap-1 rounded-4 border-l-[3px] border-solid px-3 py-2",
   "accent-compact":
-    "min-w-0 items-stretch overflow-hidden rounded-4 border-l-2 border-solid px-2 py-1",
+    "w-fit max-w-full flex-col items-start gap-0.5 overflow-hidden rounded-4 border-l-2 border-solid px-2 py-1",
+  listed:
+    "gap-3 border-b border-solid border-border-default bg-surface-base p-4 last:border-b-0",
 };
 
 export default function RowCard({

@@ -73,8 +73,9 @@ function matchesQuery(conversation, needle) {
  * chosen, and choosing one writes its id to the URL (`?conversation=<id>`),
  * so what is on screen is always what the link reopens.
  *
- * Where the client-info column has no room (`md` to `xl`), the same details
- * open in a drawer, `?panel=client`.
+ * The client-details drawer (rule 20) is there too (`?panel=info`): the
+ * phone's way to the third column, which only fits beside the thread from
+ * `xl` up. Choosing a conversation closes it, so the two never disagree.
  */
 export const useMessagesStore = create(() => ({
   content: messagesData,
@@ -99,13 +100,18 @@ export const useMessagesStore = create(() => ({
 
   setQuery: (query) => writeUrlParams({ [QUERY]: query }, { defaults }),
   setFilter: (filter) => writeUrlParams({ [FILTER]: filter }, { defaults }),
-  openConversation: (id) =>
-    writeUrlParams({ [CONVERSATION]: id }, { defaults }),
 
+  /** Choosing a conversation also closes the details drawer. */
+  openConversation: (id) =>
+    writeUrlParams({ [CONVERSATION]: id, [PANEL]: null }, { defaults }),
+  /** The phone's back button: back to the list, drawer closed. */
+  closeConversation: () =>
+    writeUrlParams({ [CONVERSATION]: null, [PANEL]: null }, { defaults }),
+
+  /** The client-details drawer — the phone's way to the third column. */
   isClientInfoOpen: (params) => params?.[PANEL] === CLIENT_INFO_PANEL,
+  openClientInfo: () =>
+    writeUrlParams({ [PANEL]: CLIENT_INFO_PANEL }, { defaults }),
   setClientInfoOpen: (open) =>
-    writeUrlParams(
-      { [PANEL]: open ? CLIENT_INFO_PANEL : null },
-      { defaults },
-    ),
+    writeUrlParams({ [PANEL]: open ? CLIENT_INFO_PANEL : null }, { defaults }),
 }));

@@ -3,6 +3,7 @@ import { extendTailwindMerge } from "tailwind-merge";
 
 import {
   CONTROL_HEIGHT_CLASSES,
+  CONTROL_MIN_HEIGHT_CLASSES,
   CONTROL_SIZE_CLASSES,
   CONTROL_WIDTH_CLASSES,
 } from "@/lib/controls";
@@ -26,6 +27,7 @@ const twMerge = extendTailwindMerge({
       "font-size": TYPOGRAPHY_CLASSES,
       rounded: RADIUS_CLASSES,
       h: CONTROL_HEIGHT_CLASSES,
+      "min-h": CONTROL_MIN_HEIGHT_CLASSES,
       w: CONTROL_WIDTH_CLASSES,
       size: CONTROL_SIZE_CLASSES,
     },

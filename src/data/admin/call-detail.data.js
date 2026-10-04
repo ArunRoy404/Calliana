@@ -1,5 +1,5 @@
 /**
- * Call Details side panel — Figma 202:38997. One shared `sample` (the
+ * Call Details side panel — Figma 202:38997 / 202:39212. One shared `sample` (the
  * recording, summary and timeline copy) is overlaid with each row's own
  * caller, phone, timing and status, the same way `agent-detail.data.js`
  * overlays one sample onto every agent.
@@ -7,9 +7,9 @@
 export const callDetailData = {
   closeLabel: "Close",
 
-  /** The panel's heading, filled from each call by `useCallsStore`. */
-  panelTitleTemplate: "Call Details: {caller}",
-  panelSubtitleTemplate: "{startTime} • Duration {duration}",
+  /** Filled per call by `useCallsStore` from the row's own fields. */
+  titleTemplate: "Call Details: {caller}",
+  subtitleTemplate: "{startTime} • Duration {duration}",
 
   labels: {
     phone: "PHONE",
@@ -19,7 +19,7 @@ export const callDetailData = {
     recordingTitle: "Call Recording Audio",
     summaryTitle: "Call Summary",
     agentNotesTitle: "Operational Agent Notes",
-    triageNotesTitle: "Internal Triage Note",
+    triageNotesTitle: "Internal Triage Note:",
     timelineTitle: "Call Event Timeline",
     editNotes: "Edit Notes",
     playLabel: "Play recording",
@@ -29,34 +29,55 @@ export const callDetailData = {
     { id: "phone", label: "PHONE" },
     { id: "clientAccount", label: "CLIENT ACCOUNT" },
     { id: "assignedAgent", label: "ASSIGNED AGENT" },
-    { id: "purposeTag", label: "PURPOSE TAG", tone: "info" },
+    { id: "purposeTag", label: "PURPOSE TAG", tone: "primary" },
   ],
 
-  playIcon: { lucide: "Play", size: 20 },
-  recordingIcon: { lucide: "AudioLines", size: 16 },
+  playIcon: { lucide: "Play", size: 16 },
+  /**
+   * Beside "Call Recording Audio", in primary blue. lucide stand-in for the
+   * equaliser glyph in the 202:39212 screenshot — a close match, not a
+   * verified Figma export.
+   */
+  recordingIcon: { lucide: "AudioLines", size: 18 },
+  lockIcon: { lucide: "Lock", size: 16 },
 
   /**
-   * The recording's static waveform — each bar's height as a percentage of
-   * the strip. Decorative until real audio exists.
+   * The recording's waveform: one bar per entry, each a percentage of the
+   * player's height, all drawn in primary blue (202:39212).
    */
   waveform: {
     bars: [
-      40, 60, 30, 70, 45, 80, 35, 55, 65, 40, 30, 50, 70, 45, 60, 35, 55, 40,
-      65, 50, 30, 60, 45, 70, 40, 55, 35, 65, 50, 30, 45, 60,
+      35, 45, 60, 45, 35, 30, 28, 28, 30, 48, 62, 50, 32, 28, 25, 22, 20, 22,
+      24, 25, 25, 28, 30, 35, 40, 45, 52, 60, 68, 75, 82, 88, 92, 95, 98, 100,
+      98, 95, 92, 88, 82, 75, 68, 60, 52, 45, 40, 38, 35, 32, 30, 28, 26, 25,
+      24, 23, 22, 22, 21, 20, 20, 20, 21, 22, 23, 24, 25, 26, 28, 30, 32, 35,
+      38, 40, 42, 45, 48, 50, 52, 55, 58, 60, 62, 65, 68, 70, 72, 75, 78, 80,
+      82, 85, 88, 90, 88, 85, 82, 80, 75, 70, 65, 58, 50, 45, 40, 35, 30, 28,
+      28, 32, 40, 48, 55, 62, 68, 72, 70, 65, 58, 50, 45, 40, 35, 30, 35, 45,
+      55, 65, 75, 80, 85, 88, 85, 80, 75, 65, 55, 45, 40, 35,
     ],
   },
-  soundIcon: { lucide: "Volume2", size: 20 },
-  lockIcon: { lucide: "Lock", size: 16 },
 
-  /** `hrefField` makes the left action a real link to the call's client account. */
+  /**
+   * `hrefField` makes the left action a real link to the call's client
+   * account; `className` pushes it to the footer's left edge, away from the
+   * other two (202:39212).
+   */
   footerActions: [
-    { id: "client", label: "Open Client Account", variant: "neutral", hrefField: "clientHref" },
-    { id: "task", label: "Create Task", variant: "outline" },
+    {
+      id: "client",
+      label: "Open Client Account",
+      variant: "neutral",
+      hrefField: "clientHref",
+      className: "mr-auto",
+    },
+    { id: "task", label: "Create Task", variant: "neutral" },
     { id: "appointment", label: "Schedule Appt", variant: "primary" },
   ],
 
   notFunctionalMessage: "Call actions aren’t wired up yet",
-  notFunctionalDescription: "This action will work once the backend is connected.",
+  notFunctionalDescription:
+    "This action will work once the backend is connected.",
 
   sample: {
     purposeTag: "Appointment Rescheduling",
@@ -65,13 +86,15 @@ export const callDetailData = {
       "Patient requested to reschedule her laser dermatology session from Thursday to Friday morning due to work travel.",
     agentNotes:
       "Checked Dr. Alegre Friday calendar. Slot available at 11:30 AM. Patient confirmed.",
-    triageNote: "Patient has Sanitas coverage. Verified authorization code in CRM.",
+    triageNote:
+      "Patient has Sanitas coverage. Verified authorization code in CRM.",
+    /** Marker tones as 202:39212 draws them: green, green, blue, green, amber. */
     timeline: [
       {
         id: "routed",
         label: "Inbound call routed through Medical Queue",
         timestamp: "10:14:02 AM • CTI PBX",
-        tone: "info",
+        tone: "success",
       },
       {
         id: "answered",
@@ -81,15 +104,21 @@ export const callDetailData = {
       },
       {
         id: "matched",
-        label: "Client record matched",
+        label: "Client record matched: Laura Alegre Clinic",
         timestamp: "10:15:30 AM • System",
-        tone: "neutral",
+        tone: "primary",
       },
       {
         id: "updated",
         label: "Calendar slot updated to Friday 11:30 AM",
         timestamp: "10:17:10 AM • Elena Rostova",
         tone: "success",
+      },
+      {
+        id: "rerouted",
+        label: "Inbound call routed through Medical Queue",
+        timestamp: "10:14:02 AM • CTI PBX",
+        tone: "warning",
       },
     ],
   },

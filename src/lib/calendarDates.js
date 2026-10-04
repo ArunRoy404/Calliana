@@ -1,92 +1,109 @@
 /**
- * Calendar-day arithmetic and formatting on ISO date strings (`2026-08-13`)
- * and 24-hour times (`"09:30"`).
+ * Calendar date helpers over ISO day strings (`"2026-08-10"`).
  *
- * Days are plain strings rather than `Date`s so they can sit in the URL and
- * in data files as-is. Every calculation runs in UTC: a calendar day has no
- * time zone, and doing it in local time would let the server render and the
- * browser disagree about which day an event falls on.
+ * Days travel through the URL and the data as plain `YYYY-MM-DD` strings and
+ * all arithmetic runs in UTC, so a day never shifts with the server's or the
+ * viewer's timezone — the server render and the browser always agree on
+ * which day is shown.
  */
 
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const DAY_MS = 24 * 60 * 60 * 1000;
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
-function toDate(iso) {
-  return new Date(`${iso}T00:00:00Z`);
+/** The `Date` (UTC midnight) for an ISO day, or `null` when it isn't one. */
+export function parseIsoDate(iso) {
+  if (!ISO_DAY.test(`${iso ?? ""}`)) return null;
+  const date = new Date(`${iso}T00:00:00Z`);
+  return Number.isNaN(date?.getTime?.()) ? null : date;
 }
 
-function toIso(date) {
-  return date?.toISOString?.()?.slice(0, 10);
+/** Whether `iso` names a real calendar day ("2026-02-30" does not). */
+export function isIsoDate(iso) {
+  const date = parseIsoDate(iso);
+  return Boolean(date) && toIsoDate(date) === iso;
 }
 
-/** Whether `value` is a real `YYYY-MM-DD` day (`2026-02-30` is not). */
-export function isIsoDate(value) {
-  if (!ISO_DATE.test(`${value ?? ""}`)) return false;
-  return toIso(toDate(value)) === value;
+/** The ISO day for a `Date`, read in UTC. */
+export function toIsoDate(date) {
+  if (!date || Number.isNaN(date?.getTime?.())) return "";
+  return date.toISOString().slice(0, 10);
 }
 
-/** Minutes since midnight of an `HH:MM` time — `"09:30"` → 570. */
+/** `iso` moved by `count` days. */
+export function addDays(iso, count = 0) {
+  const date = parseIsoDate(iso);
+  if (!date) return iso;
+  date.setUTCDate(date.getUTCDate() + count);
+  return toIsoDate(date);
+}
+
+/** `iso` moved by `count` months, clamped to the target month's last day. */
+export function addMonths(iso, count = 0) {
+  const date = parseIsoDate(iso);
+  if (!date) return iso;
+  const day = date.getUTCDate();
+  date.setUTCDate(1);
+  date.setUTCMonth(date.getUTCMonth() + count);
+  const lastDay = new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0),
+  ).getUTCDate();
+  date.setUTCDate(Math.min(day, lastDay));
+  return toIsoDate(date);
+}
+
+/** The Sunday that starts `iso`'s week. */
+export function startOfWeek(iso) {
+  const date = parseIsoDate(iso);
+  return date ? addDays(iso, -date.getUTCDay()) : iso;
+}
+
+/** The first day of `iso`'s month. */
+export function startOfMonth(iso) {
+  return `${iso ?? ""}`.slice(0, 8) + "01";
+}
+
+/** The last day of `iso`'s month. */
+export function endOfMonth(iso) {
+  return addDays(addMonths(startOfMonth(iso), 1), -1);
+}
+
+/** Every ISO day from `start` to `end`, inclusive. */
+export function daysBetween(start, end) {
+  const days = [];
+  for (let day = start; day && day <= end; day = addDays(day, 1)) {
+    days.push(day);
+  }
+  return days;
+}
+
+/** Minutes after midnight for a 24-hour `"HH:MM"` time (`"13:30"` → 810). */
 export function minutesOf(time) {
   const [hours, minutes] = `${time ?? ""}`.split(":").map(Number);
   return (hours || 0) * 60 + (minutes || 0);
 }
 
-export function addDays(iso, days) {
-  const date = toDate(iso);
-  date.setUTCDate(date.getUTCDate() + (days ?? 0));
-  return toIso(date);
-}
-
-/** Moves by whole months, keeping the day where the month has it (Jan 31 + 1 → Feb 28). */
-export function addMonths(iso, months) {
-  const date = toDate(iso);
-  const day = date.getUTCDate();
-  date.setUTCDate(1);
-  date.setUTCMonth(date.getUTCMonth() + (months ?? 0));
-  const lastDay = new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0),
-  ).getUTCDate();
-  date.setUTCDate(Math.min(day, lastDay));
-  return toIso(date);
-}
-
-/** The Sunday on or before `iso` — the calendar's weeks start on Sunday. */
-export function startOfWeek(iso) {
-  return addDays(iso, -toDate(iso).getUTCDay());
-}
-
-export function startOfMonth(iso) {
-  return `${iso?.slice?.(0, 7)}-01`;
-}
-
-export function endOfMonth(iso) {
-  return addDays(addMonths(startOfMonth(iso), 1), -1);
-}
-
-/** Every day from `start` to `end`, both included. */
-export function daysBetween(start, end) {
-  const count = Math.round((toDate(end) - toDate(start)) / DAY_MS) + 1;
-  return Array.from({ length: Math.max(count, 0) }, (_, index) =>
-    addDays(start, index),
-  );
-}
-
-/** A day through `Intl.DateTimeFormat` — `options` come from a data file. */
-export function formatIsoDate(iso, options, locale) {
-  return new Intl.DateTimeFormat(locale, { ...options, timeZone: "UTC" }).format(
-    toDate(iso),
-  );
-}
-
-/** An `HH:MM` time through `Intl.DateTimeFormat` — `"13:00"` → "1:00 PM". */
+/** A 24-hour `"HH:MM"` time as a label — `"12:30"` → "12:30 PM" in `en-US`. */
 export function formatTime(time, options, locale) {
   const minutes = minutesOf(time);
-  return new Intl.DateTimeFormat(locale, { ...options, timeZone: "UTC" }).format(
-    new Date(Date.UTC(1970, 0, 1, Math.floor(minutes / 60), minutes % 60)),
-  );
+  return new Intl.DateTimeFormat(locale, {
+    ...options,
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(2000, 0, 1, 0, minutes)));
 }
 
-/** A whole hour (24-hour `hour`) — `13` → "1 PM". */
+/** An hour of the day (0–23) as a label — `13` → "1 PM" in `en-US`. */
 export function formatHour(hour, options, locale) {
-  return formatTime(`${hour}:00`, options, locale);
+  return new Intl.DateTimeFormat(locale, {
+    ...options,
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(2000, 0, 1, hour)));
+}
+
+/** `iso` formatted with `Intl` options, read in UTC so it never shifts. */
+export function formatIsoDate(iso, options, locale) {
+  const date = parseIsoDate(iso);
+  if (!date) return "";
+  return new Intl.DateTimeFormat(locale, {
+    ...options,
+    timeZone: "UTC",
+  }).format(date);
 }

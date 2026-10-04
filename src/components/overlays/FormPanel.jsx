@@ -6,23 +6,25 @@ import SidePanel from "@/components/overlays/SidePanel";
 import { useStoreParams } from "@/hooks/useUrlParams";
 
 /**
- * An add form for a list page — Figma 198:32312 (agent) and 202:31067
- * (client): the form's fields as `children`, and the required-note / Cancel /
- * submit footer.
+ * An add drawer for a list page — Figma 198:32312 (agent) and 202:31067
+ * (client): the shared `SidePanel`, the form's fields as `children`, and the
+ * required-note / Cancel / submit footer.
  *
  * Whether it is open is the list's `?panel=add`, read through `useListStore`
- * (a `createTableStore` store, or any store with `isAddOpen` / `setAddOpen`).
- * The copy and the cancel / submit actions come from `useFormStore` (a
- * `createFormStore` store made with `closePanel`).
+ * (a `createTableStore` store). The copy and the cancel / submit actions come
+ * from `useFormStore` (a `createFormStore` store made with `closePanel`).
  *
- * - `overlay` — `panel` (default), the shared right-edge `SidePanel`; or
- *   `modal`, the centred `Modal`, when the design draws the form
- *   backdrop-centred (the outbound dialer, 202:38997 — rule 30). `variant`
- *   is passed to the `Modal`.
- * - `header` overrides the default title/subtitle block for a form whose
- *   header is its own composition (the dialer's status pill and operator
- *   line) — the same escape hatch `SidePanel` and `Modal` offer.
- * - `className` is for a genuine per-instance width need.
+ * `header` overrides the default title/subtitle block for a drawer whose
+ * header is its own composition (the dialer's status pill and operator
+ * line, 202:38997) rather than plain text — same escape hatch `SidePanel`
+ * itself offers. `className` is for a genuine per-instance width need (the
+ * dialer's keypad-beside-fields layout needs more than the default 700px).
+ *
+ * `overlay` picks the frame: `panel` (default, a right-edge `SidePanel`) or
+ * `modal` (a centred `Modal`, when the design draws the form backdrop-
+ * centred — the outbound dialer, rule 30). `variant` is passed to that frame
+ * (a modal's `sectioned` look). The open state, copy and actions are the
+ * same either way.
  */
 const OVERLAYS = { panel: SidePanel, modal: Modal };
 
@@ -46,12 +48,12 @@ export default function FormPanel({
 
   return (
     <Overlay
+      variant={variant}
       open={isOpen}
       onOpenChange={setOpen}
-      title={content?.title ?? content?.header?.title}
+      title={content?.title}
       subtitle={content?.subtitle}
       header={header}
-      variant={variant}
       className={className}
       footer={
         <FormPanelFooter

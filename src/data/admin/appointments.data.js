@@ -21,8 +21,6 @@ export const appointmentsData = {
     dayNumber: { day: "numeric" },
     hour: { hour: "numeric" },
     time: { hour: "numeric", minute: "2-digit" },
-    /** The details panel's "Scheduled for Mon, Aug 10, 2026 at 8:00 AM". */
-    detail: { weekday: "short", month: "short", day: "numeric", year: "numeric" },
   },
 
   /**

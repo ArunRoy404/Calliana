@@ -91,7 +91,7 @@ function buildDetail(event) {
     timeWindow: fillTemplate(DETAIL?.timeWindowTemplate, { start, end }),
     panelTitle: event?.name ?? event?.title,
     panelSubtitle: fillTemplate(DETAIL?.subtitleTemplate, {
-      date: formatIsoDate(event?.date, FORMATS?.detail, LOCALE),
+      date: event?.date,
       start,
     }),
   };

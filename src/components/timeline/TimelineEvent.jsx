@@ -12,6 +12,7 @@ export default function TimelineEvent({
   event,
   isLast = false,
   emphasis = false,
+  compact = false,
   revealDelay = 0,
 }) {
   const tone = event?.tone ?? DEFAULT_TONE;
@@ -20,12 +21,18 @@ export default function TimelineEvent({
     <Reveal
       as="li"
       delay={revealDelay}
-      className="relative flex gap-4 pb-6 last:pb-0"
+      className={cn(
+        "relative flex gap-4 pb-6 last:pb-0",
+        compact && "gap-2 pb-3",
+      )}
     >
       {!isLast && (
         <span
           aria-hidden
-          className="absolute top-5 bottom-0 left-[9px] w-px bg-border-default"
+          className={cn(
+            "absolute top-5 bottom-0 left-[9px] w-px bg-border-default",
+            compact && "top-4 left-[6px]",
+          )}
         />
       )}
 
@@ -33,12 +40,14 @@ export default function TimelineEvent({
         aria-hidden
         className={cn(
           "relative mt-1 flex size-[18px] shrink-0 items-center justify-center rounded-999 bg-surface-base ring-2",
+          compact && "size-3 ring-1",
           TONE_RING?.[tone] ?? TONE_RING?.[DEFAULT_TONE],
         )}
       >
         <span
           className={cn(
             "size-2 rounded-999",
+            compact && "size-1.5",
             TONE_DOT?.[tone] ?? TONE_DOT?.[DEFAULT_TONE],
           )}
         />
@@ -48,12 +57,23 @@ export default function TimelineEvent({
         <p
           className={cn(
             "text-text-primary",
-            emphasis ? "text-label-lg" : "text-body-md",
+            compact
+              ? "text-[10px] font-semibold leading-3"
+              : emphasis
+                ? "text-label-lg"
+                : "text-body-md",
           )}
         >
           {event?.label}
         </p>
-        <p className="text-body-sm text-text-tertiary">{event?.timestamp}</p>
+        <p
+          className={cn(
+            "text-body-sm text-text-tertiary",
+            compact && "text-[8px] leading-[10px]",
+          )}
+        >
+          {event?.timestamp}
+        </p>
       </div>
     </Reveal>
   );

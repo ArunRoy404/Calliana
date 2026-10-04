@@ -33,17 +33,32 @@ Also binding, in full in AGENTS.md:
 - **Rule 26** — view state (search, filters, page, size, open panel, tab)
   lives in the URL via the `src/lib/url/` service, `useUrlParams` /
   `useTableView` and a Zod params schema; URL-driven pages render per request.
+  Nothing shows as open unless the URL names it — no default selection.
+  A day in the URL is `optionalIsoDateParam` + `lib/calendarDates` (UTC).
 - **Rule 27** — a record with its own design page is a route
   (`/<role>/<list>/[id]`) that 404s unknown ids, keeps its tab in the URL and
   is built from the shared detail pieces.
 - **Rule 28** — assets are stored once (`public/icons/shared/` for shared
   icons); textures go through `TextureLayer`; missing tints become tokens.
 - **Rule 29** — reuse the pieces the calls/tasks/roles/routing/audit/profile/
-  settings build added: `forms/SegmentedFilter` (pill filters),
+  settings build added: `forms/SegmentedFilter` (pill filters; its solid strip
+  wraps on a narrow bar),
   `content.secondaryAction` (a non-add toolbar action), `forms/MultiSelectList`
   / `MultiSelectChips`, the `"user"` cell type, `IconTextCell`'s
   `column.iconField`, `atoms/Switch`, `cards/SettingRow`, `InfoTile`'s
-  `action` prop. A read-only "edit" drawer is only correct when Figma's
+  `action` prop, `DetailSection variant="outlined"` (+ `icon`/`iconTone`/`tone`),
+  `Button size="round"`, `lib/fillTemplate`, `FormPanel overlay="modal"`
+  + `Modal variant="sectioned"`, `Checkbox variant="row"`, `RowCard
+  variant="listed"`, `UserAvatar maxInitials`, and the inbox's `Button`
+  `success`/`row`/`icon`, `SegmentedFilter variant="soft"`, `ActionBar`
+  `size`/`layout`, `InfoTile size="sm"`, `RowCard variant="flush"`,
+  `CountBadge`, `MAIN_FILL_HEIGHT` (every size, rule 33), the calendar's
+  `RowCard variant="accent"`
+  and `TableCard` reused as textured paper, `InfoTile` `tone`, `Button`
+  `plain`/`stack`, any-`AssetIcon` `trailingIcon`, and one overlay scrim
+  (`SCRIM_CLASSES`, `src/lib/overlay.js`). A screen drawn inside the dashboard
+  chrome is built as content only; its top-bar title is data. A read-only
+  "edit" drawer is only correct when Figma's
   values genuinely have no field chrome around them — a bordered,
   select-height box means build a real editable `FormSelect`, not
   `CardField` text.
@@ -59,11 +74,11 @@ Also binding, in full in AGENTS.md:
   "close match, not a verified export."
 - **Rule 32** — a due date or scheduled time is a real `type="date"` /
   `type="time"` field, never free text with a date-shaped placeholder.
-- **Rule 33** — reuse the pieces the calls/messages/appointments build
-  added: `FormPanel overlay="modal"`, `fillTemplate`, `calendarDates` +
-  `optionalIsoDateParam`, `MAIN_FILL_HEIGHT`, the `flush`/`listed`/`accent`
-  `RowCard`s, `CountBadge`, and the new variants on `Button`,
-  `DetailSection`, `InfoTile`, `ActionBar`, `SegmentedFilter`, `Checkbox`.
+- **Rule 33** — a list-and-detail screen collapses to two panes on a phone:
+  the list fills the pane until the URL names a record, then the record takes
+  its place with a back button in its header and its side columns a
+  `SidePanel` from a header button; the container fills the height at every
+  size (`MAIN_FILL_HEIGHT`) and panes hide with `max-xl:hidden`.
 
 <!--
   The project rules live in AGENTS.md and are imported above, so there is exactly

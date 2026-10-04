@@ -9,13 +9,11 @@ import { cn } from "@/lib/cn";
  * A multi-line field — Figma 202:31095 ("Support Instructions / Notes"). The
  * same frame, border and states as `InputField`, taller and resizable only
  * vertically. `bare` drops the label frame for a textarea that sits inside
- * its own card (the notes composer, 202:30951); `bareSize` sets its type —
- * `lg` there, `md` for the inbox's one-line reply box (167:51527).
+ * its own card (the notes composer, 202:30951). A bare box's text is
+ * `bareSize` — `lg` (default, the notes composer) or `md` (the inbox's
+ * one-line reply box).
  */
-const BARE_SIZE_CLASSES = {
-  lg: "text-body-lg text-text-secondary",
-  md: "text-body-md text-text-primary",
-};
+const BARE_SIZE_CLASSES = { lg: "text-body-lg", md: "text-body-md" };
 
 export default function TextAreaField({
   label,
@@ -42,10 +40,8 @@ export default function TextAreaField({
           (error
             ? "border-status-error"
             : "border-border-default focus:border-border-focus"),
-        bare && [
-          "resize-none",
-          BARE_SIZE_CLASSES?.[bareSize] ?? BARE_SIZE_CLASSES?.lg,
-        ],
+        bare && "resize-none text-text-secondary",
+        bare && (BARE_SIZE_CLASSES?.[bareSize] ?? BARE_SIZE_CLASSES?.lg),
         className,
       )}
       {...props}
@@ -55,7 +51,12 @@ export default function TextAreaField({
   if (bare) return textarea;
 
   return (
-    <FieldShell label={label} htmlFor={id} error={error} helperText={helperText}>
+    <FieldShell
+      label={label}
+      htmlFor={id}
+      error={error}
+      helperText={helperText}
+    >
       {textarea}
     </FieldShell>
   );

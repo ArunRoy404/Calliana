@@ -58,7 +58,8 @@ export const addTaskData = {
     name: "description",
     label: "DETAILED DESCRIPTION",
     type: "textarea",
-    placeholder: "Any special handling instructions for agents when calling this client…",
+    placeholder:
+      "Any special handling instructions for agents when calling this client…",
   },
 
   footer: {

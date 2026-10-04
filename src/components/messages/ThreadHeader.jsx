@@ -1,5 +1,5 @@
-import AssetIcon from "@/components/atoms/AssetIcon";
 import Button from "@/components/atoms/Button";
+import Icon from "@/components/atoms/Icon";
 import MetaLine from "@/components/atoms/MetaLine";
 import UserAvatar from "@/components/atoms/UserAvatar";
 
@@ -8,19 +8,30 @@ import UserAvatar from "@/components/atoms/UserAvatar";
  * name and "account • channel", with "Mark Resolved" at the right (no
  * backend yet, so it carries `notFunctional`).
  *
- * Between `md` and `xl`, where the inbox has no client-info column, a
- * "Client info" button sits beside it and calls `onOpenClientInfo` — icon
- * only below `lg`, so the contact's name keeps its room.
+ * Below `xl` it also carries the phone's two controls — back to the list
+ * (`onBack`) and the client-details drawer (`onOpenInfo`); both drop away
+ * once the three columns fit side by side.
  */
 export default function ThreadHeader({
   conversation,
   thread,
   notFunctional,
-  onOpenClientInfo,
+  onBack,
+  onOpenInfo,
 }) {
   return (
-    <header className="flex shrink-0 items-center justify-between gap-4 border-b border-solid border-border-default p-4">
-      <div className="flex min-w-0 items-center gap-3">
+    <header className="flex shrink-0 items-center gap-2 border-b border-solid border-border-default p-3 sm:gap-4 sm:p-4">
+      <Button
+        variant="ghost"
+        size="square"
+        aria-label={thread?.backLabel}
+        onClick={onBack}
+        className="xl:hidden"
+      >
+        <Icon name="ArrowLeft" size={18} />
+      </Button>
+
+      <div className="flex min-w-0 flex-1 items-center gap-3">
         <UserAvatar
           name={conversation?.contactName}
           src={conversation?.avatar}
@@ -37,16 +48,15 @@ export default function ThreadHeader({
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
         <Button
-          variant="neutral"
-          size="xs"
-          aria-label={thread?.clientInfoLabel}
-          onClick={onOpenClientInfo}
-          className="hidden md:flex xl:hidden"
+          variant="ghost"
+          size="square"
+          aria-label={thread?.infoLabel}
+          onClick={onOpenInfo}
+          className="xl:hidden"
         >
-          <AssetIcon icon={thread?.clientInfoIcon} />
-          <span className="hidden lg:inline">{thread?.clientInfoLabel}</span>
+          <Icon name="Info" size={18} />
         </Button>
         <Button variant="success" size="xs" {...notFunctional}>
           {thread?.resolveLabel}

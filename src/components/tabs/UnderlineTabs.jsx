@@ -18,7 +18,9 @@ import {
  * between tabs: `tight` in a side panel, `wide` across a page (198:31249).
  *
  * `variant="pill"` — Figma 202:38997's dialer (DTMF Keypad / Quick Contacts
- * & Speed Dial): a grey rounded strip with the active tab a white pill.
+ * & Speed Dial): a grey rounded strip with the active tab a white pill. The
+ * strip is centred; each panel still spans the full width (`w-full`), or the
+ * centring would shrink it to its content.
  *
  * `tabs` is `[{ id, label, count }]`; `panels` maps each id to its content. A
  * `count` shows in a small ringed chip after the label that takes the tab's
@@ -31,13 +33,13 @@ const SPACING = { tight: "gap-2", wide: "gap-6" };
 const LIST_VARIANT_CLASSES = {
   underline:
     "w-full justify-start overflow-x-auto overflow-y-hidden rounded-none border-b border-solid border-brand-track p-0 [scrollbar-width:none] group-data-[orientation=horizontal]/tabs:h-auto [&::-webkit-scrollbar]:hidden",
-  pill: "w-fit items-center gap-1 rounded-6 border border-solid border-border-default bg-surface-canvas p-1",
+  pill: "w-fit items-center gap-1 rounded-8 border border-solid border-border-default bg-surface-canvas p-1",
 };
 
 const TRIGGER_VARIANT_CLASSES = {
   underline:
     "text-body-lg h-auto flex-none cursor-pointer gap-1 rounded-none border-0 border-b border-solid border-transparent px-2 pb-2 font-normal text-text-tertiary transition-colors duration-200 ease-out after:hidden hover:text-text-secondary data-[state=active]:border-border-focus data-[state=active]:text-action-primary",
-  pill: "text-label-md h-full flex-1 cursor-pointer gap-1 rounded-4 border-0 px-4 py-2 font-medium text-text-secondary shadow-none transition-colors duration-200 ease-out after:hidden hover:text-text-primary data-[state=active]:bg-surface-base data-[state=active]:text-action-primary data-[state=active]:shadow-xs",
+  pill: "text-label-lg h-full flex-1 cursor-pointer gap-1 rounded-6 border-0 px-6 py-2 text-text-secondary shadow-none transition-colors duration-200 ease-out after:hidden hover:text-text-primary data-[state=active]:bg-surface-base data-[state=active]:text-action-primary data-[state=active]:shadow-xs",
 };
 
 export default function UnderlineTabs({
@@ -65,7 +67,10 @@ export default function UnderlineTabs({
           <TabsTrigger
             key={tab?.id}
             value={tab?.id}
-            className={TRIGGER_VARIANT_CLASSES?.[variant] ?? TRIGGER_VARIANT_CLASSES?.underline}
+            className={
+              TRIGGER_VARIANT_CLASSES?.[variant] ??
+              TRIGGER_VARIANT_CLASSES?.underline
+            }
           >
             {tab?.label}
             {tab?.count != null && (
@@ -81,7 +86,7 @@ export default function UnderlineTabs({
         <TabsContent
           key={tab?.id}
           value={tab?.id}
-          className="flex flex-col gap-4"
+          className="flex w-full flex-col gap-4"
         >
           {panels?.[tab?.id]}
         </TabsContent>

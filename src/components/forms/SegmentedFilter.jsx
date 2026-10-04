@@ -1,7 +1,10 @@
 "use client";
 
 import { cn } from "@/lib/cn";
-import { CONTROL_SIZE_HEIGHT } from "@/lib/controls";
+import {
+  CONTROL_MIN_SIZE_HEIGHT,
+  CONTROL_SEGMENT_HEIGHT,
+} from "@/lib/controls";
 
 /**
  * A row of filter options as pill buttons rather than a dropdown — the tasks
@@ -11,23 +14,28 @@ import { CONTROL_SIZE_HEIGHT } from "@/lib/controls";
  * filter (`filter.variant === "segmented"`).
  *
  * `variant`:
- * - `boxed` (default) — options in a hairline box, the active one filled
- *   primary blue;
- * - `soft` — loose pills with no box, the active one a pale blue tint (the
- *   inbox's All / Unread / Needs Reply / Resolved, Figma 167:51527).
+ * - `solid` (default) — a bordered strip, the active option filled primary.
+ *   It wraps when its options outrun the bar, so a long set (tasks' five due
+ *   filters) still fits a phone instead of pushing the page sideways. Each
+ *   option keeps the control's height (`size`) whether its row is alone or
+ *   wrapped.
+ * - `soft` — bare, tighter text options that wrap rather than overflow, the
+ *   active one on a light primary tint (the inbox's All / Unread / Needs
+ *   Reply / Resolved). It has no control height: `size` applies to `solid`.
  */
-const VARIANTS = {
-  boxed: {
-    root: "gap-1 rounded-4 border border-solid border-border-default bg-surface-base p-0.5",
+const VARIANT_CLASSES = {
+  solid: {
+    strip:
+      "flex-wrap rounded-4 border border-solid border-border-default bg-surface-base p-0.5",
     option: "px-3",
     active: "bg-action-primary text-text-on-primary",
-    idle: "text-text-secondary hover:text-text-primary",
+    sized: true,
   },
   soft: {
-    root: "gap-0.5",
-    option: "px-2",
+    strip: "flex-wrap",
+    option: "px-2 py-1",
     active: "bg-surface-selected text-action-primary",
-    idle: "text-text-secondary hover:bg-surface-subtle hover:text-text-primary",
+    sized: false,
   },
 };
 
@@ -35,18 +43,19 @@ export default function SegmentedFilter({
   options = [],
   value,
   onValueChange,
-  variant = "boxed",
   size = "sm",
+  variant = "solid",
   className,
 }) {
-  const look = VARIANTS?.[variant] ?? VARIANTS?.boxed;
+  const classes = VARIANT_CLASSES?.[variant] ?? VARIANT_CLASSES?.solid;
 
   return (
     <div
       className={cn(
-        "flex items-center",
-        look?.root,
-        CONTROL_SIZE_HEIGHT?.[size] ?? CONTROL_SIZE_HEIGHT?.sm,
+        "flex items-center gap-1",
+        classes?.strip,
+        classes?.sized &&
+          (CONTROL_MIN_SIZE_HEIGHT?.[size] ?? CONTROL_MIN_SIZE_HEIGHT?.sm),
         className,
       )}
     >
@@ -59,9 +68,13 @@ export default function SegmentedFilter({
             type="button"
             onClick={() => onValueChange?.(option?.value)}
             className={cn(
-              "text-label-md h-full shrink-0 cursor-pointer rounded-4 whitespace-nowrap transition-colors duration-200 ease-out",
-              look?.option,
-              isActive ? look?.active : look?.idle,
+              "text-label-md shrink-0 cursor-pointer rounded-4 whitespace-nowrap transition-colors duration-200 ease-out",
+              classes?.option,
+              classes?.sized &&
+                (CONTROL_SEGMENT_HEIGHT?.[size] ?? CONTROL_SEGMENT_HEIGHT?.sm),
+              isActive
+                ? classes?.active
+                : "text-text-secondary hover:text-text-primary",
             )}
           >
             {option?.label}

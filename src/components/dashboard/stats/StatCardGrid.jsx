@@ -12,6 +12,7 @@ import { revealDelayAt } from "@/lib/motion";
 const COLUMN_CLASSES = {
   3: "sm:grid-cols-2 xl:grid-cols-3",
   4: "sm:grid-cols-2 xl:grid-cols-4",
+  5: "sm:grid-cols-2 xl:grid-cols-5",
 };
 
 export default function StatCardGrid({

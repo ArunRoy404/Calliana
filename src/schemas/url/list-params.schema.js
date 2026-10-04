@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { TABLE_DEFAULTS } from "@/data/tables/table-defaults.data";
+import { isIsoDate } from "@/lib/calendarDates";
 
 /** The URL key and value of a list page's add drawer: `?panel=add`. */
 export const PANEL_PARAM = "panel";
@@ -70,6 +71,17 @@ export function optionalEnumParam(values = []) {
 }
 
 /**
+ * An optional calendar day (`?date=2026-08-10`); absent, malformed or
+ * impossible ("2026-02-30") reads as `undefined`, so the page falls back to
+ * its own default day.
+ */
+export const optionalIsoDateParam = z
+  .string()
+  .refine((value) => isIsoDate(value))
+  .optional()
+  .catch(undefined);
+
+/**
  * The `filters` a list schema needs, from a data file's filter configs
  * (`[{ param, options: [{ value }] }]`) — so the URL accepts exactly the
  * options the toolbar offers.
@@ -82,9 +94,3 @@ export function filterParamsFrom(filters = []) {
     })) ?? []
   );
 }
-
-/**
- * An optional calendar day (`?date=2026-08-13`), `YYYY-MM-DD` and a real
- * date — `2026-02-30` reads as `undefined` like any other bad value.
- */
-export const optionalIsoDateParam = z.iso.date().optional().catch(undefined);

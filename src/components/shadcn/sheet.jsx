@@ -1,50 +1,41 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { cn } from "@/lib/cn"
-import { XIcon } from "lucide-react"
-import { Dialog as SheetPrimitive } from "radix-ui"
+import * as React from "react";
+import { cn } from "@/lib/cn";
+import { SCRIM_CLASSES } from "@/lib/overlay";
+import { XIcon } from "lucide-react";
+import { Dialog as SheetPrimitive } from "radix-ui";
 
-function Sheet({
-  ...props
-}) {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />
+function Sheet({ ...props }) {
+  return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
 
-function SheetTrigger({
-  ...props
-}) {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
+function SheetTrigger({ ...props }) {
+  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 }
 
-function SheetClose({
-  ...props
-}) {
-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
+function SheetClose({ ...props }) {
+  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />;
 }
 
-function SheetPortal({
-  ...props
-}) {
-  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
+function SheetPortal({ ...props }) {
+  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
 }
 
-function SheetOverlay({
-  className,
-  ...props
-}) {
+function SheetOverlay({ className, ...props }) {
   return (
     <SheetPrimitive.Overlay
       data-slot="sheet-overlay"
       className={cn(
-        // Scrim: the design's ink rather than flat black, and it fades on the
-        // same curve and timing as the panel so the two read as one move.
-        "fixed inset-0 z-50 bg-brand-ink-black/40 backdrop-blur-[2px] ease-reveal data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:duration-[260ms] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:duration-[420ms]",
-        className
+        // Scrim: shared with the dialog through `SCRIM_CLASSES` (the
+        // design's ink, a 6px blur, the panel's own curve and timing) so the
+        // two overlays can never drift apart.
+        SCRIM_CLASSES,
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function SheetContent({
@@ -72,7 +63,7 @@ function SheetContent({
             "inset-x-0 top-0 h-auto border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
           side === "bottom" &&
             "inset-x-0 bottom-0 h-auto border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
-          className
+          className,
         )}
         {...props}
       >
@@ -85,59 +76,47 @@ function SheetContent({
         )}
       </SheetPrimitive.Content>
     </SheetPortal>
-  )
+  );
 }
 
-function SheetHeader({
-  className,
-  ...props
-}) {
+function SheetHeader({ className, ...props }) {
   return (
     <div
       data-slot="sheet-header"
       className={cn("flex flex-col gap-1.5 p-4", className)}
       {...props}
     />
-  )
+  );
 }
 
-function SheetFooter({
-  className,
-  ...props
-}) {
+function SheetFooter({ className, ...props }) {
   return (
     <div
       data-slot="sheet-footer"
       className={cn("mt-auto flex flex-col gap-2 p-4", className)}
       {...props}
     />
-  )
+  );
 }
 
-function SheetTitle({
-  className,
-  ...props
-}) {
+function SheetTitle({ className, ...props }) {
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
       className={cn("font-semibold text-foreground", className)}
       {...props}
     />
-  )
+  );
 }
 
-function SheetDescription({
-  className,
-  ...props
-}) {
+function SheetDescription({ className, ...props }) {
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
       className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
-  )
+  );
 }
 
 export {
@@ -149,4 +128,4 @@ export {
   SheetFooter,
   SheetTitle,
   SheetDescription,
-}
+};
