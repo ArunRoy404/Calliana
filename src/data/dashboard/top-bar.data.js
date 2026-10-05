@@ -54,8 +54,9 @@ const ROLE_HEADINGS = {
     subtitle: "Monitor calls, clients, agents and service activity.",
   },
   agent: {
-    title: "My Workspace",
-    subtitle: "Your live calls, messages and follow-ups.",
+    title: "Dashboard",
+    subtitle:
+      "Welcome back, Iqbal Hasan! Here’s what’s happening with your business today.",
   },
   client: {
     title: "Dashboard Overview",

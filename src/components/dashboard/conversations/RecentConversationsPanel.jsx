@@ -5,8 +5,9 @@ import StaggerList from "@/components/lists/StaggerList";
 
 /**
  * "Recent Conversations" — the inbox's latest threads, one ruled
- * `MessageRow` each (who • channel, when, the last message). "Inbox" opens
- * them all. Reveals after `revealDelay`; its rows follow it in.
+ * `MessageRow` each (who • channel, when, the last message, and where it
+ * stands when the row carries a `status` — the agent dashboard's). The
+ * client home and the agent dashboard both show it. "Inbox" opens them all. Reveals after `revealDelay`; its rows follow it in.
  */
 export default function RecentConversationsPanel({
   conversations,

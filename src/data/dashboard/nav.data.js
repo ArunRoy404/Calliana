@@ -23,11 +23,11 @@ const ROLE_SECTIONS = {
     account: ["profile"],
     system: ["settings"],
   },
+  /** The agent workspace's sidebar — from the agent dashboard design. */
   agent: {
-    overview: ["dashboard"],
-    workspace: ["calls", "voicemail", "messages", "appointments", "tasks"],
-    account: ["clients"],
-    system: ["settings"],
+    main: ["dashboard", "calls", "clients", "messages", "voicemail"],
+    work: ["tasks", "callHistory"],
+    account: ["profile", "settings"],
   },
   /** The client portal's sidebar — Figma CLIENT DASHBAORD (167:24154). */
   client: {
@@ -48,8 +48,8 @@ const ROLE_USERS = {
   },
   agent: {
     user: {
-      name: "Sofía Martínez",
-      email: "s.martinez@virtualsecretary.io",
+      name: "Iqbal Hasan",
+      email: "you@company.com",
       avatar: { src: "/admin/avatar-admin.png", width: 36, height: 36 },
     },
     role: { label: "ROLE :", value: "AGENT" },

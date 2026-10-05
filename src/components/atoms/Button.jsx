@@ -63,8 +63,9 @@ const SIZE_CLASSES = {
   /** Pagers — Figma 198:23014. */
   xs: "text-label-md gap-1 rounded-4 px-2 py-1",
   /** In-row actions — Figma 198:22899. */
+  /** In-row actions keep their label on one line ("Review Log"). */
   compact:
-    "text-body-md gap-1.5 rounded-8 px-3 py-1.5 font-medium leading-[19.5px]",
+    "text-body-md gap-1.5 whitespace-nowrap rounded-8 px-3 py-1.5 font-medium leading-[19.5px]",
   /** A 28px icon-only square — Figma 198:31047 (a page's back button). */
   square: "size-7 shrink-0 rounded-4 p-0",
   /** A filter-bar-height icon-only square — the inbox's send button. */

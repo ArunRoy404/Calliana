@@ -52,14 +52,17 @@ const conversations = messagesData?.conversations?.map(buildConversation) ?? [];
  * Each conversation as a one-line summary — who, which channel, when, and the
  * latest message — in the shape `clients/detail/MessageRow` draws. The client
  * home's "Recent Conversations" lists these rather than a copy of the inbox.
+ * `statusBadge` is where the thread stands; a list that shows it (the agent
+ * dashboard) passes it on as the row's `status`.
  */
-const summaries = conversations.map((conversation) => ({
+export const summaries = conversations.map((conversation) => ({
   id: conversation?.id,
   sender: conversation?.name,
   avatar: conversation?.avatar,
   channel: conversation?.channel,
   time: conversation?.time,
   text: conversation?.preview,
+  statusBadge: messagesData?.statusBadges?.[conversation?.status],
 }));
 
 const conversationsById = new Map(
