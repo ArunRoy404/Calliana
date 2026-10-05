@@ -36,6 +36,8 @@ const SIZE_CLASSES = {
   row: "size-10",
   lg: "size-12",
   xl: "size-14",
+  /** A business profile's header photo. */
+  "2xl": "size-20",
 };
 
 /**
@@ -50,6 +52,7 @@ const INITIALS_CLASSES = {
   row: "text-label-md",
   lg: "text-label-lg",
   xl: "text-[18px] font-bold",
+  "2xl": "text-h3",
 };
 
 /** The `sizes` hint for each avatar size, so next/image fetches a fitting file. */
@@ -61,6 +64,7 @@ const IMAGE_SIZES = {
   row: "40px",
   lg: "48px",
   xl: "56px",
+  "2xl": "80px",
 };
 
 /** The presence dot grows with the avatar; `xl` matches the design's 16px. */
@@ -72,6 +76,7 @@ const STATUS_SIZE = {
   row: "size-2.5",
   lg: "size-3",
   xl: "size-4",
+  "2xl": "size-4",
 };
 
 export default function UserAvatar({

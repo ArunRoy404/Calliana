@@ -18,6 +18,11 @@ import { TONE_BORDER, TONE_SURFACE, TONE_TEXT } from "@/lib/tones";
  *   own padding, so `size` does not apply to it.
  * - `icon` (an `AssetIcon` descriptor) leads the title; `iconTone` colours
  *   just the icon (the call recording's blue equaliser beside a black title).
+ * - `variant="card"` is the outlined card with no rule under its title —
+ *   the contact details drawer's Contact Context, Quick Actions and Recent
+ *   Calls & Appointments. `variant="callout"` is the same card with a small
+ *   caps eyebrow for a title ("IMPORTANT INSTRUCTION FOR AGENTS"); give it
+ *   a `tone` to tint it.
  * - `tone` tints the title. On an `outlined` section it tints the whole card
  *   too — fill, border and rule (202:39212's amber "Internal Triage Note").
  * - `elevated` adds the soft lift the agent performance sections carry
@@ -34,7 +39,20 @@ const VARIANT_CLASSES = {
     header: "pb-3",
     title: "text-body-lg font-semibold",
   },
+  card: {
+    root: "gap-3 rounded-8 border border-solid border-border-default p-4",
+    header: "border-b-0",
+    title: "text-body-lg font-semibold",
+  },
+  callout: {
+    root: "gap-2 rounded-8 border border-solid border-border-default p-4",
+    header: "border-b-0",
+    title: "text-label-sm uppercase",
+  },
 };
+
+/** Variants drawn as their own bordered card, which a `tone` tints whole. */
+const CARD_VARIANTS = new Set(["outlined", "card", "callout"]);
 
 export default function DetailSection({
   title,
@@ -52,7 +70,7 @@ export default function DetailSection({
 }) {
   const hasHeader = title || subtitle || action;
   const variantClasses = VARIANT_CLASSES?.[variant] ?? VARIANT_CLASSES?.plain;
-  const tintsCard = variant === "outlined" && Boolean(tone);
+  const tintsCard = CARD_VARIANTS.has(variant) && Boolean(tone);
 
   return (
     <Reveal

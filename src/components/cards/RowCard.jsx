@@ -25,6 +25,9 @@ import { cn } from "@/lib/cn";
  * - `accent-compact` — the same strip sized to its content with a 2px rule,
  *   for an event inside a calendar grid cell or hour slot.
  *
+ * - `bare` — no box, rule or padding: lines stacked with a small gap, for
+ *   entries a parent card already frames (a contact's recent calls).
+ *
  * `style` is for geometry that comes from data (a week event's `top` and
  * `height` in its hour column) — never for look.
  *
@@ -48,6 +51,7 @@ const VARIANT_CLASSES = {
     "flex-col items-stretch gap-1 rounded-4 border-l-[3px] border-solid px-3 py-2",
   "accent-compact":
     "w-fit max-w-full flex-col items-start gap-0.5 overflow-hidden rounded-4 border-l-2 border-solid px-2 py-1",
+  bare: "flex-col items-stretch gap-2",
   listed:
     "gap-3 border-b border-solid border-border-default bg-surface-base p-4 last:border-b-0",
 };

@@ -16,6 +16,9 @@ const PERIODS = [
 export const reportsData = {
   periods: PERIODS,
 
+  /** The stat row's column count at its widest. */
+  statColumns: 5,
+
   /**
    * One card per metric — the parts that never change with the period. The
    * Messages trend line (`messages.svg`) is the blue export recoloured to
@@ -97,17 +100,104 @@ export const reportsData = {
     max: 80,
     step: 4,
     ticks: [80, 60, 40, 20, 0],
+    separator: "•",
     tooltip: { calls: "CALLS", missed: "MISSED" },
-    tableHeaders: { slot: "Slot", calls: "Calls", missed: "Missed" },
+    columnTitleTemplate: "{day} · {slot}",
+    columnLabelTemplate: "{title}: {calls} calls, {missed} missed",
+    tableHeaders: ["Slot", "Calls", "Missed"],
     slotLabels: ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"],
     days: [
-      { id: "mon", label: "MON", slots: [[14, 4], [28, 8], [44, 20], [60, 36], [60, 36], [48, 28], [36, 12]] },
-      { id: "tue", label: "TUE", slots: [[28, 8], [24, 4], [24, 8], [20, 4], [28, 12], [44, 20], [16, 4]] },
-      { id: "wed", label: "WED", slots: [[20, 4], [44, 20], [60, 36], [60, 36], [60, 32], [44, 24], [48, 20]] },
-      { id: "thu", label: "THU", slots: [[28, 8], [20, 4], [24, 16], [24, 16], [24, 16], [28, 8], [24, 16]] },
-      { id: "fri", label: "FRI", slots: [[44, 16], [44, 24], [48, 28], [55, 50], [40, 12], [52, 40], [28, 4]] },
-      { id: "sat", label: "SAT", slots: [[24, 16], [28, 8], [44, 20], [44, 28], [44, 24], [44, 20], [24, 8]] },
-      { id: "sun", label: "SUN", slots: [[20, 4], [24, 4], [24, 8], [28, 8], [24, 4], [24, 4], [52, 24]] },
+      {
+        id: "mon",
+        label: "MON",
+        slots: [
+          [14, 4],
+          [28, 8],
+          [44, 20],
+          [60, 36],
+          [60, 36],
+          [48, 28],
+          [36, 12],
+        ],
+      },
+      {
+        id: "tue",
+        label: "TUE",
+        slots: [
+          [28, 8],
+          [24, 4],
+          [24, 8],
+          [20, 4],
+          [28, 12],
+          [44, 20],
+          [16, 4],
+        ],
+      },
+      {
+        id: "wed",
+        label: "WED",
+        slots: [
+          [20, 4],
+          [44, 20],
+          [60, 36],
+          [60, 36],
+          [60, 32],
+          [44, 24],
+          [48, 20],
+        ],
+      },
+      {
+        id: "thu",
+        label: "THU",
+        slots: [
+          [28, 8],
+          [20, 4],
+          [24, 16],
+          [24, 16],
+          [24, 16],
+          [28, 8],
+          [24, 16],
+        ],
+      },
+      {
+        id: "fri",
+        label: "FRI",
+        slots: [
+          [44, 16],
+          [44, 24],
+          [48, 28],
+          [55, 50],
+          [40, 12],
+          [52, 40],
+          [28, 4],
+        ],
+      },
+      {
+        id: "sat",
+        label: "SAT",
+        slots: [
+          [24, 16],
+          [28, 8],
+          [44, 20],
+          [44, 28],
+          [44, 24],
+          [44, 20],
+          [24, 8],
+        ],
+      },
+      {
+        id: "sun",
+        label: "SUN",
+        slots: [
+          [20, 4],
+          [24, 4],
+          [24, 8],
+          [28, 8],
+          [24, 4],
+          [24, 4],
+          [52, 24],
+        ],
+      },
     ],
   },
 
@@ -125,7 +215,9 @@ export const reportsData = {
   outcomes: {
     title: "CALLS OUTCOMES",
     description: "How this period's calls ended.",
-    tableHeaders: { outcome: "Outcome", calls: "Calls", share: "Share" },
+    label: "Calls by outcome",
+    tooltip: { calls: "CALLS", share: "SHARE" },
+    tableHeaders: ["Outcome", "Calls", "Share"],
     /** The ring in a 240-unit square: centre radius, stroke width, gap. */
     ring: { size: 240, radius: 92, width: 44, gap: 4 },
     segments: [

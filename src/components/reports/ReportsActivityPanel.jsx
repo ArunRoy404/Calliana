@@ -1,25 +1,20 @@
-"use client";
-
 import PanelCard from "@/components/cards/PanelCard";
 import Timeline from "@/components/timeline/Timeline";
-import { useReportsStore } from "@/store/admin/useReportsStore";
 
-export default function ReportsActivityPanel({ revealDelay = 0 }) {
-  const activity = useReportsStore((state) => state.content?.activity);
-
+/**
+ * The report's activity feed — "Agent Activity" (admin) / "Recent Activity"
+ * (client): the latest events as an emphasised timeline on a banded panel.
+ * `activity` is `{ title, events }`. Reveals after `revealDelay`; its events
+ * follow it in.
+ */
+export default function ReportsActivityPanel({ activity, revealDelay = 0 }) {
   return (
     <PanelCard
+      variant="banded"
       title={activity?.title}
       revealDelay={revealDelay}
-      variant="report"
-      className="h-[258px]"
     >
-      <Timeline
-        events={activity?.events}
-        revealDelay={revealDelay}
-        emphasis
-        compact
-      />
+      <Timeline events={activity?.events} emphasis revealDelay={revealDelay} />
     </PanelCard>
   );
 }

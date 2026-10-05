@@ -80,6 +80,10 @@ const ROLE_PAGES = {
       subtitle:
         "Review calls and messages recorded by your Virtual Secretary team.",
     },
+    contacts: {
+      title: "CONTACTS",
+      subtitle: "Your customers and patients who contact your business.",
+    },
     reports: {
       title: "Reports & Activity",
       subtitle:
