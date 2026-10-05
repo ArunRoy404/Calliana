@@ -18,7 +18,6 @@ export default function TimelineEvent({
   event,
   isLast = false,
   emphasis = false,
-  compact = false,
   separator,
   aside,
   revealDelay = 0,
@@ -29,18 +28,12 @@ export default function TimelineEvent({
     <Reveal
       as="li"
       delay={revealDelay}
-      className={cn(
-        "relative flex gap-4 pb-6 last:pb-0",
-        compact && "gap-2 pb-3",
-      )}
+      className="relative flex gap-4 pb-6 last:pb-0"
     >
       {!isLast && (
         <span
           aria-hidden
-          className={cn(
-            "absolute top-5 bottom-0 left-[9px] w-px bg-border-default",
-            compact && "top-4 left-[6px]",
-          )}
+          className="absolute top-5 bottom-0 left-[9px] w-px bg-border-default"
         />
       )}
 
@@ -48,14 +41,12 @@ export default function TimelineEvent({
         aria-hidden
         className={cn(
           "relative mt-1 flex size-[18px] shrink-0 items-center justify-center rounded-999 bg-surface-base ring-2",
-          compact && "size-3 ring-1",
           TONE_RING?.[tone] ?? TONE_RING?.[DEFAULT_TONE],
         )}
       >
         <span
           className={cn(
             "size-2 rounded-999",
-            compact && "size-1.5",
             TONE_DOT?.[tone] ?? TONE_DOT?.[DEFAULT_TONE],
           )}
         />
@@ -66,11 +57,7 @@ export default function TimelineEvent({
           <p
             className={cn(
               "text-text-primary",
-              compact
-                ? "text-[10px] font-semibold leading-3"
-                : emphasis
-                  ? "text-label-lg"
-                  : "text-body-md",
+              emphasis ? "text-label-lg" : "text-body-md",
             )}
           >
             {event?.label}
@@ -78,12 +65,7 @@ export default function TimelineEvent({
           {event?.meta ? (
             <MetaLine size="sm" separator={separator} items={event?.meta} />
           ) : (
-            <p
-              className={cn(
-                "text-body-sm text-text-tertiary",
-                compact && "text-[8px] leading-[10px]",
-              )}
-            >
+            <p className="text-body-sm text-text-tertiary">
               {event?.timestamp}
             </p>
           )}

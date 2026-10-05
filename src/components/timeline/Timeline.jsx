@@ -13,7 +13,6 @@ import { cn } from "@/lib/cn";
 export default function Timeline({
   events = [],
   emphasis = false,
-  compact = false,
   separator,
   renderAside,
   revealDelay = 0,
@@ -30,7 +29,6 @@ export default function Timeline({
           key={event?.id}
           event={event}
           emphasis={emphasis}
-          compact={compact}
           separator={separator}
           aside={renderAside?.(event)}
           isLast={event?.id === events?.at(-1)?.id}

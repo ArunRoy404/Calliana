@@ -21,6 +21,10 @@ const VARIANT_CLASSES = {
   ghost: "bg-transparent text-text-secondary hover:bg-action-secondary",
   /** An inline action that reads as a link but behaves as a button. */
   link: "bg-transparent text-action-primary hover:opacity-70",
+  /** The same link, underlined — the business profile's "EDIT" and "Edit
+   * Instructions". */
+  underline:
+    "bg-transparent text-action-primary underline underline-offset-2 hover:opacity-70",
   /** Hairline-bordered, for row actions and pagers — Figma 198:22899. */
   outline:
     "border border-solid border-border-default bg-surface-canvas text-text-secondary hover:border-border-strong hover:bg-surface-subtle hover:text-text-primary",

@@ -23,6 +23,10 @@ import { cn } from "@/lib/cn";
  * - a body that scrolls on its own,
  * - an optional `footer` pinned to the bottom.
  *
+ * `closeIcon` picks `OverlayClose`'s look (`text` shows `closeLabel` as a
+ * "Close" button); `ruled={false}` drops the rules under the header and
+ * over the footer, for a drawer whose design has none (contact details).
+ *
  * `title` is always required: with a custom `header` it is still announced to
  * screen readers as the dialog's name.
  */
@@ -34,6 +38,8 @@ export default function SidePanel({
   subtitle,
   header,
   closeLabel = "Close panel",
+  closeIcon,
+  ruled = true,
   footer,
   children,
   className,
@@ -48,7 +54,12 @@ export default function SidePanel({
           className,
         )}
       >
-        <div className="mx-4 flex shrink-0 items-start justify-between gap-4 border-b border-solid border-border-strong pt-6 pb-4 sm:mx-6">
+        <div
+          className={cn(
+            "mx-4 flex shrink-0 items-start justify-between gap-4 pt-6 pb-4 sm:mx-6",
+            ruled && "border-b border-solid border-border-strong",
+          )}
+        >
           <div className="flex min-w-0 flex-1 flex-col">
             {header ?? (
               <div className="flex flex-col gap-2">
@@ -70,7 +81,7 @@ export default function SidePanel({
             )}
           </div>
 
-          <OverlayClose label={closeLabel} />
+          <OverlayClose label={closeLabel} icon={closeIcon} />
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 sm:px-6">
@@ -78,7 +89,12 @@ export default function SidePanel({
         </div>
 
         {footer && (
-          <div className="mx-4 flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-solid border-brand-track pt-4 pb-6 sm:mx-6">
+          <div
+            className={cn(
+              "mx-4 flex shrink-0 flex-wrap items-center justify-end gap-2 pt-4 pb-6 sm:mx-6",
+              ruled && "border-t border-solid border-brand-track",
+            )}
+          >
             {footer}
           </div>
         )}

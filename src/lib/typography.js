@@ -12,6 +12,7 @@ export const TYPOGRAPHY_CLASSES = [
   "text-h2",
   "text-h3",
   "text-h4",
+  "text-h5",
   "text-body-lg",
   "text-body-md",
   "text-body-sm",
