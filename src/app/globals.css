@@ -393,6 +393,12 @@
     line-height: 1.2;
     letter-spacing: 1px;
   } /* Heading/H4 */
+  .text-h5 {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 1px;
+  } /* Heading/H5 — the client settings rows' labels and values */
   .text-body-lg {
     font-size: 16px;
     font-weight: 400;

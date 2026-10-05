@@ -1,9 +1,8 @@
 "use client";
 
-import AssetIcon from "@/components/atoms/AssetIcon";
+import OverlayClose from "@/components/overlays/OverlayClose";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
@@ -25,10 +24,14 @@ import { cn } from "@/lib/cn";
  *   edge to edge, the close button sits in the header, the body scrolls on
  *   its own and the footer is canvas-tinted (the outbound dialer).
  *
+ * Both are 700px wide (shadcn's own `sm:max-w-lg` would cap them at 512)
+ * and close with the shared `OverlayClose`: the circled ⓧ on `inset`, the
+ * bare X on `sectioned`.
+ *
  * `title` is always required: with a custom `header` it is still announced to
  * screen readers as the dialog's name.
  */
-const CLOSE_ICON = { lucide: "X", size: 20 };
+const CLOSE_ICONS = { inset: "circle", sectioned: "plain" };
 
 const VARIANT_CLASSES = {
   inset: {
@@ -59,14 +62,13 @@ export default function Modal({
   className,
 }) {
   const classes = VARIANT_CLASSES?.[variant] ?? VARIANT_CLASSES?.inset;
-  const isSectioned = variant === "sectioned";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        showCloseButton={!isSectioned}
+        showCloseButton={false}
         className={cn(
-          "w-175 max-w-[calc(100%-2rem)]",
+          "w-175 max-w-[calc(100%-2rem)] sm:max-w-175",
           classes?.content,
           className,
         )}
@@ -98,14 +100,10 @@ export default function Modal({
             )}
           </div>
 
-          {isSectioned && (
-            <DialogClose
-              aria-label={closeLabel}
-              className="shrink-0 cursor-pointer rounded-999 text-text-secondary transition-[color,transform] duration-200 ease-reveal hover:rotate-90 hover:text-text-primary focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:outline-none"
-            >
-              <AssetIcon icon={CLOSE_ICON} />
-            </DialogClose>
-          )}
+          <OverlayClose
+            label={closeLabel}
+            icon={CLOSE_ICONS?.[variant] ?? CLOSE_ICONS?.inset}
+          />
         </div>
 
         <div className={cn("flex flex-col gap-4", classes?.body)}>

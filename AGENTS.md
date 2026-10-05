@@ -82,17 +82,18 @@ it rather than letting it grow.
 | `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, AssetIcon, ToneIcon, UserAvatar, StatusBadge, MetaLine, TextLink, IconTile, StatusPill, CountBadge |
 | `components/forms/`          | Inputs and form compositions — FieldShell, InputField, TextAreaField, FormField, StoreField, FormSelect, StoreSelect, FilterSelect, FormSection, TimeRangeField, SearchField, FormOptionsRow |
 | `components/overlays/`       | SidePanel — the one drawer every add/edit/detail panel is built on; FormPanel (an add drawer) and its FormPanelFooter |
-| `components/actions/`        | ActionBar — a record's row of action buttons                   |
+| `components/actions/`        | ActionBar — a record's row of action buttons; PanelLink — a panel header's "Inbox ›" link |
 | `components/lists/`          | StaggerList — a list whose rows reveal one after another       |
 | `components/tabs/`           | UnderlineTabs                                                  |
 | `components/timeline/`       | Timeline and TimelineEvent (audit trail, agent and client activities) |
-| `components/charts/`         | MeterRow and other small data graphics                         |
-| `components/tables/`         | The reusable list screen — TableDirectory (the whole screen), TableCard, TableToolbar, DataTable, TablePagination, TableCardList / TableRowCard (the card view), EmptyMessage, and `cells/` (one renderer per column `type`) |
+| `components/charts/`         | MeterRow, DotMatrixChart / DotMatrixColumn, DonutChart, ChartLegend, ChartTooltip, ChartDataTable |
+| `components/tables/`         | The reusable list screen — TableDirectory (the whole screen), TableCard, TableToolbar, DataTable, TablePagination, TableViews (the table-or-cards switch), TableCardList / TableRowCard (the card view), EmptyMessage, and `cells/` (one renderer per column `type`) |
 | `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard, CardField, DetailSection, InfoTile, InstructionCard, MetricRow, NoticeCard, RowCard, StatFigure, StatTile |
 | `components/agents/`         | Agent compositions — `add/` (AddAgentPanel, AddAgentFields) and `detail/` (AgentDetailPanel, its tabs and rows) |
 | `components/clients/`        | Client compositions — `add/` (AddClientPanel, AddClientFields) and `detail/` (ClientDetailView, its header, tabs and rows) |
 | `components/messages/`       | The inbox — MessagesInbox (the three columns), ConversationList / ConversationRow, ConversationThread with ThreadHeader, MessageBubble and MessageComposer, ClientInfoPanel |
 | `components/appointments/`   | The calendar — AppointmentsCalendar (on `TableCard`), CalendarToolbar, CalendarDayCard (Today), CalendarWeekView (time grid), CalendarMonthView / CalendarMonthCell (month grid), CalendarEventRow, AppointmentDetailPanel, ScheduleAppointmentPanel / ScheduleAppointmentFields |
+| `components/client/`         | The client portal's own compositions, one folder per page — `dashboard/` (ClientDashboard, ClientWelcomeHeader, SecretaryStatusCard — its call, booking and conversation panels are the shared `tables/TablePanel`, `dashboard/bookings/BookingsPanel` and `dashboard/conversations/RecentConversationsPanel`). Not `clients/`, which is the admin's client management |
 | `components/dashboard/`      | Dashboard sections, one folder per feature — `stats/`, `live-calls/`, `attention/`, `agents/`, `audit/` |
 | `components/nav/`            | Sidebar, top bar, account menu and Breadcrumbs                |
 | `components/notifications/`  | Notification popover and its rows                             |
@@ -310,6 +311,14 @@ Controls that sit in a row share one of two heights, set by tokens in
   them with `useTableView(useStore)`, never from store fields.
 - Declare each column once as a named constant and reference it from both
   `columns` and `card`, so the table and card views can never drift.
+- **A row that opens beneath itself** (the client call log's agent note) is
+  data plus one store option, never a hand-built row: the list's
+  `content.expand` (`{ field, title, hint, separator }`) and
+  `createTableStore({ expandKey })` — the open row is a URL key (`?note=<id>`),
+  `toggleRow(id)` opens or closes it, one row at a time. `DataTable` and
+  `TableRowCard` both draw `tables/RowExpansion` and take their click/Enter/
+  Space handling from `src/lib/rowToggle.js`, which leaves a row's own links
+  and buttons alone. A row without that field is simply not expandable.
 
 ## 17. Tables become cards on smaller screens
 
@@ -601,6 +610,86 @@ Reach for these before adding anything similar:
   An exported icon drawn for a dark tile (`/icons/calendar.svg`, near-white)
   is not reused on a white field — use the lucide glyph and say why beside
   the data entry.
+- **The client portal is the same shell, not a second app.** Its sidebar,
+  user card and top-bar heading are data: rows join the catalogue in
+  `nav-items.data.js` (a client-only label is its own entry —
+  `activityReports`, `businessProfile` — never a role check in a
+  component), sections and user in `nav.data.js`, the heading in
+  `top-bar.data.js`. Its pages live under `src/app/(dashboard)/client/`,
+  their compositions in `components/client/<page>/`, their data in
+  `src/data/client/` and stores in `src/store/client/`. A piece the admin
+  already has (stat cards, the calls table, the inbox's conversations) is
+  reused, never redrawn: shared call columns live in
+  `src/data/tables/call-columns.data.js`; the inbox store's `summaries`
+  feed any "recent conversations" list. A client page the design draws the
+  same as an admin one (Messages) is a route rendering the same component
+  (`MessagesInbox`), never a copy; only what differs becomes a prop or data.
+- Replacing a person's photo replaces the one file every page points at
+  (`public/client/avatars/<person>.png`), so the same person never shows two
+  faces. In dev, Next keeps optimised images in `.next/dev/cache/images`;
+  clear it after swapping an image at the same path.
+- **One record set, one source.** A list the client sees in two places (its
+  call log on Calls & Notes and the home's recent calls) comes from one store
+  export (`clientCallRows`) — the home takes the first `recentCount` rows.
+  The home's upcoming bookings are calendar events too, read by id from
+  `appointmentDetailsById` (`useAppointmentsStore`), so each "Open" lands on
+  that booking's drawer; an event type's `tag` is its short list name.
+  A drawer two lists open is shared: `CallDetailPanel` takes the list's
+  `useStore`, and every call list's store spreads `callDetailSlice`
+  (`src/store/calls/callDetailSlice.js`) for `?call=<id>`. A role that words
+  an inner page differently adds it to `ROLE_PAGES` in `top-bar.data.js`,
+  which layers over the shared titles for that role only.
+- The client requests page added: `Button variant="outline-primary"` (white
+  with a primary rule — a row's "…" button) and `TextCell`'s
+  `column.truncate` (one line, ellipsis). A list and its add drawer share
+  their choice lists (`REQUEST_CATEGORIES`, `REQUEST_URGENCIES`,
+  `REQUEST_STATUSES` in `src/data/client/requests.data.js`): the table's
+  badges and filters and the form's selects read the same entries — a
+  category the client cannot raise themselves is marked, not dropped
+  (`requestable`). A button elsewhere that starts the same task links to the
+  list with its drawer open (`/client/requests?panel=add`).
+- The client contacts page added: `SidePanel` `closeIcon="text"` (a
+  bordered "Close" button — `OverlayClose icon="text"`) and `ruled={false}`
+  (no header/footer rules); `DetailSection` `variant="card"` (an outlined
+  card with no rule under its title) and `variant="callout"` (the same with a
+  small-caps eyebrow title — tint it with `tone`, the amber "IMPORTANT
+  INSTRUCTION FOR AGENTS"); `CardField`'s `meta` line; `RowCard
+  variant="bare"`; and a badge status naming its own `variant` (a bare
+  "Inactive" beside tinted "Active" tags). A row's "…" that opens a details
+  drawer is an `onRowAction` calling the store's `open<Record>(row)`, which
+  writes `?<record>=<id>` — the list's own params stay. A toolbar button
+  with no design for its form yet ("Add Contact") is `secondaryAction`, not
+  an empty drawer.
+- The client Business Profile is the admin's profile page, not a copy:
+  `profile/ProfileView` takes a `useStore` made by
+  `store/profile/createProfileStore(data)`, and what differs is data —
+  `user.avatar` / `avatarSize` (`UserAvatar size="2xl"`, 80px) /
+  `subtitle` / `meta`, a field's `editable: false`, `editLinkVariant`
+  (`Button variant="underline"`), `instructions` (which sets working hours
+  beside "Support Instructions for Agents"), `dayToggles` (a `Switch` per
+  day, flipped by `toggleDay`, the day's badge and hours following it) and
+  `elevatedSections`. `WorkingDayRow` takes `hoursIcon` and `action`; a
+  text block on a grey well is `cards/NoteWell` (also inside
+  `InstructionCard`); `InfoTile wrap` lets a long value (an address) wrap
+  on a phone instead of being cut off.
+- Settings are one `settings/SettingsView` over
+  `store/settings/createSettingsStore(data)` (admin and client), with its
+  `ChangePasswordModal` taking the same `useStore`; the shared
+  `setChangePasswordOpen` writes `?modal=` on whichever page is showing.
+  `content.look` picks the density (`standard` — the admin's ruled 16px
+  rows; `large` — the client's 28px `DetailSection titleSize="lg"` titles,
+  unruled `SettingRow size="lg"` rows on the new 18px `text-h5`, 20px
+  underlined "Change"), and a `type: "tiles"` section draws its rows as
+  `InfoTile size="lg"` (the client's display name and email). A
+  `SettingRow`'s label wraps and its control stays at the right. Every
+  `Modal` is 700px and closes with `OverlayClose` (the circled ⓧ inset,
+  the bare X sectioned) — never shadcn's own close or 512px cap.
+- A few rows of a list inside a panel (the client home's recent calls) are
+  `tables/TableViews` — the same table-or-cards switch `TableDirectory`
+  renders, without its toolbar and pager — on `TableCard` paper. A panel
+  header's "see all" link is `actions/PanelLink`. A timeline row with a
+  tag and an action is `Timeline`'s `renderAside(event)`, and an event's
+  `meta` list replaces its timestamp with a `MetaLine`.
 - **The agent workspace is the same shell too.** Its pages live under
   `src/app/(dashboard)/agent/`, compositions in `components/agent/<page>/`
   (not `agents/`, the admin's agent management), data in `src/data/agent/`,
@@ -611,6 +700,14 @@ Reach for these before adding anything similar:
   admin's `callsData`, changing only its filters (`CALL_CLIENT_FILTER` /
   `CALL_STATUS_FILTER` are shared). A one-line client wrapper hands the
   store to the shared view, since a server page cannot pass a hook.
+- The agent's Task & Follow-ups reuses the admin's task rows, columns
+  (`TASK_COLUMNS`) and "Create Operational Task" drawer (`AddTaskPanel
+  useListStore`); its one pill filter reads a list-valued `views` (the due
+  bucket, plus `"mine"` for `MY_AGENT_KEY`'s tasks). `IconTextCell` takes
+  `column.wrap` like `TextCell`. A list shown both as a page and as a
+  dashboard panel (the agent's call history) keeps its table look
+  (`CALL_HISTORY_TABLE`) and rows in one data file; the dashboard store
+  slices the first `recentCount` rows.
 - A record that is a call with more to it (a voicemail) is a row of the
   call log joined with its own fields by the store, never a second copy of
   the caller: the agent's voicemail list maps `callsData.rows` through
@@ -657,6 +754,20 @@ Reach for these before adding anything similar:
   means the field is editable: build it as a real `FormSelect`/`StoreSelect`,
   not `CardField` text. "Read-only for now" is only correct when the source
   itself has no field chrome around the value.
+
+- The reports screens (admin Call Activity & Service Reports, client
+  Reports & Activity) added: `store/reports/createReportsStore(data)` — one
+  store factory both portals use (period in `?period=`, stats, outcomes and
+  every chart's shape built once; a `peak` block in the data adds Peak Call
+  Hours) — rendered by the one `reports/ReportsView`, which takes the store
+  hook as `useStore` behind a one-line client wrapper per portal. Charts
+  are `charts/DotMatrixChart` (`fill` `primary` / `accent`, scrolls inside
+  its own box on a phone), `charts/DonutChart`, `charts/ChartLegend`
+  (`marker` `square` / `ring`, `toneLabels`), every mark wrapped in
+  `charts/ChartTooltip` (hover *and* keyboard focus) and backed by an
+  `sr-only` `charts/ChartDataTable`. A report panel with a solid primary
+  header band is `PanelCard variant="banded"`. shadcn `TooltipContent`
+  takes `showArrow={false}` for a card-style tooltip.
 
 ## 30. Pixel fidelity is mandatory, not "close enough"
 

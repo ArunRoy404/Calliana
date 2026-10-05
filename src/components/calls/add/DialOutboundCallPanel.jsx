@@ -10,10 +10,8 @@ import { useDialOutboundCallFormStore } from "@/store/admin/useDialOutboundCallF
  * "Outbound CTI Softphone & Dialer" — the calls toolbar's primary action, on
  * the shared `FormPanel`. The design draws it backdrop-centred, so it opens
  * as a `sectioned` `Modal` rather than a drawer (rule 30): full-width header
- * and footer bands, the body scrolling between them. It keeps the modal's
- * own 700px width; `sm:max-w-175` only lifts shadcn's narrower 512px cap —
- * a genuine per-instance need (rule 0), since the keypad and context fields
- * sit side by side. Its own header replaces the plain title/subtitle.
+ * and footer bands, the body scrolling between them, at the modal's own
+ * 700px width. Its own header replaces the plain title/subtitle.
  *
  * `useListStore` is the call list it opens from (the admin's by default) —
  * its `?panel=add` opens it.
@@ -30,7 +28,6 @@ export default function DialOutboundCallPanel({
       overlay="modal"
       variant="sectioned"
       header={<DialerHeader content={content} />}
-      className="sm:max-w-175"
     >
       <DialOutboundCallFields />
     </FormPanel>

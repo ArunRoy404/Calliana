@@ -40,6 +40,10 @@ const SHARED = {
       subtitle:
         "Unified multi-channel communications across SMS, Voicemails, and Internal Dispatch.",
     },
+    settings: {
+      title: "Settings",
+      subtitle: "Manage your account preferences.",
+    },
     reports: {
       title: "Call Activity & Service Reports",
       subtitle:
@@ -97,6 +101,18 @@ const ROLE_PAGES = {
     },
   },
   agent: {
+    profile: {
+      title: "Profile",
+      subtitle: "Your personal information and working hours.",
+    },
+    tasks: {
+      title: "TASK & FOLLOW-UPS",
+      subtitle: "Ensure no client commitment or follow-up is forgotten.",
+    },
+    "call-history": {
+      title: "Call History",
+      subtitle: "Every call you have handled, with its outcome and purpose.",
+    },
     voicemail: {
       title: "Voicemail",
       subtitle:

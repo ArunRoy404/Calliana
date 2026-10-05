@@ -26,6 +26,9 @@ export default function AgentDashboard() {
   const conversationRows = useAgentDashboardStore(
     (state) => state.conversationRows,
   );
+  const recentCallRows = useAgentDashboardStore(
+    (state) => state.recentCallRows,
+  );
 
   const panelsStart = revealDelayAt(0, content?.stats?.length ?? 0);
 
@@ -64,7 +67,7 @@ export default function AgentDashboard() {
 
       <TablePanel
         list={content?.callHistory}
-        rows={content?.callHistory?.rows}
+        rows={recentCallRows}
         revealDelay={revealDelayAt(panelsStart, 4)}
       />
     </div>

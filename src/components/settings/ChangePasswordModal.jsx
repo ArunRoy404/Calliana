@@ -4,7 +4,7 @@ import FormPanelFooter from "@/components/overlays/FormPanelFooter";
 import Modal from "@/components/overlays/Modal";
 import StoreField from "@/components/forms/StoreField";
 import Reveal from "@/components/motion/Reveal";
-import { useUrlParams } from "@/hooks/useUrlParams";
+import { useStoreParams } from "@/hooks/useUrlParams";
 import { revealDelayAt } from "@/lib/motion";
 import { useChangePasswordFormStore } from "@/store/admin/useChangePasswordFormStore";
 import { useSettingsStore } from "@/store/admin/useSettingsStore";
@@ -16,13 +16,15 @@ import { useSettingsStore } from "@/store/admin/useSettingsStore";
  * toggles, then Cancel / Update Password from the `FormPanelFooter` every
  * form shares (no required-fields note in this design). Opened from
  * Settings → Change Password, at `?modal=change-password`.
+ *
+ * `useStore` is the settings page it opens from — any `createSettingsStore`
+ * store (the admin's by default, the client portal's too); the form itself
+ * is the one shared password form.
  */
-export default function ChangePasswordModal() {
-  const params = useUrlParams(useSettingsStore((state) => state.paramsSchema));
-  const isOpen = useSettingsStore((state) =>
-    state.isChangePasswordOpen(params),
-  );
-  const setOpen = useSettingsStore((state) => state.setChangePasswordOpen);
+export default function ChangePasswordModal({ useStore = useSettingsStore }) {
+  const params = useStoreParams(useStore);
+  const isOpen = useStore((state) => state.isChangePasswordOpen(params));
+  const setOpen = useStore((state) => state.setChangePasswordOpen);
   const content = useChangePasswordFormStore((state) => state.content);
   const cancel = useChangePasswordFormStore((state) => state.cancel);
   const submitAndClose = useChangePasswordFormStore(

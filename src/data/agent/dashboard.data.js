@@ -1,11 +1,5 @@
-import {
-  CALLER_COLUMN,
-  CLOCK_ICON,
-  DIRECTION_COLUMN,
-  directionOf,
-  DURATION_COLUMN,
-  INBOUND_LABELS,
-} from "@/data/tables/call-columns.data";
+import { CALL_HISTORY_TABLE } from "@/data/agent/call-history.data";
+import { CLOCK_ICON } from "@/data/tables/call-columns.data";
 
 /**
  * The agent workspace's home — "Dashboard", built from the design
@@ -30,12 +24,6 @@ const PRIORITIES = {
   high: { label: "High", tone: "warning" },
   normal: { label: "Normal", tone: "neutral" },
   low: { label: "Low", tone: "info" },
-};
-
-const OUTCOMES = {
-  completed: { label: "Completed", tone: "success" },
-  missed: { label: "Missed", tone: "error" },
-  voicemail: { label: "Voicemail", tone: "warning" },
 };
 
 /* ---- Follow-up queue columns ------------------------------------------ */
@@ -73,60 +61,6 @@ const RESOLVE = {
     { id: "resolve", label: "Resolve", variant: "neutral", props: NOT_WIRED },
   ],
 };
-
-/* ---- Call history columns ---------------------------------------------- */
-
-const CLIENT = { id: "client", label: "CLIENT", type: "text", field: "client" };
-const DATE = { id: "date", label: "DATE", type: "text", field: "date" };
-const TIME = {
-  id: "time",
-  label: "TIME",
-  type: "icon-text",
-  field: "time",
-  icon: CLOCK_ICON,
-};
-const PURPOSE = {
-  id: "purpose",
-  label: "PURPOSE",
-  type: "text",
-  field: "purpose",
-};
-const OUTCOME = {
-  id: "outcome",
-  label: "OUTCOME",
-  type: "badge",
-  field: "outcome",
-  showDot: false,
-  align: "center",
-  headerAlign: "center",
-};
-const CALL_ACTIONS = {
-  id: "action",
-  label: "Action",
-  type: "action",
-  align: "center",
-  headerAlign: "center",
-  actions: [
-    { id: "review", label: "Review Log", variant: "neutral", props: NOT_WIRED },
-    {
-      id: "call",
-      label: "Call back",
-      iconOnly: true,
-      variant: "info",
-      icon: { lucide: "Phone", size: 16 },
-      props: {
-        notFunctional: true,
-        notFunctionalMessage: "Calling isn’t wired up yet",
-        notFunctionalDescription:
-          "Click-to-call will work once Zoiper is connected.",
-      },
-    },
-  ],
-};
-
-/** A call-history row's direction label ("Inbound") and icon. */
-const inbound = directionOf("incoming", INBOUND_LABELS);
-const outbound = directionOf("outgoing", INBOUND_LABELS);
 
 export const agentDashboardData = {
   separator: "•",
@@ -326,79 +260,14 @@ export const agentDashboardData = {
     ],
   },
 
+  /**
+   * The agent's call log (`call-history.data.js`): its table and the
+   * newest rows, which the store takes from the log itself.
+   */
   callHistory: {
+    ...CALL_HISTORY_TABLE,
     title: "Recent Call History",
     link: { label: "View All", href: "/agent/call-history" },
-    texture: "/admin/table/table-texture.png",
     emptyLabel: "No calls yet today.",
-    tableClassName: "min-w-[1280px]",
-    columns: [
-      CALLER_COLUMN,
-      CLIENT,
-      DATE,
-      TIME,
-      DIRECTION_COLUMN,
-      DURATION_COLUMN,
-      PURPOSE,
-      OUTCOME,
-      CALL_ACTIONS,
-    ],
-    card: {
-      title: CALLER_COLUMN,
-      status: OUTCOME,
-      subtitle: CLIENT,
-      fields: [DATE, TIME, DIRECTION_COLUMN, DURATION_COLUMN, PURPOSE],
-      action: CALL_ACTIONS,
-    },
-    rows: [
-      {
-        id: "ramon-torres",
-        caller: "Ramón Torres",
-        phone: "+34 655 112 843",
-        client: "Laura Alegre Clinic",
-        date: "28 Aug 2026",
-        time: "10:42 AM",
-        ...inbound,
-        duration: "4m 18s",
-        purpose: "Appointment Rescheduling",
-        outcome: OUTCOMES.completed,
-      },
-      {
-        id: "isabel-moreno",
-        caller: "Isabel Moreno",
-        phone: "+34 612 334 901",
-        client: "Dental Care Center",
-        date: "28 Aug 2026",
-        time: "10:15 AM",
-        ...inbound,
-        duration: "---",
-        purpose: "Dental Emergency",
-        outcome: OUTCOMES.missed,
-      },
-      {
-        id: "jorge-perez",
-        caller: "Jorge Pérez",
-        phone: "+34 699 557 220",
-        client: "Clínica Bienestar",
-        date: "28 Aug 2026",
-        time: "09:55 AM",
-        ...outbound,
-        duration: "6m 42s",
-        purpose: "Portfolio Inquiry",
-        outcome: OUTCOMES.completed,
-      },
-      {
-        id: "ana-fuentes",
-        caller: "Ana Fuentes",
-        phone: "+34 674 889 002",
-        client: "Fisio Activa",
-        date: "28 Aug 2026",
-        time: "09:30 AM",
-        ...inbound,
-        duration: "1m 12s",
-        purpose: "Pre-Op Confirmation",
-        outcome: OUTCOMES.voicemail,
-      },
-    ],
   },
 };

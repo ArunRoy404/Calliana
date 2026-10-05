@@ -1,8 +1,5 @@
-import { create } from "zustand";
-
 import { profileData } from "@/data/admin/profile.data";
+import { createProfileStore } from "@/store/profile/createProfileStore";
 
-/** The profile page's dummy content. */
-export const useProfileStore = create(() => ({
-  profile: profileData,
-}));
+/** The admin's Profile — the shared profile store over the admin's data. */
+export const useProfileStore = createProfileStore(profileData);

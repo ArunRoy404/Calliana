@@ -25,6 +25,8 @@ import { TONE_BORDER, TONE_SURFACE, TONE_TEXT } from "@/lib/tones";
  *   a `tone` to tint it.
  * - `tone` tints the title. On an `outlined` section it tints the whole card
  *   too — fill, border and rule (202:39212's amber "Internal Triage Note").
+ * - `titleSize="lg"` sets a plain section's title at 28px (`text-h2`) — the
+ *   client settings page's "PROFILE", "NOTIFICATION".
  * - `elevated` adds the soft lift the agent performance sections carry
  *   (202:22821).
  *
@@ -51,6 +53,9 @@ const VARIANT_CLASSES = {
   },
 };
 
+/** A plain section's larger title; `md` keeps the variant's own. */
+const TITLE_SIZES = { lg: "text-h2" };
+
 /** Variants drawn as their own bordered card, which a `tone` tints whole. */
 const CARD_VARIANTS = new Set(["outlined", "card", "callout"]);
 
@@ -62,6 +67,7 @@ export default function DetailSection({
   iconTone,
   tone,
   size = "md",
+  titleSize = "md",
   variant = "plain",
   elevated = false,
   children,
@@ -100,6 +106,7 @@ export default function DetailSection({
                 <h3
                   className={cn(
                     variantClasses?.title,
+                    TITLE_SIZES?.[titleSize],
                     icon && "flex items-center gap-2",
                     TONE_TEXT?.[tone] ?? "text-brand-ink-black",
                   )}

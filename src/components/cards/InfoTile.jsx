@@ -9,10 +9,12 @@ import { TONE_BORDER, TONE_SURFACE } from "@/lib/tones";
  * can be text or a node (a status pill). Reveals after `revealDelay`.
  *
  * `size="sm"` is the compact tile of a narrow side column — tighter padding,
- * a 12px label over a 14px value (the inbox's client info). `as` sets the
+ * a 12px label over a 14px value (the inbox's client info); `size="lg"` a
+ * 20px semibold value (the client settings' display name and email). `as` sets the
  * root tag — `li` when the tiles are a `StaggerList`'s rows. `tone` tints
  * the tile's fill and hairline (an appointment's details in its event
- * type's green).
+ * type's green). `wrap` lets a long value (an address) run onto more
+ * lines instead of being cut off on a narrow screen.
  */
 const SIZE_CLASSES = {
   md: {
@@ -20,6 +22,12 @@ const SIZE_CLASSES = {
     body: "gap-2",
     label: "text-body-md",
     value: "text-body-lg",
+  },
+  lg: {
+    tile: "p-4",
+    body: "gap-2",
+    label: "text-body-md",
+    value: "text-h4",
   },
   sm: {
     tile: "px-3 py-2",
@@ -36,6 +44,7 @@ export default function InfoTile({
   action,
   size = "md",
   tone,
+  wrap = false,
   children,
   revealDelay = 0,
   className,
@@ -65,7 +74,8 @@ export default function InfoTile({
         <div
           className={cn(
             sizes?.value,
-            "flex min-w-0 items-center truncate text-brand-black",
+            "flex min-w-0 items-center text-brand-black",
+            wrap ? "break-words" : "truncate",
           )}
         >
           {children}

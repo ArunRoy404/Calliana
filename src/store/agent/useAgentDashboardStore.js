@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { callHistoryData } from "@/data/agent/call-history.data";
 import { agentDashboardData } from "@/data/agent/dashboard.data";
 import { bookingRows } from "@/store/admin/useAppointmentsStore";
 import { summaries } from "@/store/admin/useMessagesStore";
@@ -44,6 +45,10 @@ const scheduleRows = bookingRows(SCHEDULES?.eventIds, {
   openHrefTemplate: SCHEDULES?.openHrefTemplate,
 });
 
+/** The newest calls of the agent's call log — the Call History page's rows. */
+const recentCallRows =
+  callHistoryData?.rows?.slice(0, callHistoryData?.recentCount) ?? [];
+
 /** The inbox's latest threads, each with where it stands. */
 const conversationRows = summaries.map((summary) => ({
   ...summary,
@@ -61,4 +66,5 @@ export const useAgentDashboardStore = create(() => ({
   headerWaveform,
   scheduleRows,
   conversationRows,
+  recentCallRows,
 }));
