@@ -53,8 +53,8 @@ const ROLE_HEADINGS = {
     subtitle: "Your live calls, messages and follow-ups.",
   },
   client: {
-    title: "Account Overview",
-    subtitle: "Your calls, appointments and service activity.",
+    title: "Dashboard Overview",
+    subtitle: "Here’s what’s happening with Laura Alegre Clinic today.",
   },
 };
 

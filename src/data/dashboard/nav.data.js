@@ -29,11 +29,11 @@ const ROLE_SECTIONS = {
     account: ["clients"],
     system: ["settings"],
   },
+  /** The client portal's sidebar — Figma CLIENT DASHBAORD (167:24154). */
   client: {
-    overview: ["dashboard"],
-    workspace: ["calls", "messages", "appointments"],
-    account: ["reports", "billing"],
-    system: ["settings"],
+    main: ["dashboard", "calls", "messages", "appointments"],
+    management: ["requests", "activityReports", "contacts"],
+    account: ["businessProfile", "settings"],
   },
 };
 
@@ -56,8 +56,8 @@ const ROLE_USERS = {
   },
   client: {
     user: {
-      name: "Clínica Bienestar",
-      email: "ops@clinicabienestar.es",
+      name: "Laura Alegre",
+      email: "l.alegre@lauraalegreclinic.es",
       avatar: { src: "/admin/avatar-admin.png", width: 36, height: 36 },
     },
     role: { label: "ROLE :", value: "CLIENT" },
@@ -86,7 +86,12 @@ const SHARED = {
       path: "preferences",
       icon: "BellRing",
     },
-    { id: "support", label: "Help & Support", path: "support", icon: "LifeBuoy" },
+    {
+      id: "support",
+      label: "Help & Support",
+      path: "support",
+      icon: "LifeBuoy",
+    },
   ],
 };
 

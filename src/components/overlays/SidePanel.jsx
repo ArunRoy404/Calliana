@@ -1,13 +1,12 @@
 "use client";
 
-import AppImage from "@/components/atoms/AppImage";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
   SheetTitle,
 } from "@/components/shadcn/sheet";
+import OverlayClose from "@/components/overlays/OverlayClose";
 import { cn } from "@/lib/cn";
 
 /**
@@ -27,7 +26,6 @@ import { cn } from "@/lib/cn";
  * `title` is always required: with a custom `header` it is still announced to
  * screen readers as the dialog's name.
  */
-const CLOSE_ICON = { src: "/icons/close-circle.svg", width: 24, height: 24 };
 
 export default function SidePanel({
   open,
@@ -72,16 +70,7 @@ export default function SidePanel({
             )}
           </div>
 
-          <SheetClose
-            aria-label={closeLabel}
-            className="shrink-0 cursor-pointer rounded-999 transition-transform duration-200 ease-reveal hover:rotate-90 focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:outline-none"
-          >
-            <AppImage
-              src={CLOSE_ICON.src}
-              width={CLOSE_ICON.width}
-              height={CLOSE_ICON.height}
-            />
-          </SheetClose>
+          <OverlayClose label={closeLabel} />
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto px-4 py-4 sm:px-6">
