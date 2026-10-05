@@ -227,7 +227,8 @@ When told to commit:
 
 Colors, radii, type scale and elevation come from `src/app/globals.css`, which
 mirrors the Figma variables. Never hardcode a hex value in a component. The
-project is **light theme only** — no dark mode, no `dark:` variants.
+project has a light and a dark theme over the same tokens (rule 24) —
+never a `dark:` colour class.
 
 ## 14. Reveal motion: every component reveals itself, parents set the order
 
@@ -420,13 +421,28 @@ in a past conversation is lost.
   `cancel` and `submitAndClose`. With no backend, a valid submit shows the
   not-wired-up toast and closes; it never pretends the action happened.
 
-## 24. Light theme is enforced, not assumed
+## 24. Two themes, one set of tokens
 
-`globals.css` binds `dark:` to a `.dark` class the app never sets
-(`@custom-variant dark`). Without it, Tailwind's `dark:` follows the OS, and
-every `dark:` class shadcn ships switches on for visitors in dark mode — the
-agent panel's active tab lost its colour that way. Never remove that line, and
-never write a `dark:` class.
+The app has a light and a dark theme. Dark mode is the `.dark` class on
+<html>, toggled by the top bar's sun / moon tile (`nav/ThemeToggle`, through
+`src/lib/theme.js`) and remembered per browser; an inline script in the root
+layout (`THEME_INIT_SCRIPT`) restores it before the first paint, so there is
+no light flash, and with no saved choice it follows the operating system.
+
+- **Theme through tokens, never per component.** `globals.css` redefines the
+  same token names under `.dark { … }`; every component already reads tokens,
+  so it switches with no change. Never write a `dark:` colour class — a colour
+  that looks wrong in dark mode is a token to fix (or add) in that block.
+- `dark:` stays bound to the `.dark` class (`@custom-variant dark`), never to
+  the OS setting. shadcn's own `dark:` classes are stripped from
+  `components/shadcn/` when a primitive is added — they target shadcn's
+  palette and would fight ours.
+- The one structural use of `dark:` is a markup swap the server cannot know
+  in advance (the toggle's sun vs. moon), so server and browser render the
+  same markup.
+- A flat light image (a texture) carries `texture-image`; dark mode inverts it
+  in one rule. Exported artwork with baked colours (the spark lines) uses a
+  translucent tint of its own stroke, which reads on both themes.
 
 ## 25. Icons come from data, as assets or lucide
 

@@ -6,17 +6,17 @@
    the overlays simply pop into place. */
 @import "tw-animate-css";
 
-/* Light theme only. Tailwind's default `dark:` follows the OS setting, so
-   every `dark:` class shadcn ships (tabs, select, input…) would switch on for
-   a visitor whose system is in dark mode — the active tab lost its blue that
-   way. Binding the variant to a `.dark` class this app never sets turns all of
-   them off at the root. */
+/* Light and dark themes. Tailwind's default `dark:` follows the OS setting;
+   here it is bound to a `.dark` class on <html> instead, which the top bar's
+   theme toggle sets (and an inline script in the root layout restores before
+   the first paint). Dark mode is the token block `.dark { … }` below — every
+   colour is a token, so components need no `dark:` classes of their own. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ==========================================================================
    CALLIANA — DESIGN TOKENS
    Source: Figma "New Testing Project" (file 9foyDETn5IOj3mfPLg6qQl)
-   Single light theme. This project has no dark mode by design.
+   A light theme (:root) and a dark theme (.dark) over the same token names.
 
    Tokens are declared twice on purpose:
      1. :root  — raw custom properties using the EXACT Figma variable names,
@@ -190,6 +190,85 @@
      ------------------------------------------------------------------ */
   --control-height: 44px;
   --control-height-sm: 36px;
+}
+
+/* ==========================================================================
+   DARK THEME
+   The same token names, redefined for a navy, low-glare workspace — from the
+   agent dashboard's dark design. Set by the `.dark` class on <html>. Only
+   colours and shadows change; sizes, radii and type stay as they are.
+   ========================================================================== */
+.dark {
+  color-scheme: dark;
+
+  --surface-base: #111a2e;
+  --surface-elevated: #16203a;
+  --surface-canvas: #0a1020;
+  --surface-subtle: #1a2440;
+  --surface-selected: #1b2a52;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --text-disabled: #64748b;
+  --text-on-primary: #ffffff;
+
+  --border-default: #243150;
+  --border-strong: #33446b;
+  --border-focus: #5b7ff0;
+
+  --action-primary: #3d68e8;
+  --action-primary-hover: #5b7ff0;
+  --action-secondary: #1a2440;
+  --action-accent: #14b8a6;
+
+  --status-success: #22c55e;
+  --status-success-bg: #0f2a1d;
+  --status-error: #f87171;
+  --status-error-bg: #2c1418;
+  --status-warning: #f59e0b;
+  --status-warning-bg: #2b2010;
+  --status-info: #38bdf8;
+  --status-info-bg: #0b2433;
+
+  --teal-50: #0f2b29;
+  --blue-100: #1b2a52;
+  --surface-otp: #16203a;
+  --text-muted: #94a3b8;
+  --status-success-strong: #22c55e;
+
+  --brand-signal-blue: #7c9bff;
+  --brand-ink-black: #f1f5f9;
+  --brand-navy: #93b4ff;
+  --brand-black: #e2e8f0;
+  --brand-gray: #33446b;
+  --brand-gray-dark: #94a3b8;
+  --brand-border: #243150;
+  --brand-text-black: #f8fafc;
+  --brand-track: #1a2440;
+
+  --tint-red: #3b1518;
+  --tint-red-ink: #fca5a5;
+  --tint-amber: #3a2a10;
+  --tint-amber-ink: #fcd34d;
+  --tint-violet: #2e1a47;
+  --tint-violet-ink: #d8b4fe;
+
+  --elevation-sm: 0 2px 6px -1px rgb(0 0 0 / 0.45);
+  --elevation-card: 0 2px 3px 0 rgb(0 0 0 / 0.4);
+}
+
+/* The textures (table circuitry, card grain, the sidebar's wash) are flat
+   light photos. Inverted in the dark theme, light grain becomes dark grain at
+   the same strength instead of a grey slab. */
+.dark .texture-image {
+  filter: invert(1);
+}
+
+/* The auth screens' pale glows read as white blobs on navy; in the dark
+   theme they become a faint wash. */
+.dark .decor-glow {
+  opacity: 0.12;
 }
 
 /* ==========================================================================

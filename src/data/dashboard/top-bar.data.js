@@ -19,7 +19,7 @@ const SHARED = {
     label: "Zoiper connected",
     icon: { src: "/icons/signal.svg", width: 24, height: 24 },
   },
-  appearance: { label: "Light mode" },
+  appearance: { label: "Toggle dark mode" },
   texture: "/admin/sidebar-texture.png",
   pages: {
     agents: {

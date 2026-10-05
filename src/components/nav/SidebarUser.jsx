@@ -26,7 +26,7 @@ export default function SidebarUser({ nav }) {
               src={nav?.textures?.user}
               fill
               sizes={SIDEBAR_IMAGE_SIZES}
-              className="pointer-events-none object-cover opacity-10 backdrop-blur-[15px]"
+              className="texture-image pointer-events-none object-cover opacity-10 backdrop-blur-[15px]"
             />
           )}
 

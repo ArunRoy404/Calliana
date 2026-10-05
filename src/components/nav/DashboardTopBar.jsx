@@ -5,6 +5,7 @@ import { useSelectedLayoutSegments } from "next/navigation";
 import AppImage from "@/components/atoms/AppImage";
 import Icon from "@/components/atoms/Icon";
 import SearchField from "@/components/forms/SearchField";
+import ThemeToggle from "@/components/nav/ThemeToggle";
 import TopBarTile from "@/components/nav/TopBarTile";
 import NotificationsBell from "@/components/notifications/NotificationsBell";
 import { SidebarTrigger } from "@/components/shadcn/sidebar";
@@ -43,7 +44,7 @@ export default function DashboardTopBar({ role }) {
           src={topBar?.texture}
           fill
           sizes="100vw"
-          className="pointer-events-none object-cover opacity-10"
+          className="texture-image pointer-events-none object-cover opacity-10"
         />
       )}
 
@@ -95,14 +96,10 @@ export default function DashboardTopBar({ role }) {
           />
         </TopBarTile>
 
-        <TopBarTile
-          as="button"
-          type="button"
+        <ThemeToggle
           label={topBar?.appearance?.label}
           className="hidden border-border-strong md:flex"
-        >
-          <Icon name="Sun" size={24} className="text-action-primary" />
-        </TopBarTile>
+        />
       </div>
     </header>
   );

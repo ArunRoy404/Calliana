@@ -28,8 +28,9 @@ Also binding, in full in AGENTS.md:
 - **Rule 23** — forms: fields sit in `FieldShell`, bound with `StoreField` /
   `StoreSelect`; state is `createFormStore` + a Zod schema; submit/cancel are
   store actions.
-- **Rule 24** — light theme only, enforced by `@custom-variant dark` in
-  `globals.css`; never write a `dark:` class.
+- **Rule 24** — light and dark themes over one token set: `.dark` on <html>
+  (top-bar `ThemeToggle`, `lib/theme.js`, no-flash init script) redefines the
+  tokens in `globals.css`; never write a `dark:` colour class.
 - **Rule 25** — icons are data (`{ src }` asset or `{ lucide }`) rendered by
   `AssetIcon`; broken Figma exports fall back to lucide.
 - **Rule 26** — view state (search, filters, page, size, open panel, tab)
