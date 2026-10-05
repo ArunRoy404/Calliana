@@ -40,6 +40,11 @@ const SHARED = {
       subtitle:
         "Unified multi-channel communications across SMS, Voicemails, and Internal Dispatch.",
     },
+    reports: {
+      title: "Call Activity & Service Reports",
+      subtitle:
+        "Visual analytics on telephony answer rates, peak calling hours, and appointment conversion.",
+    },
   },
 };
 
@@ -74,6 +79,11 @@ const ROLE_PAGES = {
       title: "Calls & Notes",
       subtitle:
         "Review calls and messages recorded by your Virtual Secretary team.",
+    },
+    reports: {
+      title: "Reports & Activity",
+      subtitle:
+        "Your call volume, outcomes and busiest hours, handled by your Virtual Secretary team.",
     },
   },
 };

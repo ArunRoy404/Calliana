@@ -31,9 +31,9 @@ export const scheduleAppointmentData = {
       label: "APPOINTMENT TYPE",
       options: [
         { value: "clinical", label: "Doctor / Clinic Appointment" },
-        { value: "callback", label: "Doctor Callback" },
-        { value: "advisory", label: "Advisory Consultation" },
-        { value: "follow-up", label: "Client Follow-up" },
+        { value: "callback", label: "Urgent Callback" },
+        { value: "advisory", label: "Consultation Session" },
+        { value: "follow-up", label: "Post-Care Follow-up" },
       ],
     },
   },

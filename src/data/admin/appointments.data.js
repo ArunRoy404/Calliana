@@ -59,16 +59,37 @@ export const appointmentsData = {
 
   /**
    * `value`s are the URL's `?type=`; the first ("all") is the default. Each
-   * type's `tone` tints its events (`src/lib/tones.js`).
+   * type's `tone` tints its events (`src/lib/tones.js`); its `tag` is the
+   * short name a booking list shows beside an event (the client home).
    */
   eventTypes: {
     label: "Event type",
     options: [
       { value: "all", label: "All Event Types" },
-      { value: "clinical", label: "Clinical Appointments", tone: "success" },
-      { value: "callback", label: "Doctor Callbacks", tone: "warning" },
-      { value: "advisory", label: "Advisory Consultations", tone: "primary" },
-      { value: "follow-up", label: "Follow-ups", tone: "info" },
+      {
+        value: "clinical",
+        label: "Clinical Appointments",
+        tag: "Appointment",
+        tone: "success",
+      },
+      {
+        value: "callback",
+        label: "Doctor Callbacks",
+        tag: "Callback",
+        tone: "warning",
+      },
+      {
+        value: "advisory",
+        label: "Advisory Consultations",
+        tag: "Consultation",
+        tone: "primary",
+      },
+      {
+        value: "follow-up",
+        label: "Follow-ups",
+        tag: "Follow-up",
+        tone: "info",
+      },
     ],
   },
 
@@ -120,6 +141,57 @@ export const appointmentsData = {
    * them, on the real calendar (Aug 10, 2026 is a Monday).
    */
   events: [
+    /* The client home's upcoming bookings — the same events, not a copy. */
+    {
+      id: "post-op-carmen",
+      date: "2026-08-28",
+      start: "09:30",
+      end: "10:00",
+      type: "clinical",
+      title: "Post-Op Follow-up Consultation",
+      subtitle: "Laura Alegre Clinic",
+      contactPerson: "Carmen Vidal",
+    },
+    {
+      id: "intake-fernando",
+      date: "2026-08-28",
+      start: "10:30",
+      end: "11:00",
+      type: "callback",
+      title: "New Patient Intake Assessment",
+      subtitle: "Laura Alegre Clinic",
+      contactPerson: "Fernando Morales",
+    },
+    {
+      id: "portfolio-briefing",
+      date: "2026-08-29",
+      start: "09:30",
+      end: "10:30",
+      type: "advisory",
+      title: "Portfolio Review Briefing",
+      subtitle: "Vanguard Wealth Partners",
+      contactPerson: "Alejandro Cruz",
+    },
+    {
+      id: "post-op-laura",
+      date: "2026-08-31",
+      start: "15:30",
+      end: "16:00",
+      type: "clinical",
+      title: "Post-Op Follow-up Consultation",
+      subtitle: "Laura Alegre Clinic",
+      contactPerson: "Carmen Vidal",
+    },
+    {
+      id: "patent-review",
+      date: "2026-09-01",
+      start: "11:30",
+      end: "12:30",
+      type: "follow-up",
+      title: "IP & Patent Filing Review",
+      subtitle: "Catalunya Tech Legal",
+      contactPerson: "Nuria Plug",
+    },
     {
       id: "martinez-emergency-inspection",
       date: "2026-08-28",

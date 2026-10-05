@@ -41,6 +41,14 @@ const HOURS = appointmentsData?.weekHours;
 const WINDOW_START = (HOURS?.start ?? 0) * 60;
 const WINDOW_MINUTES = ((HOURS?.end ?? 24) - (HOURS?.start ?? 0)) * 60;
 
+/** Each event type's short tag ("Appointment", "Callback"…). */
+const TYPE_TAGS = Object.fromEntries(
+  appointmentsData?.eventTypes?.options?.map((option) => [
+    option?.value,
+    option?.tag,
+  ]) ?? [],
+);
+
 /** Each event type's tone, so an event carries the colour of its type. */
 const TYPE_TONES = Object.fromEntries(
   appointmentsData?.eventTypes?.options?.map((option) => [
@@ -88,6 +96,8 @@ function buildDetail(event) {
     ...DETAIL?.sample,
     ...event,
     client: event?.subtitle,
+    startLabel: start,
+    typeTag: TYPE_TAGS?.[event?.type],
     timeWindow: fillTemplate(DETAIL?.timeWindowTemplate, { start, end }),
     panelTitle: event?.name ?? event?.title,
     panelSubtitle: fillTemplate(DETAIL?.subtitleTemplate, {
@@ -97,8 +107,12 @@ function buildDetail(event) {
   };
 }
 
-/** Built once, so a selector returns the same object every time. */
-const detailsById = new Map(
+/**
+ * Built once, so a selector returns the same object every time. Exported
+ * so another page listing bookings (the client home's upcoming
+ * appointments) reads these same events rather than a copy.
+ */
+export const appointmentDetailsById = new Map(
   events.map((event) => [event?.id, buildDetail(event)]),
 );
 
@@ -187,7 +201,7 @@ export const useAppointmentsStore = create(() => ({
   paramsSchema: appointmentsParamsSchema,
 
   selectedAppointment: (params) =>
-    detailsById.get(params?.[APPOINTMENT]) ?? null,
+    appointmentDetailsById.get(params?.[APPOINTMENT]) ?? null,
   openAppointment: (id) =>
     writeUrlParams({ [APPOINTMENT]: id, [PANEL]: null }, { defaults }),
   setDetailOpen: (open) => {
