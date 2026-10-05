@@ -38,14 +38,29 @@ export const NAV_ITEMS = {
   roles: { label: "USER & ROLES", icon: "roles", path: "roles" },
   routing: { label: "CALL ROUTING", icon: "routing", path: "routing" },
   reports: { label: "REPORTS", icon: "reports", path: "reports" },
+  /** The client's own reports page, named for what it shows them. */
+  activityReports: {
+    label: "REPORTS & ACTIVITY",
+    icon: "reports",
+    path: "reports",
+  },
+  requests: { label: "REQUESTS", icon: "requests", path: "requests" },
+  contacts: { label: "CONTACTS", icon: "clients", path: "contacts" },
   audit: { label: "AUDIT LOG", icon: "audit", path: "audit" },
   billing: { label: "BILLING", icon: "billing", path: "billing" },
   profile: { label: "PROFILE", icon: "profile", path: "profile" },
+  /** A client's profile is their business's, at the same `profile` path. */
+  businessProfile: {
+    label: "BUSINESS PROFILE",
+    icon: "profile",
+    path: "profile",
+  },
   settings: { label: "SETTINGS", icon: "settings", path: "settings" },
 };
 
 /** Section headings, so a role names a section rather than spelling one. */
 export const NAV_SECTIONS = {
+  main: "MAIN",
   overview: "OVERVIEW",
   operation: "OPERATION",
   management: "MANAGEMENT",
