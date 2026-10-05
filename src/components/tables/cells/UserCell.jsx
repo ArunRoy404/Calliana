@@ -11,7 +11,9 @@ export default function UserCell({ column, row }) {
   return (
     <span className="flex min-w-0 flex-1 items-center gap-2">
       <UserAvatar name={name} src={row?.[column?.avatarField]} size="chip" />
-      <span className="text-label-md min-w-0 truncate text-text-primary">{name}</span>
+      <span className="text-label-md min-w-0 truncate text-text-primary">
+        {name}
+      </span>
     </span>
   );
 }

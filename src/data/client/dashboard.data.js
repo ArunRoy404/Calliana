@@ -28,6 +28,7 @@ export const clientDashboardData = {
     action: {
       label: "Submit Instruction/Request",
       icon: { lucide: "Plus", size: 16 },
+      href: "/client/requests?panel=add",
     },
   },
 
@@ -136,49 +137,24 @@ export const clientDashboardData = {
     },
   },
 
-  /** Each booking's marker `tone`, its type `tag` and its `meta` line. */
+  /**
+   * The next bookings — events from the calendar itself, so each "Open"
+   * opens that booking's own details drawer there. A booking's marker and
+   * tag take its event type's tone and short name.
+   */
   appointments: {
     title: "UPCOMING APPOINTMENTS",
     subtitle: "Bookings scheduled by your secretary",
     link: { label: "View Calendar", href: "/client/appointments" },
     openLabel: "Open",
     openHrefTemplate: "/client/appointments?appointment={id}",
-    events: [
-      {
-        id: "post-op-carmen",
-        label: "Post-Op Follow-up Consultation",
-        meta: ["Carmen Vidal", "09:30 AM", "2026-08-28"],
-        tone: "success",
-        tag: { label: "Appointment", tone: "primary" },
-      },
-      {
-        id: "intake-fernando",
-        label: "New Patient Intake Assessment",
-        meta: ["Fernando Morales", "2026-08-28", "09:30 AM"],
-        tone: "success",
-        tag: { label: "Callback", tone: "warning" },
-      },
-      {
-        id: "portfolio-briefing",
-        label: "Portfolio Review Briefing",
-        meta: ["Vanguard Wealth Partners", "Alejandro Cruz", "09:30 AM"],
-        tone: "primary",
-        tag: { label: "Consultation", tone: "primary" },
-      },
-      {
-        id: "post-op-laura",
-        label: "Post-Op Follow-up Consultation",
-        meta: ["Laura Alegre Clinic", "Carmen Vidal", "03:30 AM"],
-        tone: "success",
-        tag: { label: "Appointment", tone: "primary" },
-      },
-      {
-        id: "patent-review",
-        label: "IP & Patent Filing Review",
-        meta: ["Catalunya Tech Legal", "Nuria Plug", "11:30 AM"],
-        tone: "warning",
-        tag: { label: "Follow-up", tone: "primary" },
-      },
+    /** Calendar events (`src/data/admin/appointments.data.js`), in order. */
+    upcomingIds: [
+      "post-op-carmen",
+      "intake-fernando",
+      "portfolio-briefing",
+      "post-op-laura",
+      "patent-review",
     ],
   },
 
@@ -187,8 +163,4 @@ export const clientDashboardData = {
     subtitle: "Incoming client inquiries across channels",
     link: { label: "Inbox", href: "/client/messages" },
   },
-
-  notFunctionalMessage: "Requests aren’t wired up yet",
-  notFunctionalDescription:
-    "Submitting instructions will work once the backend is connected.",
 };

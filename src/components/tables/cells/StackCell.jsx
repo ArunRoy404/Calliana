@@ -33,7 +33,8 @@ export default function StackCell({ column, row }) {
         <span
           className={cn(
             "text-label-sm truncate",
-            SECONDARY_COLOR_CLASSES?.[column?.secondaryColor] ?? SECONDARY_COLOR_CLASSES?.info,
+            SECONDARY_COLOR_CLASSES?.[column?.secondaryColor] ??
+              SECONDARY_COLOR_CLASSES?.info,
           )}
         >
           {row?.[column?.secondary]}

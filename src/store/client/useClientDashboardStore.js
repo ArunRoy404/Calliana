@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { clientCallsData } from "@/data/client/calls.data";
 import { clientDashboardData } from "@/data/client/dashboard.data";
 import { fillTemplate } from "@/lib/fillTemplate";
+import { appointmentDetailsById } from "@/store/admin/useAppointmentsStore";
 import { clientCallRows } from "@/store/client/useClientCallsStore";
 
 const APPOINTMENTS = clientDashboardData?.appointments;
@@ -16,12 +17,23 @@ const inboundCallRows = clientCallRows.slice(
   clientCallsData?.recentCount ?? clientCallRows.length,
 );
 
-/** Each upcoming booking with the link its "Open" button follows. */
+/**
+ * The upcoming bookings, read from the calendar's own events: each one's
+ * title, "who • when" line, type tone and tag, and the link its "Open"
+ * follows (its details drawer on the client calendar).
+ */
 const appointmentEvents =
-  APPOINTMENTS?.events?.map((event) => ({
-    ...event,
-    openHref: fillTemplate(APPOINTMENTS?.openHrefTemplate, event),
-  })) ?? [];
+  APPOINTMENTS?.upcomingIds
+    ?.map((id) => appointmentDetailsById.get(id))
+    ?.filter(Boolean)
+    ?.map((event) => ({
+      id: event?.id,
+      label: event?.panelTitle,
+      meta: [event?.contactPerson, event?.startLabel, event?.date],
+      tone: event?.tone,
+      tag: { label: event?.typeTag, tone: event?.tone },
+      openHref: fillTemplate(APPOINTMENTS?.openHrefTemplate, event),
+    })) ?? [];
 
 /**
  * The client portal's home. Nothing on it is view state — no filter, tab or

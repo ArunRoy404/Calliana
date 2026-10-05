@@ -6,14 +6,10 @@ import Reveal from "@/components/motion/Reveal";
 /**
  * The top of the client home: the business's name and status, a welcome
  * line, and "Submit Instruction/Request" at the right (below it on a narrow
- * screen), ruled off underneath. Submitting has no backend yet, so the
- * button carries `notFunctional`. Reveals after `revealDelay`.
+ * screen), ruled off underneath. The button links to the requests page
+ * with its new-request drawer open. Reveals after `revealDelay`.
  */
-export default function ClientWelcomeHeader({
-  header,
-  notFunctional,
-  revealDelay = 0,
-}) {
+export default function ClientWelcomeHeader({ header, revealDelay = 0 }) {
   return (
     <Reveal
       as="header"
@@ -34,7 +30,7 @@ export default function ClientWelcomeHeader({
         <p className="text-body-sm text-text-secondary">{header?.subtitle}</p>
       </div>
 
-      <Button {...notFunctional}>
+      <Button href={header?.action?.href}>
         <AssetIcon icon={header?.action?.icon} />
         {header?.action?.label}
       </Button>

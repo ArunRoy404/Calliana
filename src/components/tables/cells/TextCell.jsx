@@ -11,7 +11,9 @@ const SIZE_CLASSES = {
 /**
  * Plain value — Figma 198:22879. `column.wrap` lets long values break rather
  * than overflow a narrow column, at word boundaries where there are any (a
- * task title) and mid-word only where there aren't (an email address).
+ * task title) and mid-word only where there aren't (an email address);
+ * `column.truncate` keeps it to one line ending in an ellipsis instead (the
+ * client requests' titles, "Schedule follow-up call with Dr. Rodrigu…").
  *
  * `column.tone` (a `src/lib/tones.js` key), `column.weight`
  * (`"regular"|"medium"|"semibold"`) and `column.size` (`"sm"|"md"|"lg"`,
@@ -28,9 +30,15 @@ export default function TextCell({ column, row }) {
     <span
       className={cn(
         SIZE_CLASSES?.[column?.size] ?? SIZE_CLASSES?.md,
-        column?.tone ? (TONE_TEXT?.[column?.tone] ?? TONE_TEXT?.[DEFAULT_TONE]) : "text-brand-black",
+        column?.tone
+          ? (TONE_TEXT?.[column?.tone] ?? TONE_TEXT?.[DEFAULT_TONE])
+          : "text-brand-black",
         column?.weight && TEXT_WEIGHT_CLASSES?.[column?.weight],
-        column?.wrap ? "wrap-break-word" : "whitespace-nowrap",
+        column?.truncate
+          ? "min-w-0 truncate"
+          : column?.wrap
+            ? "wrap-break-word"
+            : "whitespace-nowrap",
       )}
     >
       {row?.[column?.field]}

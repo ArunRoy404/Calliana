@@ -24,6 +24,12 @@ const VARIANT_CLASSES = {
   /** Hairline-bordered, for row actions and pagers — Figma 198:22899. */
   outline:
     "border border-solid border-border-default bg-surface-canvas text-text-secondary hover:border-border-strong hover:bg-surface-subtle hover:text-text-primary",
+  /**
+   * White with a primary-blue rule and glyph — a row's "…" more-actions
+   * button on the client requests list.
+   */
+  "outline-primary":
+    "border border-solid border-action-primary bg-surface-base text-action-primary hover:bg-surface-selected",
   /** Tinted, blue-ruled icon action — Figma 198:26137 (a row's call button). */
   info: "border border-solid border-border-focus bg-status-info-bg text-action-primary hover:bg-surface-selected",
   /** White, hairline-bordered secondary action — Figma 198:32344 (Cancel). */

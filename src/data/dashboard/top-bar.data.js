@@ -65,6 +65,11 @@ const ROLE_HEADINGS = {
  */
 const ROLE_PAGES = {
   client: {
+    requests: {
+      title: "Service Requests & Instructions",
+      subtitle:
+        "Submit calendar updates, VIP routing exceptions, or special handling rules to your secretary team.",
+    },
     calls: {
       title: "Calls & Notes",
       subtitle:

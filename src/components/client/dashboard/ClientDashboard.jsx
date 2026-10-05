@@ -7,7 +7,6 @@ import SecretaryStatusCard from "@/components/client/dashboard/SecretaryStatusCa
 import UpcomingAppointmentsPanel from "@/components/client/dashboard/UpcomingAppointmentsPanel";
 import StatCardGrid from "@/components/dashboard/stats/StatCardGrid";
 import { revealDelayAt } from "@/lib/motion";
-import { notFunctionalProps } from "@/lib/notFunctional";
 import { useMessagesStore } from "@/store/admin/useMessagesStore";
 import { useClientDashboardStore } from "@/store/client/useClientDashboardStore";
 
@@ -36,7 +35,6 @@ export default function ClientDashboard() {
     <div className="flex min-w-0 flex-col gap-4">
       <ClientWelcomeHeader
         header={content?.header}
-        notFunctional={notFunctionalProps(content)}
         revealDelay={revealDelayAt(0, 0)}
       />
       <SecretaryStatusCard
