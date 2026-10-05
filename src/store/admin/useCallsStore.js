@@ -1,43 +1,21 @@
 import { callDetailData } from "@/data/admin/call-detail.data";
 import { callsData } from "@/data/admin/calls.data";
-import { fillTemplate } from "@/lib/fillTemplate";
-import { CALLS_PARAM_KEYS, callsParamsSchema } from "@/schemas/calls/calls-params.schema";
-import { PANEL_PARAM } from "@/schemas/url/list-params.schema";
+import {
+  CALLS_PARAM_KEYS,
+  callsParamsSchema,
+} from "@/schemas/calls/calls-params.schema";
+import { callDetailSlice } from "@/store/calls/callDetailSlice";
 import { createTableStore } from "@/store/createTableStore";
 
 const { call: CALL } = CALLS_PARAM_KEYS;
 
-/**
- * Overlay one call's own row (caller, timing, status) on the shared detail
- * sample, so each call's panel reads as its own until real per-call data
- * exists — the same overlay `useAgentsStore` runs for agent details.
- */
-function buildCallDetail(row) {
-  const sample = callDetailData?.sample;
-  const hasTiming = Boolean(row?.startTime && row?.duration);
-
-  return {
-    ...sample,
-    panelTitle: fillTemplate(callDetailData?.titleTemplate, row),
-    panelSubtitle: hasTiming
-      ? fillTemplate(callDetailData?.subtitleTemplate, row)
-      : undefined,
-    id: row?.id,
-    caller: row?.caller,
-    phone: row?.phone,
-    clientAccount: row?.clientAccount,
-    clientHref: row?.clientId ? `/admin/clients/${row?.clientId}` : undefined,
-    startTime: row?.startTime,
-    duration: row?.duration,
-    status: row?.callStatus,
-    followUp: row?.followUp,
-  };
-}
-
-/** Built once per call, so a selector returns the same object every time. */
-const callDetails = new Map(
-  callsData?.rows?.map((row) => [row?.id, buildCallDetail(row)]) ?? [],
-);
+/** One call's details drawer — the slice every call list shares. */
+const callDetail = callDetailSlice({
+  rows: callsData?.rows,
+  detail: callDetailData,
+  callKey: CALL,
+  clientHrefTemplate: callsData?.clientHrefTemplate,
+});
 
 /**
  * The calls directory — its content plus the search, client, status and
@@ -55,15 +33,5 @@ export const useCallsStore = createTableStore({
   paramsSchema: callsParamsSchema,
   summaryTemplate: callsData?.pagination?.summary,
   addPanelClears: [CALL],
-  extend: (set, get) => ({
-    detailContent: callDetailData,
-
-    selectedCall: (params) => callDetails.get(params?.[CALL]) ?? null,
-
-    openCall: (row) =>
-      get()?.setParams?.({ [CALL]: row?.id, [PANEL_PARAM]: null }),
-    setDetailOpen: (open) => {
-      if (!open) get()?.setParams?.({ [CALL]: null });
-    },
-  }),
+  extend: (set, get) => ({ ...callDetail(set, get) }),
 });

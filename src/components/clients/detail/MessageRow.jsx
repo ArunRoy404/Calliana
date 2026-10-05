@@ -4,7 +4,8 @@ import RowCard from "@/components/cards/RowCard";
 
 /**
  * One message thread — Figma 202:30625: the sender's picture, name •
- * channel and the time, then the latest message and where the thread stands.
+ * channel and the time, then the latest message and — when the thread has a
+ * `status` — where it stands (the client home's conversations carry none).
  */
 export default function MessageRow({ message, separator, revealDelay = 0 }) {
   return (
@@ -33,11 +34,13 @@ export default function MessageRow({ message, separator, revealDelay = 0 }) {
           <p className="text-body-md min-w-0 text-text-secondary">
             {message?.text}
           </p>
-          <StatusBadge
-            variant="tag"
-            label={message?.status?.label}
-            tone={message?.status?.tone}
-          />
+          {message?.status && (
+            <StatusBadge
+              variant="tag"
+              label={message?.status?.label}
+              tone={message?.status?.tone}
+            />
+          )}
         </div>
       </div>
     </RowCard>

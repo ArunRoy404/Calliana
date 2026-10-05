@@ -53,6 +53,7 @@ function call(
   direction,
   duration,
   outcome,
+  note,
 ) {
   return {
     id,
@@ -65,6 +66,7 @@ function call(
     duration,
     statusKey: outcome,
     callStatus: OUTCOMES?.[outcome],
+    note,
   };
 }
 
@@ -93,6 +95,17 @@ export const clientCallsData = {
     notFunctionalMessage: "Call history isn’t available yet",
     notFunctionalDescription:
       "The full call archive will open here once it is built.",
+  },
+
+  /**
+   * A row opens its agent note beneath itself (`?note=<id>`); clicking the
+   * row again closes it. Read-only — the client cannot edit the note.
+   */
+  expand: {
+    field: "note",
+    title: "Agent message from this call",
+    hint: ["Read-only call note", "Click the row again to collapse"],
+    separator: "•",
   },
 
   reviewHrefTemplate: "/client/calls?call={id}",
@@ -146,6 +159,7 @@ export const clientCallsData = {
       "incoming",
       "03:42",
       "connected",
+      "Patient requested to move today’s appointment to Friday morning because of work travel. New availability was checked and the patient confirmed 11:30 AM.",
     ),
     call(
       "carmen-vidal-01",
@@ -156,6 +170,7 @@ export const clientCallsData = {
       "incoming",
       "04:15",
       "completed",
+      "Confirmed tomorrow’s pre-op slot. Reminded the patient to fast from midnight and bring her insurance card.",
     ),
     call(
       "gonzalo-ramos-01",
@@ -166,6 +181,7 @@ export const clientCallsData = {
       "incoming",
       "00:00",
       "missed",
+      "Missed call, no voicemail left. A callback is queued for the morning shift.",
     ),
     call(
       "carmen-vidal-02",
@@ -176,6 +192,7 @@ export const clientCallsData = {
       "outgoing",
       "02:18",
       "completed",
+      "Called back to offer an earlier slot. The patient kept her original appointment.",
     ),
     call(
       "raul-menendez-01",
@@ -186,6 +203,7 @@ export const clientCallsData = {
       "incoming",
       "01:05",
       "voicemail",
+      "Voicemail asking to confirm pre-op instructions. A written summary was sent by SMS.",
     ),
     call(
       "patricia-ortiz-01",
@@ -196,6 +214,7 @@ export const clientCallsData = {
       "incoming",
       "05:12",
       "completed",
+      "Pre-op checklist reviewed with the patient. No changes to the booking.",
     ),
     call(
       "ramon-torres-01",
@@ -206,6 +225,7 @@ export const clientCallsData = {
       "incoming",
       "03:42",
       "completed",
+      "New patient asked about laser dermatology. An intake consultation was booked for next week.",
     ),
     call(
       "mateo-fernandez-01",
@@ -216,6 +236,7 @@ export const clientCallsData = {
       "incoming",
       "02:56",
       "completed",
+      "Sanitas coverage confirmed with the insurer; the authorisation code is noted in the CRM.",
     ),
     call(
       "lucia-herrera-01",
@@ -226,6 +247,7 @@ export const clientCallsData = {
       "outgoing",
       "01:48",
       "connected",
+      "Rescheduled to Thursday at 10:00 at the patient’s request; confirmation sent.",
     ),
     call(
       "diego-navarro-01",
@@ -236,6 +258,7 @@ export const clientCallsData = {
       "incoming",
       "00:00",
       "missed",
+      "Missed call during the lunch window. A callback is scheduled for 15:00.",
     ),
     call(
       "elena-ferrer-01",
@@ -246,6 +269,7 @@ export const clientCallsData = {
       "incoming",
       "02:07",
       "voicemail",
+      "Voicemail about an invoice question. Forwarded to billing with the patient’s number.",
     ),
     call(
       "sofia-ruiz-01",
@@ -256,6 +280,7 @@ export const clientCallsData = {
       "incoming",
       "04:33",
       "completed",
+      "New patient enquiry about availability; first visit booked for Monday 09:30.",
     ),
   ],
 };

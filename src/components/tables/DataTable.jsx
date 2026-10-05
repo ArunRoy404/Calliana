@@ -1,8 +1,11 @@
 "use client";
 
+import { Fragment } from "react";
+
 import MotionTableRow from "@/components/motion/MotionTableRow";
 import Reveal from "@/components/motion/Reveal";
 import EmptyMessage from "@/components/tables/EmptyMessage";
+import RowExpansion from "@/components/tables/RowExpansion";
 import TableCellContent from "@/components/tables/TableCellContent";
 import {
   Table,
@@ -14,6 +17,7 @@ import {
 } from "@/components/shadcn/table";
 import { cn } from "@/lib/cn";
 import { nestedRevealDelayAt } from "@/lib/motion";
+import { rowToggleProps } from "@/lib/rowToggle";
 import { CELL_ALIGN, DEFAULT_ALIGN, HEADER_ALIGN } from "@/lib/tableAlign";
 
 /**
@@ -28,6 +32,11 @@ import { CELL_ALIGN, DEFAULT_ALIGN, HEADER_ALIGN } from "@/lib/tableAlign";
  *
  * Rows reveal one by one after `revealDelay`, and a row that appears later (a
  * new page, a changed filter) makes its own entrance.
+ *
+ * With `expand` (the list's `content.expand`), a row holding that field opens
+ * beneath itself on a click, Enter or Space — a full-width `RowExpansion`
+ * (the client call log's agent note) — and closes on the next. Which row
+ * is open is `expandedId`, from the URL; `onToggleRow(id)` writes it.
  */
 const CELL_PADDING = "p-2.5 first:pl-4 last:pr-4";
 
@@ -37,6 +46,9 @@ export default function DataTable({
   emptyLabel,
   onRowAction,
   actionProps,
+  expand,
+  expandedId,
+  onToggleRow,
   revealDelay = 0,
   className,
 }) {
@@ -68,35 +80,71 @@ export default function DataTable({
       {/* shadcn drops the last row's rule; the design keeps it above the footer. */}
       <TableBody className="[&_tr:last-child]:border-b">
         {rows?.length ? (
-          rows?.map((row, index) => (
-            <Reveal
-              as={MotionTableRow}
-              key={row?.id}
-              delay={nestedRevealDelayAt(revealDelay, index)}
-              className="border-brand-gray hover:bg-surface-selected/60"
-            >
-              {columns?.map((column) => (
-                <TableCell
-                  key={column?.id}
-                  className={cn("align-middle whitespace-normal", CELL_PADDING)}
+          rows?.map((row, index) => {
+            const canExpand = Boolean(expand && row?.[expand?.field]);
+            const isExpanded = canExpand && row?.id === expandedId;
+
+            return (
+              <Fragment key={row?.id}>
+                <Reveal
+                  as={MotionTableRow}
+                  delay={nestedRevealDelayAt(revealDelay, index)}
+                  className={cn(
+                    "border-brand-gray hover:bg-surface-selected/60",
+                    canExpand &&
+                      "cursor-pointer outline-none focus-visible:bg-surface-selected/60",
+                    isExpanded && "border-b-0",
+                  )}
+                  {...rowToggleProps({
+                    id: row?.id,
+                    canExpand,
+                    isExpanded,
+                    onToggle: onToggleRow,
+                  })}
                 >
-                  <div
-                    className={cn(
-                      "flex min-w-0 items-center",
-                      CELL_ALIGN?.[column?.align] ?? CELL_ALIGN?.[DEFAULT_ALIGN],
-                    )}
+                  {columns?.map((column) => (
+                    <TableCell
+                      key={column?.id}
+                      className={cn(
+                        "align-middle whitespace-normal",
+                        CELL_PADDING,
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "flex min-w-0 items-center",
+                          CELL_ALIGN?.[column?.align] ??
+                            CELL_ALIGN?.[DEFAULT_ALIGN],
+                        )}
+                      >
+                        <TableCellContent
+                          column={column}
+                          row={row}
+                          onRowAction={onRowAction}
+                          actionProps={actionProps}
+                        />
+                      </div>
+                    </TableCell>
+                  ))}
+                </Reveal>
+
+                {isExpanded && (
+                  <Reveal
+                    as={MotionTableRow}
+                    distance={8}
+                    className="border-brand-gray hover:bg-transparent"
                   >
-                    <TableCellContent
-                      column={column}
-                      row={row}
-                      onRowAction={onRowAction}
-                      actionProps={actionProps}
-                    />
-                  </div>
-                </TableCell>
-              ))}
-            </Reveal>
-          ))
+                    <TableCell
+                      colSpan={columns?.length || 1}
+                      className="p-0 whitespace-normal"
+                    >
+                      <RowExpansion expand={expand} row={row} />
+                    </TableCell>
+                  </Reveal>
+                )}
+              </Fragment>
+            );
+          })
         ) : (
           <Reveal as={MotionTableRow} className="hover:bg-transparent">
             <TableCell colSpan={columns?.length || 1} className="p-0">
