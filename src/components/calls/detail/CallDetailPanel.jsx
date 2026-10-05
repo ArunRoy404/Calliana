@@ -25,12 +25,16 @@ import { useCallsStore } from "@/store/admin/useCallsStore";
  * screen while the panel slides away. Sections reveal in reading order and
  * their delays follow the sections actually shown, so an absent triage note
  * leaves no gap in the sequence.
+ *
+ * `useStore` is the call list it opens from — any `createTableStore` store
+ * carrying `callDetailSlice` (the admin calls directory by default, the
+ * client portal's Calls & Notes too).
  */
-export default function CallDetailPanel() {
-  const params = useStoreParams(useCallsStore);
-  const selectedCall = useCallsStore((state) => state.selectedCall(params));
-  const setOpen = useCallsStore((state) => state.setDetailOpen);
-  const content = useCallsStore((state) => state.detailContent);
+export default function CallDetailPanel({ useStore = useCallsStore }) {
+  const params = useStoreParams(useStore);
+  const selectedCall = useStore((state) => state.selectedCall(params));
+  const setOpen = useStore((state) => state.setDetailOpen);
+  const content = useStore((state) => state.detailContent);
 
   const call = useRetainedValue(selectedCall);
   const notFunctional = notFunctionalProps(content);

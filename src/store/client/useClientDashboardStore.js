@@ -1,17 +1,20 @@
 import { create } from "zustand";
 
+import { clientCallsData } from "@/data/client/calls.data";
 import { clientDashboardData } from "@/data/client/dashboard.data";
 import { fillTemplate } from "@/lib/fillTemplate";
+import { clientCallRows } from "@/store/client/useClientCallsStore";
 
-const CALLS = clientDashboardData?.inboundCalls;
 const APPOINTMENTS = clientDashboardData?.appointments;
 
-/** Each recent call with the link its "Review Call" action opens. */
-const inboundCallRows =
-  CALLS?.rows?.map((row) => ({
-    ...row,
-    reviewHref: fillTemplate(CALLS?.reviewHrefTemplate, row),
-  })) ?? [];
+/**
+ * The latest calls on the client's line: the first `recentCount` rows of
+ * the Calls & Notes log (each already carrying its Review Call link).
+ */
+const inboundCallRows = clientCallRows.slice(
+  0,
+  clientCallsData?.recentCount ?? clientCallRows.length,
+);
 
 /** Each upcoming booking with the link its "Open" button follows. */
 const appointmentEvents =

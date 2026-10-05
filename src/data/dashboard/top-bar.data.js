@@ -58,9 +58,28 @@ const ROLE_HEADINGS = {
   },
 };
 
+/**
+ * Inner-page titles one role words differently — the client's Calls page is
+ * "Calls & Notes". They layer over the shared `pages` for that role only, so
+ * the admin's pages keep their own titles.
+ */
+const ROLE_PAGES = {
+  client: {
+    calls: {
+      title: "Calls & Notes",
+      subtitle:
+        "Review calls and messages recorded by your Virtual Secretary team.",
+    },
+  },
+};
+
 export const dashboardTopBarByRole = Object.fromEntries(
   Object.entries(ROLE_HEADINGS)?.map(([role, heading]) => [
     role,
-    { ...SHARED, ...heading },
+    {
+      ...SHARED,
+      ...heading,
+      pages: { ...SHARED?.pages, ...ROLE_PAGES?.[role] },
+    },
   ]),
 );

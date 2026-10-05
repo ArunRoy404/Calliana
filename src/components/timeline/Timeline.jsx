@@ -7,11 +7,15 @@ import { cn } from "@/lib/cn";
  * (dashboard audit trail), 202:23142 (agent activities) and 202:31017 (client
  * activities). The last event drops its connector. `emphasis` sets every
  * label in semibold; `className` adds the list's inset where it has one.
+ * `renderAside(event)` puts a node at the right of each row (a tag and an
+ * action); `separator` joins an event's `meta` line.
  */
 export default function Timeline({
   events = [],
   emphasis = false,
   compact = false,
+  separator,
+  renderAside,
   revealDelay = 0,
   className,
 }) {
@@ -27,6 +31,8 @@ export default function Timeline({
           event={event}
           emphasis={emphasis}
           compact={compact}
+          separator={separator}
+          aside={renderAside?.(event)}
           isLast={event?.id === events?.at(-1)?.id}
           revealDelay={delay}
         />

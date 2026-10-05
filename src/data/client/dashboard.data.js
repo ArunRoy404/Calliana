@@ -1,9 +1,10 @@
 import {
   CALL_STATUS_COLUMN,
   CALLER_COLUMN,
-  directionOf,
+  DATE_TIME_COLUMN,
   DIRECTION_COLUMN,
   DURATION_COLUMN,
+  REVIEW_CALL_COLUMN,
 } from "@/data/tables/call-columns.data";
 
 /**
@@ -16,29 +17,6 @@ import {
  * `/client/messages`, `/client/appointments`); they open once those pages
  * are built.
  */
-const DATE_TIME_COLUMN = {
-  id: "dateTime",
-  label: "DATE & TIME",
-  type: "text",
-  field: "dateTime",
-};
-
-const REVIEW_COLUMN = {
-  id: "action",
-  label: "Action",
-  type: "action",
-  align: "center",
-  headerAlign: "center",
-  actions: [
-    {
-      id: "review",
-      label: "Review Call",
-      variant: "neutral",
-      hrefField: "reviewHref",
-    },
-  ],
-};
-
 export const clientDashboardData = {
   separator: "•",
 
@@ -131,15 +109,14 @@ export const clientDashboardData = {
 
   /**
    * A list shown in a panel, so it carries a list's `columns` and `card`
-   * (rule 17) — but no toolbar or pager: it is the latest few calls, with
-   * "Inbox" for the rest.
+   * (rule 17) — but no toolbar or pager: its rows are the first few of the
+   * client's own call log (`clientCallRows`), with "Inbox" for the rest.
    */
   inboundCalls: {
     title: "RECENT CLIENT INBOUND CALLS",
     subtitle: "Latest callers received and triaged on your phone line",
     link: { label: "Inbox", href: "/client/calls" },
     texture: "/admin/table/table-texture.png",
-    reviewHrefTemplate: "/client/calls?call={id}",
     emptyLabel: "No calls yet today.",
     tableClassName: "min-w-[960px]",
     columns: [
@@ -148,71 +125,15 @@ export const clientDashboardData = {
       DIRECTION_COLUMN,
       DURATION_COLUMN,
       CALL_STATUS_COLUMN,
-      REVIEW_COLUMN,
+      REVIEW_CALL_COLUMN,
     ],
     card: {
       title: CALLER_COLUMN,
       status: CALL_STATUS_COLUMN,
       subtitle: DATE_TIME_COLUMN,
       fields: [DIRECTION_COLUMN, DURATION_COLUMN],
-      action: REVIEW_COLUMN,
+      action: REVIEW_CALL_COLUMN,
     },
-    rows: [
-      {
-        id: "ramon-torres-01",
-        caller: "Ramón Torres",
-        phone: "+34 644 892 119",
-        dateTime: "07/14/21 6:20am",
-        ...directionOf("incoming"),
-        duration: "03:42",
-        callStatus: { label: "Connected", tone: "success" },
-      },
-      {
-        id: "mateo-fernandez-02",
-        caller: "Mateo Fernandez",
-        phone: "+34 611 789 203",
-        dateTime: "05/21/21 9:00am",
-        ...directionOf("incoming"),
-        duration: "04:15",
-        callStatus: { label: "Completed", tone: "success" },
-      },
-      {
-        id: "gonzalo-ramos-01",
-        caller: "Gonzalo Ramos",
-        phone: "+34 689 334 550",
-        dateTime: "08/02/21 7:23am",
-        ...directionOf("incoming"),
-        duration: "00:00",
-        callStatus: { label: "Missed", tone: "error" },
-      },
-      {
-        id: "carmen-vidal-01",
-        caller: "Carmen Vidal",
-        phone: "+34 650 119 443",
-        dateTime: "08/19/21 1:15pm",
-        ...directionOf("outgoing"),
-        duration: "02:18",
-        callStatus: { label: "Completed", tone: "success" },
-      },
-      {
-        id: "raul-menendez-01",
-        caller: "Raul Menendez",
-        phone: "+34 670 448 991",
-        dateTime: "08/01/21 9:02am",
-        ...directionOf("incoming"),
-        duration: "01:05",
-        callStatus: { label: "Voicemail", tone: "warning" },
-      },
-      {
-        id: "patricia-ortiz-01",
-        caller: "Patricia Ortiz",
-        phone: "+34 633 220 119",
-        dateTime: "07/10/21 10:22pm",
-        ...directionOf("incoming"),
-        duration: "05:12",
-        callStatus: { label: "Completed", tone: "success" },
-      },
-    ],
   },
 
   /** Each booking's marker `tone`, its type `tag` and its `meta` line. */

@@ -3,34 +3,24 @@
  *
  * Same shape as the agents and clients lists: `columns` say what each column
  * shows and how, `rows` carry only values, `card` rearranges the same columns
- * for narrow screens. `direction` differs per row, so the DIRECTION column
- * reads its icon from `directionIcon` on the row (`IconTextCell`'s
- * `iconField`) rather than one fixed icon for the whole column.
+ * for narrow screens. The caller, direction, duration and call-status
+ * columns (and `directionOf`) are shared with the client home's recent calls,
+ * in `src/data/tables/call-columns.data.js`.
  */
-const CLOCK_ICON = { src: "/icons/clock.svg", width: 16, height: 16 };
-const PHONE_INCOMING_ICON = { lucide: "PhoneIncoming", size: 12 };
-const PHONE_OUTGOING_ICON = { lucide: "PhoneOutgoing", size: 12 };
+import {
+  CALL_STATUS_COLUMN as CALL_STATUS,
+  CALLER_COLUMN as CALLER,
+  CLOCK_ICON,
+  DIRECTION_COLUMN as DIRECTION,
+  directionOf,
+  DURATION_COLUMN as DURATION,
+} from "@/data/tables/call-columns.data";
 
-const CALLER = {
-  id: "caller",
-  label: "CALLER",
-  type: "stack",
-  primary: "caller",
-  secondary: "phone",
-};
 const CLIENT_ACCOUNT = {
   id: "clientAccount",
   label: "CLIENT / ACCOUNT",
   type: "text",
   field: "clientAccount",
-};
-const DIRECTION = {
-  id: "direction",
-  label: "DIRECTION",
-  type: "icon-text",
-  field: "directionLabel",
-  iconField: "directionIcon",
-  align: "center",
 };
 const START_TIME = {
   id: "startTime",
@@ -38,21 +28,6 @@ const START_TIME = {
   type: "icon-text",
   field: "startTime",
   icon: CLOCK_ICON,
-};
-const DURATION = {
-  id: "duration",
-  label: "DURATION",
-  type: "icon-text",
-  field: "duration",
-  icon: CLOCK_ICON,
-};
-const CALL_STATUS = {
-  id: "callStatus",
-  label: "CALL STATUS",
-  type: "badge",
-  field: "callStatus",
-  align: "center",
-  headerAlign: "center",
 };
 const FOLLOW_UP = {
   id: "followUp",
@@ -86,12 +61,6 @@ const ACTION = {
   ],
 };
 
-function directionOf(direction) {
-  return direction === "outgoing"
-    ? { directionLabel: "Outgoing", directionIcon: PHONE_OUTGOING_ICON }
-    : { directionLabel: "Incoming", directionIcon: PHONE_INCOMING_ICON };
-}
-
 export const CALL_STATUS_OPTIONS = [
   { value: "connected", label: "Connected" },
   { value: "completed", label: "Completed" },
@@ -108,6 +77,9 @@ export const CALL_CLIENT_OPTIONS = [
 
 export const callsData = {
   texture: "/admin/table/table-texture.png",
+
+  /** Where a call's details link its client account ("Open Client Account"). */
+  clientHrefTemplate: "/admin/clients/{clientId}",
 
   search: {
     label: "Search calls",

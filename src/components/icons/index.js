@@ -9,6 +9,7 @@ import LogoutIcon from "@/components/icons/LogoutIcon";
 import MessagesIcon from "@/components/icons/MessagesIcon";
 import ProfileIcon from "@/components/icons/ProfileIcon";
 import ReportsIcon from "@/components/icons/ReportsIcon";
+import RequestsIcon from "@/components/icons/RequestsIcon";
 import RolesIcon from "@/components/icons/RolesIcon";
 import RoutingIcon from "@/components/icons/RoutingIcon";
 import SettingsIcon from "@/components/icons/SettingsIcon";
@@ -38,6 +39,7 @@ export const SIDEBAR_ICONS = {
   roles: RolesIcon,
   routing: RoutingIcon,
   reports: ReportsIcon,
+  requests: RequestsIcon,
   audit: AuditIcon,
   settings: SettingsIcon,
   profile: ProfileIcon,
