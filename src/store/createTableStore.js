@@ -43,6 +43,11 @@ const LIST_KEYS = ["q", "page", "size"];
  * names keys opening it removes (another panel's). `setAddOpen` takes the
  * drawer's open flag, so it plugs straight into `SidePanel`'s `onOpenChange`.
  *
+ * A list whose rows open beneath themselves (`content.expand`) names the URL
+ * key holding the open row, `expandKey` (`?note=<id>`): the view then
+ * carries `expandedId`, and `toggleRow(id)` opens that row or, if it is
+ * already open, closes it. One row is open at a time.
+ *
  * `shallow` / `history` pick how the URL is written (see `urlState.js`); set
  * `shallow: false` when the page's data comes from the server.
  */
@@ -55,6 +60,7 @@ export function createTableStore({
   pageSizeOptions: sizes = TABLE_DEFAULTS?.pageSizeOptions,
   summaryTemplate,
   addPanelClears = [],
+  expandKey,
   shallow = true,
   history = "replace",
   extend,
@@ -117,6 +123,7 @@ export function createTableStore({
         page,
         pages: pageCount,
       }),
+      expandedId: expandKey ? params?.[expandKey] : undefined,
     };
   }
 
@@ -142,6 +149,13 @@ export function createTableStore({
     setPageSize: (size) => setParams({ size, page: null }),
 
     goToPage: (page) => setParams({ page }),
+
+    /** Open row `id` beneath itself, or close it if it is the open one. */
+    toggleRow: (id) => {
+      if (!expandKey) return;
+      const open = readUrlParams(paramsSchema)?.[expandKey];
+      setParams({ [expandKey]: open === id ? null : id });
+    },
     nextPage: () => {
       const { page, pageCount } = currentView();
       setParams({ page: Math.min(page + 1, pageCount) });

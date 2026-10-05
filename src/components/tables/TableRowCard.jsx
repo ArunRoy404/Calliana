@@ -1,6 +1,9 @@
 import CardField from "@/components/cards/CardField";
 import Reveal from "@/components/motion/Reveal";
+import RowExpansion from "@/components/tables/RowExpansion";
 import TableCellContent from "@/components/tables/TableCellContent";
+import { cn } from "@/lib/cn";
+import { rowToggleProps } from "@/lib/rowToggle";
 
 /**
  * One table row as a card — the row's content rearranged for narrow screens.
@@ -10,19 +13,39 @@ import TableCellContent from "@/components/tables/TableCellContent";
  * by the same cell renderer the table uses, so a badge or a duration looks
  * identical in both views. The action column stretches across the card.
  * Reveals itself after `revealDelay`.
+ *
+ * With `expand`, a card holding that field opens its `RowExpansion` along
+ * its foot on a tap (or Enter / Space) and closes on the next, exactly as
+ * the table row does — `isExpanded` and `onToggle` come from the list.
  */
 export default function TableRowCard({
   row,
   layout,
   onRowAction,
   actionProps,
+  expand,
+  isExpanded = false,
+  onToggle,
   revealDelay = 0,
 }) {
+  const canExpand = Boolean(expand && row?.[expand?.field]);
+
   return (
     <Reveal
       as="li"
       delay={revealDelay}
-      className="flex min-w-0 flex-col gap-4 border border-solid border-border-default bg-surface-base/90 p-4 backdrop-blur-sm transition-[border-color,box-shadow] duration-200 ease-out hover:border-border-strong hover:shadow-card"
+      className={cn(
+        "flex min-w-0 flex-col gap-4 border border-solid border-border-default bg-surface-base/90 p-4 backdrop-blur-sm transition-[border-color,box-shadow] duration-200 ease-out hover:border-border-strong hover:shadow-card",
+        canExpand &&
+          "cursor-pointer outline-none focus-visible:border-border-focus",
+        isExpanded && "border-border-focus",
+      )}
+      {...rowToggleProps({
+        id: row?.id,
+        canExpand,
+        isExpanded: canExpand && isExpanded,
+        onToggle,
+      })}
     >
       <div className="flex min-w-0 items-start justify-between gap-3">
         <TableCellContent column={layout?.title} row={row} />
@@ -53,6 +76,12 @@ export default function TableRowCard({
           actionProps={actionProps}
           stretch
         />
+      )}
+
+      {canExpand && isExpanded && (
+        <div className="-mx-4 -mb-4">
+          <RowExpansion expand={expand} row={row} />
+        </div>
       )}
     </Reveal>
   );

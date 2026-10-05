@@ -12,7 +12,8 @@ import { nestedRevealDelayAt } from "@/lib/motion";
  *
  * It renders the same page of rows the table does, so search, filters,
  * rows-per-page and paging all carry over untouched. Cards reveal one by one
- * after `revealDelay`.
+ * after `revealDelay`. With `expand`, a card opens its row's expansion the
+ * way the table row does (`expandedId` / `onToggleRow`).
  */
 export default function TableCardList({
   rows = [],
@@ -20,6 +21,9 @@ export default function TableCardList({
   emptyLabel,
   onRowAction,
   actionProps,
+  expand,
+  expandedId,
+  onToggleRow,
   revealDelay = 0,
   className,
 }) {
@@ -33,6 +37,9 @@ export default function TableCardList({
             layout={layout}
             onRowAction={onRowAction}
             actionProps={actionProps}
+            expand={expand}
+            isExpanded={row?.id === expandedId}
+            onToggle={onToggleRow}
             revealDelay={nestedRevealDelayAt(revealDelay, index)}
           />
         ))

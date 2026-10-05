@@ -5,11 +5,10 @@ import Button from "@/components/atoms/Button";
 import FilterSelect from "@/components/forms/FilterSelect";
 import SearchField from "@/components/forms/SearchField";
 import SegmentedFilter from "@/components/forms/SegmentedFilter";
-import DataTable from "@/components/tables/DataTable";
 import TableCard from "@/components/tables/TableCard";
-import TableCardList from "@/components/tables/TableCardList";
 import TablePagination from "@/components/tables/TablePagination";
 import TableToolbar from "@/components/tables/TableToolbar";
+import TableViews from "@/components/tables/TableViews";
 import { useTableView } from "@/hooks/useTableView";
 import { cn } from "@/lib/cn";
 
@@ -35,8 +34,17 @@ export default function TableDirectory({ useStore, onRowAction, actionProps }) {
   const nextPage = useStore((state) => state.nextPage);
   const previousPage = useStore((state) => state.previousPage);
   const openAdd = useStore((state) => state.openAdd);
-  const { query, filters, pageSize, visibleRows, page, pageCount, summary } =
-    useTableView(useStore);
+  const toggleRow = useStore((state) => state.toggleRow);
+  const {
+    query,
+    filters,
+    pageSize,
+    visibleRows,
+    page,
+    pageCount,
+    summary,
+    expandedId,
+  } = useTableView(useStore);
 
   return (
     <TableCard
@@ -51,10 +59,7 @@ export default function TableDirectory({ useStore, onRowAction, actionProps }) {
                 value={query}
                 onValueChange={setQuery}
                 size="sm"
-                className={cn(
-                  "w-full sm:w-[350px]",
-                  content?.searchClassName,
-                )}
+                className={cn("w-full sm:w-[350px]", content?.searchClassName)}
               />
               {content?.filters?.map((filter) =>
                 filter?.variant === "segmented" ? (
@@ -90,8 +95,12 @@ export default function TableDirectory({ useStore, onRowAction, actionProps }) {
                     variant="toolbar"
                     size="sm"
                     notFunctional
-                    notFunctionalMessage={content?.secondaryAction?.notFunctionalMessage}
-                    notFunctionalDescription={content?.secondaryAction?.notFunctionalDescription}
+                    notFunctionalMessage={
+                      content?.secondaryAction?.notFunctionalMessage
+                    }
+                    notFunctionalDescription={
+                      content?.secondaryAction?.notFunctionalDescription
+                    }
                   >
                     <AssetIcon icon={content?.secondaryAction?.icon} />
                     {content?.secondaryAction?.label}
@@ -120,32 +129,13 @@ export default function TableDirectory({ useStore, onRowAction, actionProps }) {
         />
       }
     >
-      <div
-        className={cn(
-          "hidden xl:block",
-          content?.tableBreakpoint === "lg" && "lg:block xl:block",
-        )}
-      >
-        <DataTable
-          columns={content?.columns}
-          rows={visibleRows}
-          emptyLabel={content?.emptyLabel}
-          onRowAction={onRowAction}
-          actionProps={actionProps}
-          className={content?.tableClassName}
-        />
-      </div>
-
-      <TableCardList
+      <TableViews
+        content={content}
         rows={visibleRows}
-        layout={content?.card}
-        emptyLabel={content?.emptyLabel}
         onRowAction={onRowAction}
         actionProps={actionProps}
-        className={cn(
-          "xl:hidden",
-          content?.tableBreakpoint === "lg" && "lg:hidden xl:hidden",
-        )}
+        expandedId={expandedId}
+        onToggleRow={toggleRow}
       />
     </TableCard>
   );
