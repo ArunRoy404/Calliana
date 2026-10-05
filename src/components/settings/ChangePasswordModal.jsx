@@ -11,17 +11,23 @@ import { useSettingsStore } from "@/store/admin/useSettingsStore";
 
 /**
  * "Change Password" — Figma 319:34461: a centred `Modal` (not a side panel —
- * the design shows this one backdrop-centred, rule 30), three password
- * fields, the required-note / Cancel / submit footer `FormPanelFooter`
- * already draws for every other form.
+ * the design shows this one backdrop-centred, rule 30): the title beside
+ * the circled close button, three password fields with their reveal
+ * toggles, then Cancel / Update Password from the `FormPanelFooter` every
+ * form shares (no required-fields note in this design). Opened from
+ * Settings → Change Password, at `?modal=change-password`.
  */
 export default function ChangePasswordModal() {
   const params = useUrlParams(useSettingsStore((state) => state.paramsSchema));
-  const isOpen = useSettingsStore((state) => state.isChangePasswordOpen(params));
+  const isOpen = useSettingsStore((state) =>
+    state.isChangePasswordOpen(params),
+  );
   const setOpen = useSettingsStore((state) => state.setChangePasswordOpen);
   const content = useChangePasswordFormStore((state) => state.content);
   const cancel = useChangePasswordFormStore((state) => state.cancel);
-  const submitAndClose = useChangePasswordFormStore((state) => state.submitAndClose);
+  const submitAndClose = useChangePasswordFormStore(
+    (state) => state.submitAndClose,
+  );
   const store = useChangePasswordFormStore;
 
   return (
@@ -30,7 +36,11 @@ export default function ChangePasswordModal() {
       onOpenChange={setOpen}
       title={content?.title}
       footer={
-        <FormPanelFooter footer={content?.footer} onCancel={cancel} onSubmit={submitAndClose} />
+        <FormPanelFooter
+          footer={content?.footer}
+          onCancel={cancel}
+          onSubmit={submitAndClose}
+        />
       }
     >
       <Reveal delay={revealDelayAt(0, 0)}>

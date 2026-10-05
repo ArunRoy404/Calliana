@@ -48,6 +48,20 @@ function buildConversation(conversation) {
 
 /** Built once, so a selector returns the same object every time. */
 const conversations = messagesData?.conversations?.map(buildConversation) ?? [];
+/**
+ * Each conversation as a one-line summary — who, which channel, when, and the
+ * latest message — in the shape `clients/detail/MessageRow` draws. The client
+ * home's "Recent Conversations" lists these rather than a copy of the inbox.
+ */
+const summaries = conversations.map((conversation) => ({
+  id: conversation?.id,
+  sender: conversation?.name,
+  avatar: conversation?.avatar,
+  channel: conversation?.channel,
+  time: conversation?.time,
+  text: conversation?.preview,
+}));
+
 const conversationsById = new Map(
   conversations?.map((conversation) => [conversation?.id, conversation]),
 );
@@ -80,6 +94,7 @@ function matchesQuery(conversation, needle) {
 export const useMessagesStore = create(() => ({
   content: messagesData,
   paramsSchema: messagesParamsSchema,
+  summaries,
 
   query: (params) => params?.[QUERY] ?? "",
   filter: (params) => params?.[FILTER] ?? ALL,
