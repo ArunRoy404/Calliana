@@ -601,6 +601,51 @@ Reach for these before adding anything similar:
   An exported icon drawn for a dark tile (`/icons/calendar.svg`, near-white)
   is not reused on a white field — use the lucide glyph and say why beside
   the data entry.
+- **The agent workspace is the same shell too.** Its pages live under
+  `src/app/(dashboard)/agent/`, compositions in `components/agent/<page>/`
+  (not `agents/`, the admin's agent management), data in `src/data/agent/`,
+  stores in `src/store/agent/`. A screen the admin already has (Calls) is
+  the same component over the agent's own store: `calls/CallsDirectory`,
+  `DialOutboundCallPanel` and `CallDetailPanel` all take the list's
+  `useStore` / `useListStore`, and the agent's calls data spreads the
+  admin's `callsData`, changing only its filters (`CALL_CLIENT_FILTER` /
+  `CALL_STATUS_FILTER` are shared). A one-line client wrapper hands the
+  store to the shared view, since a server page cannot pass a hook.
+- A record that is a call with more to it (a voicemail) is a row of the
+  call log joined with its own fields by the store, never a second copy of
+  the caller: the agent's voicemail list maps `callsData.rows` through
+  `voicemail.data.js`'s `voicemails` (keyed by call id). Its drawer is
+  `CallDetailPanel` with other content: the drawer's blocks are data
+  (`detail.sections` — `kind` `recording` / `timeline` / text over a record
+  `field`, `editable`, `icon`, `tone`), its recording header reads
+  `recordingAsideTemplate` ("0:52 / 03:42") with an optional
+  `downloadIcon`, and footer actions take an `icon`. `CallsDirectory`
+  draws the dialer only when the list has an `addAction`. A badge status
+  may carry its own `showDot`.
+- Clients are one list and one record page for both portals:
+  `store/clients/createClientsStore({ content, detailContent,
+  detailHrefTemplate, paramsSchema })` builds the list, each row's "View
+  Account" link and every client's detail record; `clients/ClientsDirectory`
+  and `ClientDetailView` take its `useStore` (the add drawer shows only when
+  the list has an `addAction`). The agent's data spreads the admin's
+  (`clientsData`, `clientDetailData`) and changes only its links
+  (`/agent/clients/{id}`), category labels and actions; filters shared
+  between the two lists are named constants (`CLIENT_STATUS_FILTER`).
+- One pill filter across two facets (All / Incoming / Outgoing / Missed /
+  Voicemail) reads a list-valued row field: `createTableStore` matches a
+  filter when the row's field equals the value or, for an array, includes
+  it — the store sets `views: [direction, statusKey]`.
+- The agent dashboard added: `tables/TablePanel` (a few rows of a list in a
+  titled dashboard panel — no toolbar or pager; also the client home's
+  recent calls), `dashboard/bookings/BookingsPanel` over
+  `bookingRows(ids, { metaFields, openHrefTemplate })` from the calendar
+  store (each dashboard picks its meta line), `dashboard/conversations/
+  RecentConversationsPanel` (rows show a `status` when the store passes the
+  inbox's `statusBadge`), `charts/Waveform` (decorative bars from a store-
+  built loudness envelope; it clips, never squeezes), `atoms/ElapsedTimer`
+  (a ticking mm:ss — local visual state), `atoms/IconLabel` (icon + one
+  line of text) and `directionOf(direction, INBOUND_LABELS)` for
+  "Inbound / Outbound". `Button size="compact"` never wraps its label.
 - A design that shows the dashboard chrome around a new screen is built as
   the content only: the shell already draws the sidebar and top bar, and the
   top bar's title is a `pages.<segment>` entry in `top-bar.data.js` — never

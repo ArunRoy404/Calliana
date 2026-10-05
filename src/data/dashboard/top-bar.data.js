@@ -96,6 +96,23 @@ const ROLE_PAGES = {
         "Your call volume, outcomes and busiest hours, handled by your Virtual Secretary team.",
     },
   },
+  agent: {
+    voicemail: {
+      title: "Voicemail",
+      subtitle:
+        "Listen to client voicemails, check their transcriptions and call callers back.",
+    },
+    clients: {
+      title: "Client Accounts",
+      subtitle:
+        "Directory of enterprise accounts, clinics, and businesses supported on the Virtual Secretary platform.",
+    },
+    calls: {
+      title: "Call Workspace",
+      subtitle:
+        "Central operational tool for managing, logging and routing client telephone calls and voicemails.",
+    },
+  },
 };
 
 export const dashboardTopBarByRole = Object.fromEntries(

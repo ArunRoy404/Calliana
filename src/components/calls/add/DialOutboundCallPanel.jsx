@@ -14,13 +14,18 @@ import { useDialOutboundCallFormStore } from "@/store/admin/useDialOutboundCallF
  * own 700px width; `sm:max-w-175` only lifts shadcn's narrower 512px cap —
  * a genuine per-instance need (rule 0), since the keypad and context fields
  * sit side by side. Its own header replaces the plain title/subtitle.
+ *
+ * `useListStore` is the call list it opens from (the admin's by default) —
+ * its `?panel=add` opens it.
  */
-export default function DialOutboundCallPanel() {
+export default function DialOutboundCallPanel({
+  useListStore = useCallsStore,
+}) {
   const content = useDialOutboundCallFormStore((state) => state.content);
 
   return (
     <FormPanel
-      useListStore={useCallsStore}
+      useListStore={useListStore}
       useFormStore={useDialOutboundCallFormStore}
       overlay="modal"
       variant="sectioned"

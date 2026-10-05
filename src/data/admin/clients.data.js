@@ -107,6 +107,15 @@ export const CLIENT_CATEGORIES = [
   { value: "wellness", label: "Beauty & Wellness" },
 ];
 
+/** The status filter — the admin's and the agent's client lists. */
+export const CLIENT_STATUS_FILTER = {
+  param: "status",
+  field: "statusKey",
+  label: "Filter by status",
+  allValue: "all",
+  options: [{ value: "all", label: "All Statuses" }, ...CLIENT_STATUS_OPTIONS],
+};
+
 export const clientsData = {
   texture: "/admin/table/table-texture.png",
 
@@ -121,18 +130,12 @@ export const clientsData = {
       field: "category",
       label: "Filter by category",
       allValue: "all",
-      options: [{ value: "all", label: "All Categories" }, ...CLIENT_CATEGORIES],
-    },
-    {
-      param: "status",
-      field: "statusKey",
-      label: "Filter by status",
-      allValue: "all",
       options: [
-        { value: "all", label: "All Statuses" },
-        ...CLIENT_STATUS_OPTIONS,
+        { value: "all", label: "All Categories" },
+        ...CLIENT_CATEGORIES,
       ],
     },
+    CLIENT_STATUS_FILTER,
   ],
 
   addAction: {

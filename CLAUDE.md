@@ -56,7 +56,14 @@ Also binding, in full in AGENTS.md:
   `RowCard variant="accent"`
   and `TableCard` reused as textured paper, `InfoTile` `tone`, `Button`
   `plain`/`stack`, any-`AssetIcon` `trailingIcon`, and one overlay scrim
-  (`SCRIM_CLASSES`, `src/lib/overlay.js`). A screen drawn inside the dashboard
+  (`SCRIM_CLASSES`, `src/lib/overlay.js`); the agent workspace's
+  `components/agent/<page>/`, shared screens over the agent's own store
+  (`CallsDirectory useStore`, `createClientsStore` + `ClientsDirectory` /
+  `ClientDetailView useStore`; voicemail = call rows + `voicemails` joined
+  in the store, `CallDetailPanel` sections as data), list-valued filter
+  fields (`views`),
+  `tables/TablePanel`, `BookingsPanel` + `bookingRows`, `charts/Waveform`,
+  `ElapsedTimer`, `IconLabel`. A screen drawn inside the dashboard
   chrome is built as content only; its top-bar title is data. A read-only
   "edit" drawer is only correct when Figma's
   values genuinely have no field chrome around them — a bordered,

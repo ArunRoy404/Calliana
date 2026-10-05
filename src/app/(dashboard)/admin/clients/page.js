@@ -1,6 +1,6 @@
 import { connection } from "next/server";
 
-import ClientsDirectory from "@/app/(dashboard)/admin/clients/_components/ClientsDirectory";
+import ClientsDirectory from "@/components/clients/ClientsDirectory";
 
 export const metadata = {
   title: "Clients · Calliana",

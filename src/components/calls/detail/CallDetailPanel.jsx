@@ -1,5 +1,6 @@
 "use client";
 
+import AssetIcon from "@/components/atoms/AssetIcon";
 import Button from "@/components/atoms/Button";
 import CallInfoCard from "@/components/calls/detail/CallInfoCard";
 import CallRecordingPlayer from "@/components/calls/detail/CallRecordingPlayer";
@@ -16,19 +17,22 @@ import { useCallsStore } from "@/store/admin/useCallsStore";
 
 /**
  * One call's details — Figma 202:38997 / 202:39212, on the shared
- * `SidePanel`. The info card sits on top, then one
- * outlined `DetailSection` per block: recording, summary, agent notes, and —
- * when the call has them — the amber triage note and the event timeline.
+ * `SidePanel` — and, with its own content, one voicemail's (the agent's
+ * "Voicemail Details"). The info card sits on top, then one outlined
+ * `DetailSection` per entry in `content.sections`: the recording player,
+ * a text block (summary, agent notes, the amber triage note, a voicemail's
+ * transcription) or the event timeline. A text or timeline section the
+ * record has nothing for is left out.
  *
- * The call is the URL's `?call=<id>`, read through the calls store, so the
- * panel opens straight from a shared link; on close the last call is kept on
- * screen while the panel slides away. Sections reveal in reading order and
- * their delays follow the sections actually shown, so an absent triage note
- * leaves no gap in the sequence.
+ * The record is the URL's `?call=<id>`, read through the store, so the
+ * panel opens straight from a shared link; on close the last record is
+ * kept on screen while the panel slides away. Sections reveal in reading
+ * order and their delays follow the sections actually shown, so an absent
+ * one leaves no gap in the sequence.
  *
- * `useStore` is the call list it opens from — any `createTableStore` store
+ * `useStore` is the list it opens from — any `createTableStore` store
  * carrying `callDetailSlice` (the admin calls directory by default, the
- * client portal's Calls & Notes too).
+ * client portal's Calls & Notes and the agent's calls and voicemail too).
  */
 export default function CallDetailPanel({ useStore = useCallsStore }) {
   const params = useStoreParams(useStore);
@@ -40,58 +44,77 @@ export default function CallDetailPanel({ useStore = useCallsStore }) {
   const notFunctional = notFunctionalProps(content);
   const labels = content?.labels;
 
-  const editNotesAction = (
-    <Button
-      variant="link"
-      size="none"
-      className="text-body-md font-semibold"
-      {...notFunctional}
-    >
-      {labels?.editNotes}
-    </Button>
-  );
+  /** What sits at the right of a section's header, by section kind. */
+  function asideOf(section) {
+    if (section?.editable) {
+      return (
+        <Button
+          variant="link"
+          size="none"
+          className="text-body-md font-semibold"
+          {...notFunctional}
+        >
+          {labels?.editNotes}
+        </Button>
+      );
+    }
+    if (section?.kind !== "recording" || !call?.recordingAside) return null;
 
-  const sections = [
-    {
-      id: "recording",
-      title: labels?.recordingTitle,
-      icon: content?.recordingIcon,
-      iconTone: "primary",
-      action: call?.duration && (
+    return (
+      <span className="flex items-center gap-3">
         <span className="text-label-lg text-brand-ink-black">
-          {call?.duration}
+          {call?.recordingAside}
         </span>
-      ),
-      render: (delay) => (
+        {content?.downloadIcon && (
+          <Button
+            variant="ghost"
+            size="square"
+            aria-label={labels?.downloadLabel}
+            {...notFunctional}
+          >
+            <AssetIcon icon={content?.downloadIcon} />
+          </Button>
+        )}
+      </span>
+    );
+  }
+
+  /** A section's body, by section kind. */
+  function bodyOf(section, delay) {
+    if (section?.kind === "recording") {
+      return (
         <CallRecordingPlayer
           content={content}
           notFunctional={notFunctional}
           revealDelay={nestedRevealDelayAt(delay, 0)}
         />
-      ),
-    },
-    { id: "summary", title: labels?.summaryTitle, text: call?.summary },
-    {
-      id: "agentNotes",
-      title: labels?.agentNotesTitle,
-      action: editNotesAction,
-      text: call?.agentNotes,
-    },
-    call?.triageNote && {
-      id: "triage",
-      title: labels?.triageNotesTitle,
-      icon: content?.lockIcon,
-      tone: "warning",
-      text: call?.triageNote,
-    },
-    call?.timeline && {
-      id: "timeline",
-      title: labels?.timelineTitle,
-      render: (delay) => (
-        <Timeline events={call?.timeline} emphasis revealDelay={delay} />
-      ),
-    },
-  ].filter(Boolean);
+      );
+    }
+    if (section?.kind === "timeline") {
+      return (
+        <Timeline
+          events={call?.[section?.field]}
+          emphasis
+          revealDelay={delay}
+        />
+      );
+    }
+    return (
+      <p
+        className={cn(
+          "text-body-md",
+          TONE_TEXT?.[section?.tone] ?? "text-text-secondary",
+        )}
+      >
+        {call?.[section?.field]}
+      </p>
+    );
+  }
+
+  const sections =
+    content?.sections?.filter(
+      (section) => section?.kind === "recording" || call?.[section?.field],
+    ) ?? [];
 
   return (
     <SidePanel
@@ -107,6 +130,7 @@ export default function CallDetailPanel({ useStore = useCallsStore }) {
           href={action?.hrefField ? call?.[action?.hrefField] : undefined}
           {...(!action?.hrefField ? notFunctional : undefined)}
         >
+          {action?.icon && <AssetIcon icon={action?.icon} />}
           {action?.label}
         </Button>
       ))}
@@ -128,19 +152,10 @@ export default function CallDetailPanel({ useStore = useCallsStore }) {
             icon={section?.icon}
             iconTone={section?.iconTone}
             tone={section?.tone}
-            action={section?.action}
+            action={asideOf(section)}
             revealDelay={delay}
           >
-            {section?.render?.(delay) ?? (
-              <p
-                className={cn(
-                  "text-body-md",
-                  TONE_TEXT?.[section?.tone] ?? "text-text-secondary",
-                )}
-              >
-                {section?.text}
-              </p>
-            )}
+            {bodyOf(section, delay)}
           </DetailSection>
         );
       })}
