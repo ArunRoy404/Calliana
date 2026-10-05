@@ -179,6 +179,7 @@ export const agentDashboardData = {
         label: "Open Live Workspace",
         variant: "primary",
         icon: { lucide: "MonitorSmartphone", size: 16 },
+        href: "/agent/calls/live",
       },
     ],
   },

@@ -52,6 +52,12 @@ const VARIANT_CLASSES = {
    * event, tinted by the strip it sits in). It dims a touch on hover.
    */
   plain: "bg-transparent text-left hover:opacity-80",
+  /**
+   * A selectable card — one of a set where one is chosen (a call outcome,
+   * a script's caller response); `aria-pressed` marks the chosen one.
+   */
+  choice:
+    "border border-solid border-border-default bg-action-secondary text-left text-text-primary hover:border-border-strong aria-[pressed=true]:border-border-focus aria-[pressed=true]:bg-surface-selected aria-[pressed=true]:text-action-primary",
   /** Light action on a dark toolbar strip — Figma 198:22851. */
   toolbar:
     "rounded-4 bg-brand-track font-medium text-brand-black hover:bg-surface-base",
@@ -75,6 +81,8 @@ const SIZE_CLASSES = {
   /** Lines stacked top-left, filling the width — a calendar event's title
    * over its client, with `plain`. */
   stack: "w-full flex-col items-start justify-start gap-1 rounded-none p-0",
+  /** A card's padding, its lines stacked top-left — pairs with `choice`. */
+  card: "w-full flex-col items-start justify-start gap-1 rounded-4 p-3",
   /** A 36px icon-only circle — a recording's play button. */
   round: "size-9 shrink-0 rounded-999 p-0",
   /** `sm` and `md` are row controls: filter-bar and form heights. */

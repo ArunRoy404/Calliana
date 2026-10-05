@@ -22,6 +22,10 @@ import { cn } from "@/lib/cn";
  * - `field` — an input-shaped trigger for forms, Figma 198:32325. `FormSelect`
  *   wraps it with a label and error.
  *
+ * `prefix` leads the chosen value inside the trigger in a quieter colour
+ * ("Professional / Dept: Dr. Laura Alegre") — the list shows the values
+ * alone.
+ *
  * shadcn's Select supplies the behaviour (keyboard, typeahead, focus return,
  * portal); the look is the design's: a grey chip that opens a flat list whose
  * current and hovered option fill with the primary blue.
@@ -56,6 +60,7 @@ export default function FilterSelect({
   variant = "filter",
   size = "sm",
   placeholder,
+  prefix,
   id,
   invalid = false,
   onBlur,
@@ -88,6 +93,9 @@ export default function FilterSelect({
           className,
         )}
       >
+        {prefix && (
+          <span className="shrink-0 text-text-secondary">{prefix}</span>
+        )}
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
 

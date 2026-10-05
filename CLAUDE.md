@@ -86,7 +86,9 @@ Also binding, in full in AGENTS.md:
   page and dashboard panel), list-valued filter
   fields (`views`),
   `tables/TablePanel`, `BookingsPanel` + `bookingRows`, `charts/Waveform`,
-  `ElapsedTimer`, `IconLabel`. A screen drawn inside the dashboard
+  `ElapsedTimer`, `IconLabel`; the live call workspace's boxed tabs and
+  filter, tag chips, `Button choice`/`card`, `NoteWell tone`, `FactList`,
+  `FilterSelect prefix`, nested top-bar keys (`"calls/live"`). A screen drawn inside the dashboard
   chrome is built as content only; its top-bar title is data. A read-only
   "edit" drawer is only correct when Figma's
   values genuinely have no field chrome around them — a bordered,

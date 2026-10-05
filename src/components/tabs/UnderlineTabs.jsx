@@ -22,6 +22,10 @@ import {
  * strip is centred; each panel still spans the full width (`w-full`), or the
  * centring would shrink it to its content.
  *
+ * `variant="boxed"` — the live call's side panel (Scripts / Dispositions /
+ * Calendar / Support): plain labels sharing the strip evenly (two rows of
+ * two on a phone) over a hairline, the active one boxed in green.
+ *
  * `tabs` is `[{ id, label, count }]`; `panels` maps each id to its content. A
  * `count` shows in a small ringed chip after the label that takes the tab's
  * colour. The underline strip scrolls sideways on a narrow screen rather
@@ -34,11 +38,15 @@ const LIST_VARIANT_CLASSES = {
   underline:
     "w-full justify-start overflow-x-auto overflow-y-hidden rounded-none border-b border-solid border-brand-track p-0 [scrollbar-width:none] group-data-[orientation=horizontal]/tabs:h-auto [&::-webkit-scrollbar]:hidden",
   pill: "w-fit items-center gap-1 rounded-8 border border-solid border-border-default bg-surface-canvas p-1",
+  boxed:
+    "grid w-full grid-cols-2 gap-1 rounded-none border-b border-solid border-brand-track bg-transparent p-0 pb-3 sm:grid-cols-4 group-data-[orientation=horizontal]/tabs:h-auto",
 };
 
 const TRIGGER_VARIANT_CLASSES = {
   underline:
     "text-body-lg h-auto flex-none cursor-pointer gap-1 rounded-none border-0 border-b border-solid border-transparent px-2 pb-2 font-normal text-text-tertiary transition-colors duration-200 ease-out after:hidden hover:text-text-secondary data-[state=active]:border-border-focus data-[state=active]:text-action-primary",
+  boxed:
+    "text-body-lg h-auto min-w-0 flex-none cursor-pointer rounded-4 border border-solid border-transparent px-2 py-2 font-semibold text-text-secondary shadow-none transition-colors duration-200 ease-out after:hidden hover:text-text-primary data-[state=active]:border-status-success data-[state=active]:bg-status-success-bg data-[state=active]:text-status-success",
   pill: "text-label-lg h-full flex-1 cursor-pointer gap-1 rounded-6 border-0 px-6 py-2 text-text-secondary shadow-none transition-colors duration-200 ease-out after:hidden hover:text-text-primary data-[state=active]:bg-surface-base data-[state=active]:text-action-primary data-[state=active]:shadow-xs",
 };
 

@@ -680,7 +680,12 @@ Reach for these before adding anything similar:
   rows; `large` — the client's 28px `DetailSection titleSize="lg"` titles,
   unruled `SettingRow size="lg"` rows on the new 18px `text-h5`, 20px
   underlined "Change"), and a `type: "tiles"` section draws its rows as
-  `InfoTile size="lg"` (the client's display name and email). A
+  `InfoTile size="lg"` (the client's display name and email; `columns: 3`
+  sets three across from `lg` — the agent's general preferences). The
+  agent's Profile and Settings are the same views over
+  `createProfileStore` / `createSettingsStore`, their data spreading the
+  admin's and changing only the look (`editLinkVariant`, `avatarSize`,
+  `look: "large"`) and the agent's own sections. A
   `SettingRow`'s label wraps and its control stays at the right. Every
   `Modal` is 700px and closes with `OverlayClose` (the circled ⓧ inset,
   the bare X sectioned) — never shadcn's own close or 512px cap.
@@ -728,6 +733,21 @@ Reach for these before adding anything similar:
   (`clientsData`, `clientDetailData`) and changes only its links
   (`/agent/clients/{id}`), category labels and actions; filters shared
   between the two lists are named constants (`CLIENT_STATUS_FILTER`).
+- The agent's Live Call Workspace (`/agent/calls/live`, an inner page of
+  Calls) keeps its side-panel tab, calendar view, open previous call and
+  chosen script response in the URL (`useLiveCallStore`), and the note,
+  categories, professional and outcome in one wrap-up form
+  (`useLiveCallNoteStore` + `live-call-note.schema.js`; `insertText` adds
+  a canned response or a past call's message). Canned texts are one list
+  that both the "Quick insert" chips and the response cards read. It
+  added: `UnderlineTabs variant="boxed"`, `SegmentedFilter
+  variant="boxed"`, `MultiSelectChips variant="tag"` + `showCount`,
+  `Button variant="choice"` + `size="card"` (one-of-a-set cards marked by
+  `aria-pressed`), `NoteWell tone` (`info` / `warning`), `cards/FactList`,
+  `FilterSelect prefix`, `ActionBar` actions with an `href`, and top-bar
+  titles for nested pages keyed by their path (`"calls/live"`). Below
+  `xl` its three columns stack with the critical instruction and the note
+  first (CSS `order`).
 - One pill filter across two facets (All / Incoming / Outgoing / Missed /
   Voicemail) reads a list-valued row field: `createTableStore` matches a
   filter when the row's field equals the value or, for an array, includes

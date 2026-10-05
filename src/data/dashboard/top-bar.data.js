@@ -101,6 +101,11 @@ const ROLE_PAGES = {
     },
   },
   agent: {
+    "calls/live": {
+      title: "Live Call Workspace",
+      subtitle:
+        "Active call context, client instructions and call documentation.",
+    },
     profile: {
       title: "Profile",
       subtitle: "Your personal information and working hours.",
