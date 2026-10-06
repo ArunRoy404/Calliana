@@ -8,7 +8,8 @@ import { cn } from "@/lib/cn";
  * The parent is `relative isolate`; this fills it underneath its content.
  * `className` carries the layer's strength (`opacity-17`), since the exports
  * are flat images with no alpha. `scrim` lays the page canvas colour over the
- * image, as the detail page's 76% wash does.
+ * image, as the detail page's 76% wash does. `texture-image` lets the
+ * dark theme invert the light photo (see `globals.css`).
  */
 export default function TextureLayer({ src, scrim = false, className }) {
   if (!src) return null;
@@ -19,7 +20,7 @@ export default function TextureLayer({ src, scrim = false, className }) {
         src={src}
         fill
         sizes="100vw"
-        className={cn("object-cover", className)}
+        className={cn("texture-image object-cover", className)}
       />
       {scrim && <span className="absolute inset-0 bg-surface-canvas/76" />}
     </span>

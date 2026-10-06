@@ -1,11 +1,11 @@
 "use client";
 
 import ClientWelcomeHeader from "@/components/client/dashboard/ClientWelcomeHeader";
-import InboundCallsPanel from "@/components/client/dashboard/InboundCallsPanel";
-import RecentConversationsPanel from "@/components/client/dashboard/RecentConversationsPanel";
 import SecretaryStatusCard from "@/components/client/dashboard/SecretaryStatusCard";
-import UpcomingAppointmentsPanel from "@/components/client/dashboard/UpcomingAppointmentsPanel";
+import BookingsPanel from "@/components/dashboard/bookings/BookingsPanel";
+import RecentConversationsPanel from "@/components/dashboard/conversations/RecentConversationsPanel";
 import StatCardGrid from "@/components/dashboard/stats/StatCardGrid";
+import TablePanel from "@/components/tables/TablePanel";
 import { revealDelayAt } from "@/lib/motion";
 import { useMessagesStore } from "@/store/admin/useMessagesStore";
 import { useClientDashboardStore } from "@/store/client/useClientDashboardStore";
@@ -47,14 +47,14 @@ export default function ClientDashboard() {
         revealDelay={statsStart}
       />
 
-      <InboundCallsPanel
-        calls={content?.inboundCalls}
+      <TablePanel
+        list={content?.inboundCalls}
         rows={inboundCallRows}
         revealDelay={revealDelayAt(panelsStart, 0)}
       />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <UpcomingAppointmentsPanel
+        <BookingsPanel
           appointments={content?.appointments}
           events={appointmentEvents}
           separator={content?.separator}

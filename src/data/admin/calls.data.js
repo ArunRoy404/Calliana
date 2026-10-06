@@ -16,7 +16,8 @@ import {
   DURATION_COLUMN as DURATION,
 } from "@/data/tables/call-columns.data";
 
-const CLIENT_ACCOUNT = {
+/** The client-account column — the call log and the agent's voicemail list. */
+export const CALL_CLIENT_ACCOUNT_COLUMN = {
   id: "clientAccount",
   label: "CLIENT / ACCOUNT",
   type: "text",
@@ -38,7 +39,11 @@ const FOLLOW_UP = {
   align: "center",
   headerAlign: "center",
 };
-const ACTION = {
+/**
+ * "Details" (opens the row's drawer) and the call-back button — the call log
+ * and the agent's voicemail list.
+ */
+export const CALL_ACTIONS_COLUMN = {
   id: "action",
   label: "Action",
   type: "action",
@@ -75,6 +80,30 @@ export const CALL_CLIENT_OPTIONS = [
   { value: "catalunya-tech-legal", label: "Catalunya Tech Legal" },
 ];
 
+/** The client-account filter — the admin's and the agent's call lists. */
+export const CALL_CLIENT_FILTER = {
+  param: "client",
+  field: "clientId",
+  label: "Filter by client account",
+  allValue: "all",
+  options: [
+    { value: "all", label: "All Client Accounts" },
+    ...CALL_CLIENT_OPTIONS,
+  ],
+};
+
+/** The call-status filter — the admin's and the agent's call lists. */
+export const CALL_STATUS_FILTER = {
+  param: "status",
+  field: "statusKey",
+  label: "Filter by call status",
+  allValue: "all",
+  options: [
+    { value: "all", label: "All Call Statuses" },
+    ...CALL_STATUS_OPTIONS,
+  ],
+};
+
 export const callsData = {
   texture: "/admin/table/table-texture.png",
 
@@ -87,26 +116,8 @@ export const callsData = {
   },
 
   filters: [
-    {
-      param: "client",
-      field: "clientId",
-      label: "Filter by client account",
-      allValue: "all",
-      options: [
-        { value: "all", label: "All Client Accounts" },
-        ...CALL_CLIENT_OPTIONS,
-      ],
-    },
-    {
-      param: "status",
-      field: "statusKey",
-      label: "Filter by call status",
-      allValue: "all",
-      options: [
-        { value: "all", label: "All Call Statuses" },
-        ...CALL_STATUS_OPTIONS,
-      ],
-    },
+    CALL_CLIENT_FILTER,
+    CALL_STATUS_FILTER,
     {
       param: "direction",
       field: "direction",
@@ -134,21 +145,21 @@ export const callsData = {
 
   columns: [
     CALLER,
-    CLIENT_ACCOUNT,
+    CALL_CLIENT_ACCOUNT_COLUMN,
     DIRECTION,
     START_TIME,
     DURATION,
     CALL_STATUS,
     FOLLOW_UP,
-    ACTION,
+    CALL_ACTIONS_COLUMN,
   ],
 
   card: {
     title: CALLER,
     status: CALL_STATUS,
-    subtitle: CLIENT_ACCOUNT,
+    subtitle: CALL_CLIENT_ACCOUNT_COLUMN,
     fields: [DIRECTION, START_TIME, DURATION, FOLLOW_UP],
-    action: ACTION,
+    action: CALL_ACTIONS_COLUMN,
   },
 
   rows: [

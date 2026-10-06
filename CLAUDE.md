@@ -11,7 +11,9 @@ Also binding, in full in AGENTS.md:
   (`h-control`, 44px) for forms and the top bar, `sm` (`h-control-sm`, 36px)
   for filter bars; search has no `⌘K` hint.
 - **Rule 16** — every list is `tables/TableDirectory` over a `createTableStore`
-  store; filters and row actions are data; 10 rows per page by default.
+  store; filters and row actions are data; 10 rows per page by default. A row
+  that expands is `content.expand` + `expandKey` (`?note=<id>`), drawn by
+  `RowExpansion` in both views.
 - **Rule 17** — below `xl` a table becomes `TableCardList` / `TableRowCard`,
   built from the table's own cell renderers; a reveal never flashes a scrollbar.
 - **Rule 18** — the sidebar is 232px with inset rows; keep that language.
@@ -26,8 +28,9 @@ Also binding, in full in AGENTS.md:
 - **Rule 23** — forms: fields sit in `FieldShell`, bound with `StoreField` /
   `StoreSelect`; state is `createFormStore` + a Zod schema; submit/cancel are
   store actions.
-- **Rule 24** — light theme only, enforced by `@custom-variant dark` in
-  `globals.css`; never write a `dark:` class.
+- **Rule 24** — light and dark themes over one token set: `.dark` on <html>
+  (top-bar `ThemeToggle`, `lib/theme.js`, no-flash init script) redefines the
+  tokens in `globals.css`; never write a `dark:` colour class.
 - **Rule 25** — icons are data (`{ src }` asset or `{ lucide }`) rendered by
   `AssetIcon`; broken Figma exports fall back to lucide.
 - **Rule 26** — view state (search, filters, page, size, open panel, tab)
@@ -55,8 +58,38 @@ Also binding, in full in AGENTS.md:
   `CountBadge`, `MAIN_FILL_HEIGHT` (every size, rule 33), the calendar's
   `RowCard variant="accent"`
   and `TableCard` reused as textured paper, `InfoTile` `tone`, `Button`
-  `plain`/`stack`, any-`AssetIcon` `trailingIcon`, and one overlay scrim
-  (`SCRIM_CLASSES`, `src/lib/overlay.js`). A screen drawn inside the dashboard
+  `plain`/`stack`, any-`AssetIcon` `trailingIcon`, the reports'
+  `createReportsStore` + `ReportsView`, `charts/*` (dot matrix, donut, legend,
+  tooltip, sr-only table), `PanelCard variant="banded"`, and one overlay scrim
+  (`SCRIM_CLASSES`, `src/lib/overlay.js`), and the client portal's
+  `tables/TableViews`, `actions/PanelLink`, `Timeline` `renderAside`/`meta`,
+  shared `call-columns.data.js`. The client portal is the same shell — its
+  sidebar and heading are data; its pages live in `components/client/<page>/`.
+  A record set shown twice has one source (`clientCallRows`); a shared drawer
+  takes `useStore` (`CallDetailPanel` + `callDetailSlice`); per-role page
+  titles are `ROLE_PAGES` in `top-bar.data.js`.
+  Contacts added `SidePanel closeIcon="text"` / `ruled={false}`,
+  `DetailSection variant="card"` / `"callout"`, `CardField meta`, `RowCard
+  variant="bare"` and per-status badge `variant`; a row's "…" opens its
+  drawer through `onRowAction` → `open<Record>`.
+  Profiles are one `ProfileView` over `createProfileStore(data)` (admin and
+  client Business Profile); `NoteWell`, `InfoTile wrap`, `Button
+  variant="underline"`, `UserAvatar size="2xl"`, `WorkingDayRow`
+  `hoursIcon`/`action`.
+  Settings are one `SettingsView` over `createSettingsStore(data)`
+  (`content.look` `standard` / `large`, `type: "tiles"` sections); every
+  `Modal` is 700px with `OverlayClose`; `text-h5` is the 18px style.
+  The agent workspace's `components/agent/<page>/`, shared screens over the agent's own store
+  (`CallsDirectory useStore`, `createClientsStore` + `ClientsDirectory` /
+  `ClientDetailView useStore`; voicemail = call rows + `voicemails` joined
+  in the store, `CallDetailPanel` sections as data; agent tasks over
+  `TASK_COLUMNS` + `AddTaskPanel useListStore`; one call-history file for
+  page and dashboard panel), list-valued filter
+  fields (`views`),
+  `tables/TablePanel`, `BookingsPanel` + `bookingRows`, `charts/Waveform`,
+  `ElapsedTimer`, `IconLabel`; the live call workspace's boxed tabs and
+  filter, tag chips, `Button choice`/`card`, `NoteWell tone`, `FactList`,
+  `FilterSelect prefix`, nested top-bar keys (`"calls/live"`). A screen drawn inside the dashboard
   chrome is built as content only; its top-bar title is data. A read-only
   "edit" drawer is only correct when Figma's
   values genuinely have no field chrome around them — a bordered,

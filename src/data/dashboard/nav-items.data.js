@@ -47,6 +47,12 @@ export const NAV_ITEMS = {
   requests: { label: "REQUESTS", icon: "requests", path: "requests" },
   contacts: { label: "CONTACTS", icon: "clients", path: "contacts" },
   audit: { label: "AUDIT LOG", icon: "audit", path: "audit" },
+  /** An agent's own call log — the same clock glyph as the audit log. */
+  callHistory: {
+    label: "CALL HISTORY",
+    icon: "audit",
+    path: "call-history",
+  },
   billing: { label: "BILLING", icon: "billing", path: "billing" },
   profile: { label: "PROFILE", icon: "profile", path: "profile" },
   /** A client's profile is their business's, at the same `profile` path. */
@@ -65,6 +71,7 @@ export const NAV_SECTIONS = {
   operation: "OPERATION",
   management: "MANAGEMENT",
   workspace: "WORKSPACE",
+  work: "WORK",
   account: "ACCOUNT",
   system: "SYSTEM",
 };

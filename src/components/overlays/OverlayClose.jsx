@@ -1,6 +1,7 @@
 "use client";
 
 import AssetIcon from "@/components/atoms/AssetIcon";
+import Button from "@/components/atoms/Button";
 import { DialogClose } from "@/components/shadcn/dialog";
 import { cn } from "@/lib/cn";
 
@@ -14,6 +15,8 @@ import { cn } from "@/lib/cn";
  * - `circle` (default) — the design's circled ⓧ in primary blue, on every
  *   drawer and on Change Password (Figma 319:34461).
  * - `plain` — a bare slate X, for the outbound dialer's sectioned header.
+ * - `text` — no glyph: `label` itself on a white, hairline-bordered button
+ *   (the contact details drawer's "Close").
  */
 const CLOSE_ICONS = {
   circle: {
@@ -27,6 +30,16 @@ const CLOSE_ICONS = {
 };
 
 export default function OverlayClose({ label, icon = "circle" }) {
+  if (icon === "text") {
+    return (
+      <DialogClose asChild>
+        <Button variant="neutral" size="sm" className="shrink-0 font-semibold">
+          {label}
+        </Button>
+      </DialogClose>
+    );
+  }
+
   const look = CLOSE_ICONS?.[icon] ?? CLOSE_ICONS?.circle;
 
   return (

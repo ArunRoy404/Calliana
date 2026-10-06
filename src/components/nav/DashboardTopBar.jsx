@@ -1,10 +1,11 @@
 "use client";
 
-import { useSelectedLayoutSegment } from "next/navigation";
+import { useSelectedLayoutSegments } from "next/navigation";
 
 import AppImage from "@/components/atoms/AppImage";
 import Icon from "@/components/atoms/Icon";
 import SearchField from "@/components/forms/SearchField";
+import ThemeToggle from "@/components/nav/ThemeToggle";
 import TopBarTile from "@/components/nav/TopBarTile";
 import NotificationsBell from "@/components/notifications/NotificationsBell";
 import { SidebarTrigger } from "@/components/shadcn/sidebar";
@@ -24,12 +25,17 @@ import { useDashboardStore } from "@/store/dashboard/useDashboardStore";
  * so the two bottom borders line up.
  *
  * The heading follows the route: an inner page (`/admin/agents`) shows its own
- * entry from `topBar.pages`, and anything else falls back to the role's.
+ * entry from `topBar.pages` — a nested page its full path first
+ * (`calls/live`), then its section (`calls`) — and anything else falls back
+ * to the role's.
  */
 export default function DashboardTopBar({ role }) {
   const topBar = useDashboardStore((state) => state.topBar?.[role]);
-  const segment = useSelectedLayoutSegment();
-  const heading = topBar?.pages?.[segment] ?? topBar;
+  const segments = useSelectedLayoutSegments();
+  const heading =
+    topBar?.pages?.[segments?.join("/")] ??
+    topBar?.pages?.[segments?.[0]] ??
+    topBar;
 
   return (
     <header className="sticky top-0 z-20 flex h-(--dashboard-bar-height) shrink-0 items-center gap-3 overflow-hidden border-b border-solid border-border-default bg-surface-elevated px-4 py-3 sm:px-6">
@@ -38,7 +44,7 @@ export default function DashboardTopBar({ role }) {
           src={topBar?.texture}
           fill
           sizes="100vw"
-          className="pointer-events-none object-cover opacity-10"
+          className="texture-image pointer-events-none object-cover opacity-10"
         />
       )}
 
@@ -90,14 +96,10 @@ export default function DashboardTopBar({ role }) {
           />
         </TopBarTile>
 
-        <TopBarTile
-          as="button"
-          type="button"
+        <ThemeToggle
           label={topBar?.appearance?.label}
           className="hidden border-border-strong md:flex"
-        >
-          <Icon name="Sun" size={24} className="text-action-primary" />
-        </TopBarTile>
+        />
       </div>
     </header>
   );

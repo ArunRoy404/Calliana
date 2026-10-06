@@ -201,6 +201,7 @@ export const appointmentsData = {
       title: "Emergency inspection",
       name: "Dr. Martinez Emergency Inspection",
       subtitle: "Martinez Dental Care",
+      contactPerson: "Mateo Fernandez",
       notes: "Acute molar pain emergency inspection slot.",
     },
     {

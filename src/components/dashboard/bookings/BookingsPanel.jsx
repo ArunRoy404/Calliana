@@ -5,12 +5,14 @@ import DetailSection from "@/components/cards/DetailSection";
 import Timeline from "@/components/timeline/Timeline";
 
 /**
- * "Upcoming Appointments" — the secretary's next bookings as a timeline:
- * each a toned marker, the booking and its "who • when" line, with its type
- * tag and an "Open" link at the right. "View Calendar" opens the full
- * calendar. Reveals after `revealDelay`; its bookings follow it in.
+ * A dashboard's bookings as a timeline — the client home's "Upcoming
+ * Appointments" and the agent dashboard's "Today's Schedules": each a toned
+ * marker, the booking and its meta line, with its type tag and an "Open"
+ * link at the right. "View Calendar" opens the full calendar. `events` are
+ * calendar events as rows (`bookingRows`). Reveals after `revealDelay`; its
+ * bookings follow it in.
  */
-export default function UpcomingAppointmentsPanel({
+export default function BookingsPanel({
   appointments,
   events,
   separator,

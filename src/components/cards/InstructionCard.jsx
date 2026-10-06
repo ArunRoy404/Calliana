@@ -1,4 +1,5 @@
 import AssetIcon from "@/components/atoms/AssetIcon";
+import NoteWell from "@/components/cards/NoteWell";
 import Reveal from "@/components/motion/Reveal";
 
 /**
@@ -22,9 +23,7 @@ export default function InstructionCard({
         <AssetIcon icon={icon} className="shrink-0" />
         <span className="truncate">{title}</span>
       </h3>
-      <p className="text-body-md rounded-8 bg-action-secondary p-4 text-text-secondary">
-        {children}
-      </p>
+      <NoteWell>{children}</NoteWell>
     </Reveal>
   );
 }

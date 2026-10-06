@@ -24,14 +24,20 @@ import { useClientsStore } from "@/store/admin/useClientsStore";
  * The active tab is the URL's `?tab=` (rule 26), so a link opens the page on
  * that tab and Back / Forward move between tabs' links. Each tab is its own
  * component and reveals its content as it is selected.
+ *
+ * `useStore` is the clients store the page belongs to — the admin's by
+ * default, the agent workspace's too (its own links and actions).
  */
-export default function ClientDetailView({ clientId }) {
-  const client = useClientsStore((state) => state.clientById(clientId));
-  const content = useClientsStore((state) => state.detailContent);
-  const schema = useClientsStore((state) => state.detailParamsSchema);
+export default function ClientDetailView({
+  clientId,
+  useStore = useClientsStore,
+}) {
+  const client = useStore((state) => state.clientById(clientId));
+  const content = useStore((state) => state.detailContent);
+  const schema = useStore((state) => state.detailParamsSchema);
   const params = useUrlParams(schema);
-  const tab = useClientsStore((state) => state.detailTab(params));
-  const setTab = useClientsStore((state) => state.setDetailTab);
+  const tab = useStore((state) => state.detailTab(params));
+  const setTab = useStore((state) => state.setDetailTab);
 
   const tabProps = { client, content };
   const panels = {

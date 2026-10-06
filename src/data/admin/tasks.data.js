@@ -69,10 +69,25 @@ const ACTION = {
       props: {
         notFunctional: true,
         notFunctionalMessage: "Task management isn’t wired up yet",
-        notFunctionalDescription: "This action will work once the backend is connected.",
+        notFunctionalDescription:
+          "This action will work once the backend is connected.",
       },
     },
   ],
+};
+
+/**
+ * The task list's columns — the admin's Task & Follow-ups and the agent's
+ * build their tables from these, adjusting only what their designs change.
+ */
+export const TASK_COLUMNS = {
+  TASK,
+  CLIENT,
+  TYPE,
+  PRIORITY,
+  DUE_DATE,
+  ASSIGNED_TO,
+  STATUS,
 };
 
 export const TASK_PRIORITY_OPTIONS = [
@@ -152,14 +167,20 @@ export const tasksData = {
       field: "priorityKey",
       label: "Filter by priority",
       allValue: "all",
-      options: [{ value: "all", label: "All Priorities" }, ...TASK_PRIORITY_OPTIONS],
+      options: [
+        { value: "all", label: "All Priorities" },
+        ...TASK_PRIORITY_OPTIONS,
+      ],
     },
     {
       param: "status",
       field: "statusKey",
       label: "Filter by status",
       allValue: "all",
-      options: [{ value: "all", label: "All Statuses" }, ...TASK_STATUS_OPTIONS],
+      options: [
+        { value: "all", label: "All Statuses" },
+        ...TASK_STATUS_OPTIONS,
+      ],
     },
   ],
 
@@ -169,13 +190,23 @@ export const tasksData = {
   },
 
   notFunctionalMessage: "Task management isn’t wired up yet",
-  notFunctionalDescription: "This action will work once the backend is connected.",
+  notFunctionalDescription:
+    "This action will work once the backend is connected.",
 
   emptyLabel: "No tasks match your search or filters.",
 
   tableClassName: "min-w-[1100px]",
 
-  columns: [TASK, CLIENT, TYPE, PRIORITY, DUE_DATE, ASSIGNED_TO, STATUS, ACTION],
+  columns: [
+    TASK,
+    CLIENT,
+    TYPE,
+    PRIORITY,
+    DUE_DATE,
+    ASSIGNED_TO,
+    STATUS,
+    ACTION,
+  ],
 
   card: {
     title: TASK,

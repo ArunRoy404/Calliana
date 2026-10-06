@@ -116,6 +116,29 @@ export const appointmentDetailsById = new Map(
   events.map((event) => [event?.id, buildDetail(event)]),
 );
 
+/**
+ * Calendar events as a booking list's timeline rows (the client home's
+ * upcoming appointments, the agent dashboard's today's schedules): each
+ * one's title, a meta line of `metaFields` read off the event, its type's
+ * tone and tag, and the link its "Open" follows (`openHrefTemplate`, filled
+ * from the event). Unknown ids are skipped.
+ */
+export function bookingRows(ids = [], { metaFields = [], openHrefTemplate }) {
+  return (
+    ids
+      ?.map((id) => appointmentDetailsById.get(id))
+      ?.filter(Boolean)
+      ?.map((event) => ({
+        id: event?.id,
+        label: event?.panelTitle,
+        meta: metaFields.map((field) => event?.[field]),
+        tone: event?.tone,
+        tag: { label: event?.typeTag, tone: event?.tone },
+        openHref: fillTemplate(openHrefTemplate, event),
+      })) ?? []
+  );
+}
+
 /** The week grid's hour rows ("7 AM" … "5 PM"), built once. */
 const hourRows = Array.from(
   { length: (HOURS?.end ?? 0) - (HOURS?.start ?? 0) },

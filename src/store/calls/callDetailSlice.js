@@ -11,17 +11,28 @@ import { PANEL_PARAM } from "@/schemas/url/list-params.schema";
 /**
  * Overlay one call's own row (caller, timing, status) on the detail data's
  * shared `sample`, so each call's panel reads as its own until real per-call
- * data exists. `clientHrefTemplate` links the call's client account
- * (`/admin/clients/{clientId}`); a list without one leaves it out.
+ * data exists. The row's own extra fields (a voicemail's `received` and
+ * `transcription`) come through as they are. `clientHrefTemplate` links the
+ * call's client account (`/admin/clients/{clientId}`); a list without one
+ * leaves it out.
+ *
+ * `recordingAside` is the recording header's right side, from
+ * `detail.recordingAsideTemplate` (the duration by default; a voicemail's
+ * "0:52 / 03:42").
  */
 export function buildCallDetail(row, { detail, clientHrefTemplate } = {}) {
   const hasTiming = Boolean(row?.startTime && row?.duration);
+  const record = { ...detail?.sample, ...row };
 
   return {
-    ...detail?.sample,
+    ...record,
     panelTitle: fillTemplate(detail?.titleTemplate, row),
-    panelSubtitle: hasTiming
-      ? fillTemplate(detail?.subtitleTemplate, row)
+    panelSubtitle:
+      hasTiming && detail?.subtitleTemplate
+        ? fillTemplate(detail?.subtitleTemplate, row)
+        : undefined,
+    recordingAside: row?.duration
+      ? fillTemplate(detail?.recordingAsideTemplate ?? "{duration}", record)
       : undefined,
     id: row?.id,
     caller: row?.caller,

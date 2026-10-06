@@ -20,7 +20,10 @@ const LIST_KEYS = ["q", "page", "size"];
  *
  * `filters` is `[{ param, field, allValue }]`: each filter's URL key, the row
  * field it compares to, and the value that switches it off ("all"). A row must
- * pass every filter.
+ * pass every filter. A row field holding a list matches when the list
+ * includes the value — one pill filter can then cover two facets (the agent
+ * calls' All / Incoming / Outgoing / Missed / Voicemail reads a row's
+ * `views: [direction, status]`).
  *
  * **The URL is the state.** Query, filters, page and page size are search
  * params, never store fields: a link reproduces the view, Back and Forward
@@ -72,7 +75,11 @@ export function createTableStore({
   function matches(row, query, values) {
     const passesFilters = filters?.every((filter) => {
       const value = values?.[filter?.param] ?? filter?.allValue;
-      return value === filter?.allValue || row?.[filter?.field] === value;
+      const field = row?.[filter?.field];
+      return (
+        value === filter?.allValue ||
+        (Array.isArray(field) ? field.includes(value) : field === value)
+      );
     });
     if (!passesFilters) return false;
 

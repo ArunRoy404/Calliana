@@ -75,9 +75,17 @@ export const REVIEW_CALL_COLUMN = {
   ],
 };
 
-/** A row's direction label and icon, from `"incoming"` / `"outgoing"`. */
-export function directionOf(direction) {
+/** The words a list uses for a call's direction. */
+const INCOMING_LABELS = { incoming: "Incoming", outgoing: "Outgoing" };
+/** The agent workspace's words for the same — "Inbound" / "Outbound". */
+export const INBOUND_LABELS = { incoming: "Inbound", outgoing: "Outbound" };
+
+/**
+ * A row's direction label and icon, from `"incoming"` / `"outgoing"`.
+ * `labels` swaps the words (`INBOUND_LABELS`); the icons stay the same.
+ */
+export function directionOf(direction, labels = INCOMING_LABELS) {
   return direction === "outgoing"
-    ? { directionLabel: "Outgoing", directionIcon: PHONE_OUTGOING_ICON }
-    : { directionLabel: "Incoming", directionIcon: PHONE_INCOMING_ICON };
+    ? { directionLabel: labels?.outgoing, directionIcon: PHONE_OUTGOING_ICON }
+    : { directionLabel: labels?.incoming, directionIcon: PHONE_INCOMING_ICON };
 }

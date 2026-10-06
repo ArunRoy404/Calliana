@@ -35,7 +35,7 @@ export default function DashboardSidebar({ role }) {
           src={nav?.textures?.panel}
           fill
           sizes={SIDEBAR_IMAGE_SIZES}
-          className="pointer-events-none object-cover opacity-10"
+          className="texture-image pointer-events-none object-cover opacity-10"
         />
       )}
 

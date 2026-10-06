@@ -16,11 +16,6 @@ export const callDetailData = {
     clientAccount: "CLIENT ACCOUNT",
     assignedAgent: "ASSIGNED AGENT",
     purposeTag: "PURPOSE TAG",
-    recordingTitle: "Call Recording Audio",
-    summaryTitle: "Call Summary",
-    agentNotesTitle: "Operational Agent Notes",
-    triageNotesTitle: "Internal Triage Note:",
-    timelineTitle: "Call Event Timeline",
     editNotes: "Edit Notes",
     playLabel: "Play recording",
   },
@@ -33,13 +28,6 @@ export const callDetailData = {
   ],
 
   playIcon: { lucide: "Play", size: 16 },
-  /**
-   * Beside "Call Recording Audio", in primary blue. lucide stand-in for the
-   * equaliser glyph in the 202:39212 screenshot — a close match, not a
-   * verified Figma export.
-   */
-  recordingIcon: { lucide: "AudioLines", size: 18 },
-  lockIcon: { lucide: "Lock", size: 16 },
 
   /**
    * The recording's waveform: one bar per entry, each a percentage of the
@@ -57,6 +45,48 @@ export const callDetailData = {
       55, 65, 75, 80, 85, 88, 85, 80, 75, 65, 55, 45, 40, 35,
     ],
   },
+
+  /**
+   * The drawer's blocks, top to bottom, each an outlined `DetailSection`.
+   * `kind` picks the body: `recording` (the player — always shown, its
+   * header's right side reads the record's `recordingAside`), `timeline`
+   * (the record's `field` as events) or text (the record's `field`). A
+   * text or timeline section whose `field` is empty on a record is left
+   * out. `editable` adds "Edit Notes"; `tone` tints the whole card.
+   */
+  sections: [
+    {
+      id: "recording",
+      kind: "recording",
+      title: "Call Recording Audio",
+      /**
+       * lucide stand-in for the equaliser glyph in the 202:39212
+       * screenshot — a close match, not a verified Figma export.
+       */
+      icon: { lucide: "AudioLines", size: 18 },
+      iconTone: "primary",
+    },
+    { id: "summary", field: "summary", title: "Call Summary" },
+    {
+      id: "agentNotes",
+      field: "agentNotes",
+      title: "Operational Agent Notes",
+      editable: true,
+    },
+    {
+      id: "triage",
+      field: "triageNote",
+      title: "Internal Triage Note:",
+      icon: { lucide: "Lock", size: 16 },
+      tone: "warning",
+    },
+    {
+      id: "timeline",
+      kind: "timeline",
+      field: "timeline",
+      title: "Call Event Timeline",
+    },
+  ],
 
   /**
    * `hrefField` makes the left action a real link to the call's client

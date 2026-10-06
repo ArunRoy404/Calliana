@@ -16,6 +16,16 @@ export const messagesData = {
   },
 
   /** `value`s are the URL's `?filter=`; the first is the default. */
+  /**
+   * Each thread status as a badge — the agent dashboard's recent
+   * conversations show where each thread stands.
+   */
+  statusBadges: {
+    "needs-reply": { label: "Needs Reply", tone: "warning" },
+    resolved: { label: "Resolved", tone: "success" },
+    waiting: { label: "Waiting", tone: "neutral" },
+  },
+
   filterOptions: [
     { value: "all", label: "All" },
     { value: "unread", label: "Unread" },
@@ -259,7 +269,7 @@ export const messagesData = {
       time: "Yesterday",
       startedDay: "Yesterday",
       unread: 0,
-      status: "needs-reply",
+      status: "waiting",
       client: {
         name: "Vanguard Wealth Partners",
         avatar: "/client/avatars/ricardo-gomez.png",

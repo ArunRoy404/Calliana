@@ -11,7 +11,8 @@ import { cn } from "@/lib/cn";
  * `buttonProps` (typically `notFunctionalProps(content)`) apply to every
  * action that has no `onClick` of its own; an action with a real `onClick`
  * (the queue detail panel's "Edit Rules", which opens another panel) is
- * wired instead of toasting not-wired-up. Reveals after `revealDelay`.
+ * wired instead of toasting not-wired-up, and one with an `href` is a real
+ * link (the dashboard's "Open Live Workspace"). Reveals after `revealDelay`.
  *
  * `size` is every button's `Button` size. `layout` is `row` (default, a
  * wrapping row) or `stack` (full-width buttons one above the other — the
@@ -44,8 +45,9 @@ export default function ActionBar({
           key={action?.id}
           variant={action?.variant}
           size={size}
+          href={action?.href}
           onClick={action?.onClick}
-          {...(!action?.onClick ? buttonProps : undefined)}
+          {...(!action?.onClick && !action?.href ? buttonProps : undefined)}
         >
           <AssetIcon icon={action?.icon} />
           {action?.label}

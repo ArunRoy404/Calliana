@@ -10,13 +10,15 @@ const SMS_ICON = { src: "/icons/shared/sms.svg", width: 16, height: 16 };
 export const profileData = {
   editLabel: "EDIT",
   editProfileLabel: "Edit Profile",
+  /** The admin's sections carry the soft lift; the client's sit flat. */
+  elevatedSections: true,
   changeAvatarLabel: "Change photo",
   changeAvatarIcon: { lucide: "Camera", size: 12 },
 
   user: {
     name: "Sofia Martínez",
     status: { label: "Available", tone: "success" },
-    role: "Agent",
+    meta: ["Agent"],
   },
 
   sections: {
@@ -38,16 +40,23 @@ export const profileData = {
     role: "Support Agent",
   },
 
+  /** Each day's hours; `open` days are worked. */
   workingHours: [
-    { id: "monday", day: "Monday", hours: "09:00 – 18:00", status: { label: "Active", tone: "success" } },
-    { id: "tuesday", day: "Tuesday", hours: "09:00 – 18:00", status: { label: "Active", tone: "success" } },
-    { id: "wednesday", day: "Wednesday", hours: "09:00 – 18:00", status: { label: "Active", tone: "success" } },
-    { id: "thursday", day: "Thursday", hours: "09:00 – 18:00", status: { label: "Active", tone: "success" } },
-    { id: "friday", day: "Friday", hours: "09:00 – 18:00", status: { label: "Active", tone: "success" } },
-    { id: "saturday", day: "Saturday", hours: "—", status: { label: "Inactive", tone: "neutral" } },
-    { id: "sunday", day: "Sunday", hours: "—", status: { label: "Inactive", tone: "neutral" } },
+    { id: "monday", day: "Monday", hours: "09:00 – 18:00", open: true },
+    { id: "tuesday", day: "Tuesday", hours: "09:00 – 18:00", open: true },
+    { id: "wednesday", day: "Wednesday", hours: "09:00 – 18:00", open: true },
+    { id: "thursday", day: "Thursday", hours: "09:00 – 18:00", open: true },
+    { id: "friday", day: "Friday", hours: "09:00 – 18:00", open: true },
+    { id: "saturday", day: "Saturday", hours: "—", open: false },
+    { id: "sunday", day: "Sunday", hours: "—", open: false },
   ],
+  offHours: "—",
+  dayStatuses: {
+    on: { label: "Active", tone: "success" },
+    off: { label: "Inactive", tone: "neutral" },
+  },
 
   notFunctionalMessage: "Profile editing isn’t wired up yet",
-  notFunctionalDescription: "This action will work once the backend is connected.",
+  notFunctionalDescription:
+    "This action will work once the backend is connected.",
 };

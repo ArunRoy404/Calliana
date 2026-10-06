@@ -31,6 +31,17 @@ const VARIANT_CLASSES = {
     active: "bg-action-primary text-text-on-primary",
     sized: true,
   },
+  /**
+   * Separate hairline boxes sharing the row equally, the active one ruled and
+   * tinted primary (the live call calendar's Day / Week / Month).
+   */
+  boxed: {
+    strip: "grid w-full auto-cols-fr grid-flow-col gap-2",
+    option:
+      "text-body-md border border-solid border-border-default bg-surface-base px-3 py-2.5 text-left",
+    active: "border-border-focus bg-surface-selected text-action-primary",
+    sized: false,
+  },
   soft: {
     strip: "flex-wrap",
     option: "px-2 py-1",
