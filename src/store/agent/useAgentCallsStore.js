@@ -1,5 +1,9 @@
 import { callDetailData } from "@/data/admin/call-detail.data";
-import { agentCallsData } from "@/data/agent/calls.data";
+import {
+  AGENT_CALL_DETAIL_LINKS,
+  agentCallsData,
+} from "@/data/agent/calls.data";
+import { withContentLinks } from "@/lib/actionLinks";
 import { agentCallsParamsSchema } from "@/schemas/agent/agent-calls-params.schema";
 import { CALLS_PARAM_KEYS } from "@/schemas/calls/calls-params.schema";
 import { callDetailSlice } from "@/store/calls/callDetailSlice";
@@ -23,7 +27,7 @@ const agentCallRows =
  * toolbar: search, the pill filter, the client-account and call-status
  * selects, rows per page and paging in the URL (rule 26), the dialer at
  * `?panel=add` and each call's details drawer at `?call=<id>` (the shared
- * `callDetailSlice`).
+ * `callDetailSlice`, with the agent's own footer links).
  */
 export const useAgentCallsStore = createTableStore({
   content: agentCallsData,
@@ -35,7 +39,7 @@ export const useAgentCallsStore = createTableStore({
   addPanelClears: [CALL],
   extend: callDetailSlice({
     rows: agentCallRows,
-    detail: callDetailData,
+    detail: withContentLinks(callDetailData, AGENT_CALL_DETAIL_LINKS),
     callKey: CALL,
     clientHrefTemplate: agentCallsData?.clientHrefTemplate,
   }),

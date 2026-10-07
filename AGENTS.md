@@ -664,6 +664,27 @@ Reach for these before adding anything similar:
   category the client cannot raise themselves is marked, not dropped
   (`requestable`). A button elsewhere that starts the same task links to the
   list with its drawer open (`/client/requests?panel=add`).
+- **Cross-page buttons link per portal, never through shared copy.** A
+  button that starts another page's task opens that page with its add drawer
+  (`/admin/tasks?panel=add`, `/admin/appointments?panel=add`,
+  `/client/appointments?panel=add`, `/agent/tasks?panel=add`). Copy only one
+  portal uses (the agent dashboard's live-call actions, the agent voicemail
+  drawer's footer) carries its link itself as an action `href`. The client page, the call drawer and
+  the inbox are copy every portal reuses, so that copy carries no links: a
+  portal's links are their own data (`ADMIN_CLIENT_DETAIL_LINKS`,
+  `ADMIN_CALL_DETAIL_LINKS`, `CLIENT_CALL_DETAIL_LINKS`,
+  `AGENT_CALL_DETAIL_LINKS`, `AGENT_CLIENT_DETAIL_LINKS`, the inbox's
+  `actionLinks` by role) in the same shape as the content, layered on by
+  that portal's store with `withContentLinks` (`src/lib/actionLinks.js`).
+  A link that names its record is an `hrefTemplate` with a `fallbackHref`,
+  filled per record (`resolveActionHref`; "Message" on a client page opens
+  that client's latest conversation through `createClientsStore`'s
+  `linkValues` — `conversationLinkValues` from the inbox store, shared by
+  the admin and agent). The inbox takes its portal as `MessagesInbox role` and
+  reads `contentFor(role)`. An action a portal has no link for — the
+  agent's, or the client's Create Task — keeps not-wired-up; `ActionBar`,
+  the client tabs and `CallDetailPanel`'s footer all treat an `href` as
+  wired.
 - The client contacts page added: `SidePanel` `closeIcon="text"` (a
   bordered "Close" button — `OverlayClose icon="text"`) and `ruled={false}`
   (no header/footer rules); `DetailSection` `variant="card"` (an outlined

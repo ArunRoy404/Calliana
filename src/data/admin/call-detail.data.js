@@ -4,6 +4,19 @@
  * caller, phone, timing and status, the same way `agent-detail.data.js`
  * overlays one sample onto every agent.
  */
+/**
+ * The admin's own links on the call drawer's footer, layered over
+ * `callDetailData` by the admin's calls store only — the agent's and the
+ * client's call lists reuse the same copy. Each opens that admin page with
+ * its add drawer open.
+ */
+export const ADMIN_CALL_DETAIL_LINKS = {
+  footerActions: {
+    task: { href: "/admin/tasks?panel=add" },
+    appointment: { href: "/admin/appointments?panel=add" },
+  },
+};
+
 export const callDetailData = {
   closeLabel: "Close",
 

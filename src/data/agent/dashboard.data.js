@@ -158,7 +158,12 @@ export const agentDashboardData = {
         0.45, 0.5, 0.95, 1, 0.9, 0.5, 0.45, 0.5, 0.95, 1, 0.95,
       ],
     },
-    /** None of the call's actions has a backend yet. */
+    /**
+     * Add Note has no backend yet; Create Task opens the agent's Task &
+     * Follow-ups with its create drawer open, and Open Live Workspace the
+     * workspace — the agent's own pages, so this agent-only data carries
+     * the links itself.
+     */
     notFunctionalMessage: NOT_WIRED.notFunctionalMessage,
     notFunctionalDescription: NOT_WIRED.notFunctionalDescription,
     actions: [
@@ -173,6 +178,7 @@ export const agentDashboardData = {
         label: "Create Task",
         variant: "neutral",
         icon: { lucide: "SquareCheckBig", size: 16 },
+        href: "/agent/tasks?panel=add",
       },
       {
         id: "workspace",

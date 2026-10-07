@@ -70,6 +70,18 @@ function call(
   };
 }
 
+/**
+ * The client's own links on the call drawer's footer, layered over its
+ * `detail` by the client's calls store: Schedule Appt opens the client's
+ * calendar with its new-appointment drawer. Create Task has no client page,
+ * so it stays not-wired-up.
+ */
+export const CLIENT_CALL_DETAIL_LINKS = {
+  footerActions: {
+    appointment: { href: "/client/appointments?panel=add" },
+  },
+};
+
 export const clientCallsData = {
   texture: "/admin/table/table-texture.png",
 
@@ -140,7 +152,8 @@ export const clientCallsData = {
 
   /**
    * The details drawer: the admin's call details, without "Open Client
-   * Account" — a client is already looking at their own account.
+   * Account" — a client is already looking at their own account. Its links
+   * are the client's own (`CLIENT_CALL_DETAIL_LINKS`).
    */
   detail: {
     ...callDetailData,

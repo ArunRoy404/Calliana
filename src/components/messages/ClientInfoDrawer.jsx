@@ -13,16 +13,16 @@ import { useMessagesStore } from "@/store/admin/useMessagesStore";
  * third column from `xl` up is reached here instead, from the thread header's
  * details button (`?panel=info`, rule 20). Built on the shared `SidePanel`,
  * with the column's own `ClientInfoPanel` in its `panel` variant, and the
- * last client kept on screen while it slides away.
+ * last client kept on screen while it slides away. `content` is the inbox's,
+ * as `MessagesInbox` resolved it for the portal.
  */
-export default function ClientInfoDrawer() {
+export default function ClientInfoDrawer({ content }) {
   const params = useStoreParams(useMessagesStore);
   const conversation = useMessagesStore((state) =>
     state.selectedConversation(params),
   );
   const isOpen = useMessagesStore((state) => state.isClientInfoOpen(params));
   const setOpen = useMessagesStore((state) => state.setClientInfoOpen);
-  const content = useMessagesStore((state) => state.content);
 
   const client = useRetainedValue(conversation?.client);
   const notFunctional = notFunctionalProps(content);

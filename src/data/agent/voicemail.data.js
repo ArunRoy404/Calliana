@@ -191,7 +191,14 @@ export const voicemailData = {
         variant: "neutral",
         hrefField: "clientHref",
       },
-      { id: "task", label: "Create Task", variant: "neutral" },
+      // The agent's own list, so it carries its link: the agent's Task &
+      // Follow-ups with its create drawer open.
+      {
+        id: "task",
+        label: "Create Task",
+        variant: "neutral",
+        href: "/agent/tasks?panel=add",
+      },
       {
         id: "callback",
         label: "Callback",

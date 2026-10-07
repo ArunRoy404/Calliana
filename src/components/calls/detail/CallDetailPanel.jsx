@@ -127,8 +127,11 @@ export default function CallDetailPanel({ useStore = useCallsStore }) {
           key={action?.id}
           variant={action?.variant}
           className={action?.className}
-          href={action?.hrefField ? call?.[action?.hrefField] : undefined}
-          {...(!action?.hrefField ? notFunctional : undefined)}
+          href={
+            action?.href ??
+            (action?.hrefField ? call?.[action?.hrefField] : undefined)
+          }
+          {...(!action?.href && !action?.hrefField ? notFunctional : undefined)}
         >
           {action?.icon && <AssetIcon icon={action?.icon} />}
           {action?.label}

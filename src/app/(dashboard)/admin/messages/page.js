@@ -18,5 +18,5 @@ export const metadata = {
  */
 export default async function MessagesPage() {
   await connection();
-  return <MessagesInbox />;
+  return <MessagesInbox role="admin" />;
 }

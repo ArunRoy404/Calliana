@@ -11,7 +11,8 @@ import { notFunctionalProps } from "@/lib/notFunctional";
  * The call on the agent's line right now: the primary band (live label,
  * Zoiper tag, the running timer), who is calling beside the client account
  * it belongs to (stacked below `lg`), the call's waveform, and Add Note /
- * Create Task / Open Live Workspace. None of the actions has a backend yet.
+ * Create Task / Open Live Workspace. An action with an `href` (Create Task,
+ * Open Live Workspace) is a link; the rest toast not-wired-up.
  * Reveals after `revealDelay`; its action row follows it in.
  */
 export default function LiveCallPanel({
