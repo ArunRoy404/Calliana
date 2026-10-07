@@ -13,6 +13,26 @@ const ICON = (src, size = 16) => ({ src, width: size, height: size });
 const TASK_ICON = ICON("/icons/client/task-primary.svg", 24);
 const TASK_ICON_URGENT = ICON("/icons/client/task-error.svg", 24);
 
+/**
+ * The admin's own links on a client's page, layered over `clientDetailData`
+ * by the admin's clients store only — the agent's page spreads the same
+ * copy, so the copy itself carries no links. "Message" opens the client's
+ * latest conversation (the store fills `{conversation}`; a client with none
+ * lands on the inbox); the task and appointment buttons open those pages
+ * with their add drawer open.
+ */
+export const ADMIN_CLIENT_DETAIL_LINKS = {
+  actions: {
+    message: {
+      hrefTemplate: "/admin/messages?conversation={conversation}",
+      fallbackHref: "/admin/messages",
+    },
+    task: { href: "/admin/tasks?panel=add" },
+  },
+  appointments: { actionHref: "/admin/appointments?panel=add" },
+  tasks: { actionHref: "/admin/tasks?panel=add" },
+};
+
 export const clientDetailData = {
   breadcrumb: [
     { id: "clients", label: "CLIENTS", href: "/admin/clients" },
@@ -149,7 +169,8 @@ export const clientDetailData = {
     submitLabel: "Add Note",
     submitIcon: ICON("/icons/client/add-white.svg"),
     notFunctionalMessage: "Notes aren’t saved yet",
-    notFunctionalDescription: "Your note will be kept once the backend is connected.",
+    notFunctionalDescription:
+      "Your note will be kept once the backend is connected.",
   },
 
   sample: {

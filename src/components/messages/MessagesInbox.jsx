@@ -30,10 +30,15 @@ import { useMessagesStore } from "@/store/admin/useMessagesStore";
  *
  * Search, filter and the open conversation are the URL's (rule 26), read once
  * here through the store and handed down. The columns reveal left to right.
+ *
+ * `role` is the portal showing the inbox; it picks that portal's content
+ * (`contentFor`), whose actions link to its own pages. Without a role, or
+ * for an action the portal has no link for, the action toasts
+ * not-wired-up.
  */
-export default function MessagesInbox() {
+export default function MessagesInbox({ role }) {
   const params = useStoreParams(useMessagesStore);
-  const content = useMessagesStore((state) => state.content);
+  const content = useMessagesStore((state) => state.contentFor(role));
   const deriveConversations = useMessagesStore(
     (state) => state.visibleConversations,
   );
@@ -105,7 +110,7 @@ export default function MessagesInbox() {
         )}
       </div>
 
-      <ClientInfoDrawer />
+      <ClientInfoDrawer content={content} />
     </>
   );
 }

@@ -20,5 +20,5 @@ export const metadata = {
  */
 export default async function ClientMessagesPage() {
   await connection();
-  return <MessagesInbox />;
+  return <MessagesInbox role="client" />;
 }

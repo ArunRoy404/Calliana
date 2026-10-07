@@ -37,6 +37,26 @@ export const agentClientsData = {
   ],
 };
 
+/**
+ * The agent's own links on a client's page, layered over
+ * `agentClientDetailData` by the agent's clients store: "Message" opens the
+ * client's latest conversation in the agent's inbox (the store fills
+ * `{conversation}`; a client with none lands on the inbox), and both
+ * "Create Task" buttons (the header's and the Tasks tab's) open the agent's
+ * Task & Follow-ups with its create drawer. Schedule Appointment has no
+ * agent page yet, so it stays not-wired-up.
+ */
+export const AGENT_CLIENT_DETAIL_LINKS = {
+  actions: {
+    message: {
+      hrefTemplate: "/agent/messages?conversation={conversation}",
+      fallbackHref: "/agent/messages",
+    },
+    task: { href: "/agent/tasks?panel=add" },
+  },
+  tasks: { actionHref: "/agent/tasks?panel=add" },
+};
+
 export const agentClientDetailData = {
   ...clientDetailData,
   breadcrumb: [

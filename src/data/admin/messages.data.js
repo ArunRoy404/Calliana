@@ -87,6 +87,45 @@ export const messagesData = {
       "Your message is valid — it will be sent once the SMS gateway is connected.",
   },
 
+  /**
+   * Each portal's links on the inbox's actions, by role — the same shape as
+   * the content they layer onto (`withContentLinks`): the thread's quick
+   * actions and the client info's contextual actions, by action id, each to
+   * that portal's own page with its add drawer open. An action a portal has
+   * no link for (the client's Create Task — it has no task page; the
+   * agent's Schedule — it has no calendar) stays not-wired-up.
+   */
+  actionLinks: {
+    admin: {
+      thread: {
+        quickActions: {
+          schedule: { href: "/admin/appointments?panel=add" },
+          task: { href: "/admin/tasks?panel=add" },
+        },
+      },
+      clientInfo: {
+        actions: { meeting: { href: "/admin/appointments?panel=add" } },
+      },
+    },
+    agent: {
+      thread: {
+        quickActions: {
+          task: { href: "/agent/tasks?panel=add" },
+        },
+      },
+    },
+    client: {
+      thread: {
+        quickActions: {
+          schedule: { href: "/client/appointments?panel=add" },
+        },
+      },
+      clientInfo: {
+        actions: { meeting: { href: "/client/appointments?panel=add" } },
+      },
+    },
+  },
+
   clientInfo: {
     title: "CLIENT INFO",
     fields: [
@@ -132,6 +171,7 @@ export const messagesData = {
       avatar: "/client/avatars/laura-alegre.png",
       contactName: "Marta Soler (Practice Mgr)",
       account: "Laura Alegre Clinic",
+      accountId: "laura-alegre-clinic",
       channel: "SMS",
       time: "10:52 AM",
       startedDay: "Today",
@@ -194,6 +234,7 @@ export const messagesData = {
       avatar: "/client/avatars/dr-martinez.png",
       contactName: "Dr. Martínez (Lead Dentist)",
       account: "Martinez Dental Care",
+      accountId: "martinez-dental-care",
       channel: "SMS",
       time: "09:30 AM",
       startedDay: "Today",
@@ -232,6 +273,7 @@ export const messagesData = {
       avatar: "/client/avatars/marta-sanchez.png",
       contactName: "Marta Sánchez (Patient)",
       account: "Laura Alegre Clinic",
+      accountId: "laura-alegre-clinic",
       channel: "Voicemail",
       time: "Yesterday",
       startedDay: "Yesterday",
@@ -265,6 +307,7 @@ export const messagesData = {
       avatar: "/client/avatars/ricardo-gomez.png",
       contactName: "Ricardo Gómez (Finance)",
       account: "Vanguard Wealth Partners",
+      accountId: "vanguard-wealth-partners",
       channel: "SMS",
       time: "Yesterday",
       startedDay: "Yesterday",

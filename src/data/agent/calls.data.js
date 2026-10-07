@@ -13,6 +13,18 @@ import {
  * row's `views` (its direction and its status, set by the store), beside
  * the client-account and call-status selects.
  */
+/**
+ * The agent's own links on the call drawer's footer, layered over the shared
+ * `callDetailData` by the agent's calls store: Create Task opens the agent's
+ * Task & Follow-ups with its create drawer. Schedule Appt has no agent page
+ * yet, so it stays not-wired-up.
+ */
+export const AGENT_CALL_DETAIL_LINKS = {
+  footerActions: {
+    task: { href: "/agent/tasks?panel=add" },
+  },
+};
+
 export const agentCallsData = {
   ...callsData,
 

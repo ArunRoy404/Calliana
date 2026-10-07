@@ -1,5 +1,9 @@
-import { callDetailData } from "@/data/admin/call-detail.data";
+import {
+  ADMIN_CALL_DETAIL_LINKS,
+  callDetailData,
+} from "@/data/admin/call-detail.data";
 import { callsData } from "@/data/admin/calls.data";
+import { withContentLinks } from "@/lib/actionLinks";
 import {
   CALLS_PARAM_KEYS,
   callsParamsSchema,
@@ -9,10 +13,13 @@ import { createTableStore } from "@/store/createTableStore";
 
 const { call: CALL } = CALLS_PARAM_KEYS;
 
-/** One call's details drawer — the slice every call list shares. */
+/**
+ * One call's details drawer — the slice every call list shares, with the
+ * admin's own footer links (Create Task, Schedule Appt).
+ */
 const callDetail = callDetailSlice({
   rows: callsData?.rows,
-  detail: callDetailData,
+  detail: withContentLinks(callDetailData, ADMIN_CALL_DETAIL_LINKS),
   callKey: CALL,
   clientHrefTemplate: callsData?.clientHrefTemplate,
 });

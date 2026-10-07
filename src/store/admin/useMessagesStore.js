@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 import { messagesData } from "@/data/admin/messages.data";
+import { withContentLinks } from "@/lib/actionLinks";
 import { fillTemplate } from "@/lib/fillTemplate";
 import { searchParamDefaults } from "@/lib/url/searchParams";
 import { writeUrlParams } from "@/lib/url/urlState";
@@ -65,6 +66,37 @@ export const summaries = conversations.map((conversation) => ({
   statusBadge: messagesData?.statusBadges?.[conversation?.status],
 }));
 
+/**
+ * The inbox as each portal with links sees it (`actionLinks`, by role),
+ * built once so a selector returns the same object every time.
+ */
+const contentByRole = new Map(
+  Object.entries(messagesData?.actionLinks ?? {}).map(([role, links]) => [
+    role,
+    withContentLinks(messagesData, links),
+  ]),
+);
+
+/**
+ * Each client account's latest conversation, by account id. Conversations
+ * are listed newest first, so the first one per account wins.
+ */
+const latestConversationByAccount = new Map();
+conversations.forEach((conversation) => {
+  const accountId = conversation?.accountId;
+  if (accountId && !latestConversationByAccount.has(accountId)) {
+    latestConversationByAccount.set(accountId, conversation?.id);
+  }
+});
+
+/**
+ * The values a client page's "Message" link is filled from (a clients
+ * store's `linkValues`): that client's latest conversation, or none.
+ */
+export const conversationLinkValues = (row) => ({
+  conversation: latestConversationByAccount.get(row?.id),
+});
+
 const conversationsById = new Map(
   conversations?.map((conversation) => [conversation?.id, conversation]),
 );
@@ -96,6 +128,8 @@ function matchesQuery(conversation, needle) {
  */
 export const useMessagesStore = create(() => ({
   content: messagesData,
+  /** The inbox as `role` sees it — its own action links, or none. */
+  contentFor: (role) => contentByRole.get(role) ?? messagesData,
   paramsSchema: messagesParamsSchema,
   summaries,
 

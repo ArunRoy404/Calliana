@@ -11,7 +11,8 @@ export const metadata = {
 /**
  * The agent workspace's Messages — the same inbox the admin and the client
  * portal work in (Figma 167:51527): the conversation list, the open thread
- * and the client's info. One component for every portal (rule 0).
+ * and the client's info. One component for every portal (rule 0); `role`
+ * gives Create Task the agent's own Task & Follow-ups link.
  *
  * The inbox's state lives in its URL, so it renders per request: a shared
  * link (`/agent/messages?conversation=laura-alegre`) arrives with that
@@ -19,5 +20,5 @@ export const metadata = {
  */
 export default async function AgentMessagesPage() {
   await connection();
-  return <MessagesInbox />;
+  return <MessagesInbox role="agent" />;
 }

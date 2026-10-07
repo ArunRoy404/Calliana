@@ -7,7 +7,9 @@ import { notFunctionalProps } from "@/lib/notFunctional";
 
 /**
  * Appointments tab — Figma 202:30713: a full-width "Schedule Appointment",
- * then the account's appointments.
+ * then the account's appointments. With the portal's `actionHref` (the
+ * admin's calendar, new-appointment drawer open) the button is a link;
+ * without one it toasts not-wired-up.
  */
 export default function ClientAppointmentsTab({ client, content }) {
   const labels = content?.appointments;
@@ -16,7 +18,12 @@ export default function ClientAppointmentsTab({ client, content }) {
     <DetailSection
       size="lg"
       action={
-        <Button fullWidth {...notFunctionalProps(content)}>
+        <Button
+          fullWidth
+          {...(labels?.actionHref
+            ? { href: labels?.actionHref }
+            : notFunctionalProps(content))}
+        >
           <AssetIcon icon={labels?.actionIcon} />
           {labels?.actionLabel}
         </Button>

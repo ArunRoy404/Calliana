@@ -67,7 +67,10 @@ Also binding, in full in AGENTS.md:
   sidebar and heading are data; its pages live in `components/client/<page>/`.
   A record set shown twice has one source (`clientCallRows`); a shared drawer
   takes `useStore` (`CallDetailPanel` + `callDetailSlice`); per-role page
-  titles are `ROLE_PAGES` in `top-bar.data.js`.
+  titles are `ROLE_PAGES` in `top-bar.data.js`. A button that starts another
+  page's task links there with its drawer open (`?panel=add`), through that
+  portal's own link data layered by its store (`withContentLinks`,
+  `lib/actionLinks.js`) — never links in copy another portal reuses.
   Contacts added `SidePanel closeIcon="text"` / `ruled={false}`,
   `DetailSection variant="card"` / `"callout"`, `CardField meta`, `RowCard
   variant="bare"` and per-status badge `variant`; a row's "…" opens its

@@ -13,7 +13,9 @@ import { revealDelayAt } from "@/lib/motion";
  * A client page's header band — Figma 198:31038: the breadcrumb, a back
  * button, the business mark, name and status, the specialty and address, the
  * primary contact line, and the record's actions on the right (below it on a
- * narrower screen).
+ * narrower screen). The actions are the client's own (`client.actions`, built
+ * by the store), so a portal's links reach this client's records; one
+ * without a link toasts not-wired-up.
  */
 export default function ClientDetailHeader({ client, content }) {
   const labels = content?.labels;
@@ -73,7 +75,7 @@ export default function ClientDetailHeader({ client, content }) {
         </div>
 
         <ActionBar
-          actions={content?.actions}
+          actions={client?.actions}
           buttonProps={notFunctionalProps(content)}
           revealDelay={revealDelayAt(0, 1)}
         />
