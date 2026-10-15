@@ -55,3 +55,16 @@ export function resolveActionHref(action, values) {
 
   return { ...rest, href: /\{\w+\}/.test(href) ? fallbackHref : href };
 }
+
+/**
+ * `actions` with each one that names a drawer (`panel`, layered on by a
+ * portal's links) wired to open it through `openPanel(panel)`. The rest are
+ * left as they are — a link, or not-wired-up.
+ */
+export function withPanelActions(actions, openPanel) {
+  return actions?.map((action) =>
+    action?.panel
+      ? { ...action, onClick: () => openPanel?.(action?.panel) }
+      : action,
+  );
+}
