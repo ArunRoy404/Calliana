@@ -1,6 +1,14 @@
 import { CLIENT_ACCOUNT_OPTIONS } from "@/data/admin/client-accounts.data";
 import { TASK_TYPE_OPTIONS } from "@/data/admin/tasks.data";
 
+/** A task's priorities — the create-task form and the inbox's task drawer. */
+export const TASK_PRIORITY_OPTIONS = [
+  { value: "low", label: "Low" },
+  { value: "normal", label: "Normal" },
+  { value: "high", label: "High" },
+  { value: "urgent", label: "Urgent" },
+];
+
 /**
  * "Create Operational Task" side panel — Figma 208:42777. Field `name`s match
  * the keys in `src/schemas/tasks/add-task.schema.js`.
@@ -33,12 +41,7 @@ export const addTaskData = {
     priority: {
       name: "priority",
       label: "PRIORITY LEVEL",
-      options: [
-        { value: "low", label: "Low" },
-        { value: "normal", label: "Normal" },
-        { value: "high", label: "High" },
-        { value: "urgent", label: "Urgent" },
-      ],
+      options: TASK_PRIORITY_OPTIONS,
     },
   },
 
