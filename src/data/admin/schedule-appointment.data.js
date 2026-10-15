@@ -12,8 +12,8 @@ import { CLIENT_ACCOUNT_OPTIONS } from "@/data/admin/client-accounts.data";
  * (`#F7F9FC`, for dark tiles) and vanishes on a white field. Takes the same
  * slate as the clock.
  */
-const CALENDAR_ICON = { lucide: "CalendarDays", size: 16 };
-const CLOCK_ICON = { src: "/icons/clock.svg", width: 16, height: 16 };
+export const CALENDAR_ICON = { lucide: "CalendarDays", size: 16 };
+export const CLOCK_ICON = { src: "/icons/clock.svg", width: 16, height: 16 };
 
 export const scheduleAppointmentData = {
   title: "Schedule New Appointment",

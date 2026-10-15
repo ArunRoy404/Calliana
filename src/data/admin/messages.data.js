@@ -94,17 +94,26 @@ export const messagesData = {
    * that portal's own page with its add drawer open. An action a portal has
    * no link for (the client's Create Task — it has no task page; the
    * agent's Schedule — it has no calendar) stays not-wired-up.
+   *
+   * `panel` opens one of the admin's own drawers over the open conversation
+   * instead (`message-forms.data.js`): Call back, Call account lead, and
+   * Create action task from either Create Task button.
    */
   actionLinks: {
     admin: {
       thread: {
         quickActions: {
           schedule: { href: "/admin/appointments?panel=add" },
-          task: { href: "/admin/tasks?panel=add" },
+          task: { panel: "task" },
+          callback: { panel: "callback" },
         },
       },
       clientInfo: {
-        actions: { meeting: { href: "/admin/appointments?panel=add" } },
+        actions: {
+          call: { panel: "lead" },
+          meeting: { href: "/admin/appointments?panel=add" },
+          task: { panel: "task" },
+        },
       },
     },
     agent: {
@@ -160,6 +169,26 @@ export const messagesData = {
     ],
   },
 
+  /**
+   * What the admin's drawers over a conversation open on, until real
+   * per-conversation data exists (the store lays each conversation over it).
+   * Task values are ids into the task form's shared option lists.
+   */
+  formSample: {
+    callerId: "+34 913 445 220 — Clinic reception",
+    callReason: "Return the caller’s appointment enquiry",
+    callNotes:
+      "Confirm the requested appointment date and record the caller’s response.",
+    taskTitle: "Confirm appointment availability",
+    taskType: "appointment-coordination",
+    taskPriority: "normal",
+    taskDueDate: "2026-10-29",
+    taskDueTime: "09:30",
+    taskAssignee: "sofia-martinez",
+    taskInstructions:
+      "Check the clinic calendar, confirm provider approval, and call the patient with the available options.",
+  },
+
   notFunctionalMessage: "Inbox actions aren’t wired up yet",
   notFunctionalDescription:
     "This action will work once the backend is connected.",
@@ -170,6 +199,10 @@ export const messagesData = {
       name: "Laura Alegre",
       avatar: "/client/avatars/laura-alegre.png",
       contactName: "Marta Soler (Practice Mgr)",
+      /** Who wrote in and their number — the Call back drawer's recipient. */
+      contactPerson: "Marta Soler",
+      contactPhone: "+34 677 334 112",
+      reference: "MSG-1042",
       account: "Laura Alegre Clinic",
       accountId: "laura-alegre-clinic",
       channel: "SMS",
@@ -233,6 +266,9 @@ export const messagesData = {
       name: "Dr. Martínez",
       avatar: "/client/avatars/dr-martinez.png",
       contactName: "Dr. Martínez (Lead Dentist)",
+      contactPerson: "Dr. Martínez",
+      contactPhone: "+34 611 245 870",
+      reference: "MSG-1038",
       account: "Martinez Dental Care",
       accountId: "martinez-dental-care",
       channel: "SMS",
@@ -272,6 +308,9 @@ export const messagesData = {
       name: "Marta Sánchez",
       avatar: "/client/avatars/marta-sanchez.png",
       contactName: "Marta Sánchez (Patient)",
+      contactPerson: "Marta Sánchez",
+      contactPhone: "+34 622 908 114",
+      reference: "MSG-1031",
       account: "Laura Alegre Clinic",
       accountId: "laura-alegre-clinic",
       channel: "Voicemail",
@@ -306,6 +345,9 @@ export const messagesData = {
       name: "Ricardo Gómez",
       avatar: "/client/avatars/ricardo-gomez.png",
       contactName: "Ricardo Gómez (Finance)",
+      contactPerson: "Ricardo Gómez",
+      contactPhone: "+34 654 771 302",
+      reference: "MSG-1027",
       account: "Vanguard Wealth Partners",
       accountId: "vanguard-wealth-partners",
       channel: "SMS",

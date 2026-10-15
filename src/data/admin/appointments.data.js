@@ -118,15 +118,55 @@ export const appointmentsData = {
       { id: "address", label: "Address" },
       { id: "notes", label: "Appointment & Clinical Notes:" },
     ],
-    cancelLabel: "Cancel Booking",
-    closeLabel: "Close",
-    rescheduleLabel: "Reschedule",
+    /**
+     * The footer, left to right. `close` closes the drawer; `panel` opens
+     * that drawer over the appointment when the page has it
+     * (`AppointmentsCalendar panelForms` — the admin's), else the button is
+     * not wired up — and `onlyWithPanel` leaves it out altogether (Follow-up
+     * call, which only the admin's calendar has). The rest are not wired up.
+     */
+    footerActions: [
+      {
+        id: "cancel",
+        label: "Cancel Booking",
+        variant: "danger",
+        className: "mr-auto",
+      },
+      { id: "close", label: "Close", variant: "neutral", close: true },
+      {
+        id: "followUp",
+        label: "Follow-up Call",
+        variant: "neutral",
+        panel: "followUp",
+        onlyWithPanel: true,
+      },
+      { id: "reschedule", label: "Reschedule", panel: "reschedule" },
+    ],
+
+    /**
+     * The Follow-up call / Reschedule drawers' "28 Aug 2026 · 12:00 PM –
+     * 12:30 PM" — the day in `slotLocale`'s day-month order, as the drawers
+     * are drawn.
+     */
+    slotTemplate: "{day} · {start}–{end}",
+    slotDateFormat: { day: "numeric", month: "short", year: "numeric" },
+    slotLocale: "en-GB",
+
     sample: {
       contactPerson: "Mateo Fernandez",
       contactPhone: "+34 611 789 203",
       assignedAgent: "Elena Rostova",
       address: "Chair 1, Madrid Clinic",
       notes: "Confirm the slot with the client the day before.",
+
+      /* What the follow-up and reschedule drawers open on. */
+      professionalId: "martinez",
+      followUpReason: "Follow up on the scheduled dental consultation",
+      followUpNotes:
+        "Confirm attendance and any changes requested by the patient.",
+      rescheduleDate: "2026-08-31",
+      rescheduleTime: "11:30",
+      rescheduleReason: "Patient requested another date.",
     },
   },
 
