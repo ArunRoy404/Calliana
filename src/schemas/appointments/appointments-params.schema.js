@@ -20,11 +20,21 @@ export const APPOINTMENTS_PARAM_KEYS = {
 };
 
 /**
+ * The admin's drawers over one appointment, by drawer id → URL key; each
+ * key's value is the appointment's id.
+ */
+export const APPOINTMENT_RECORD_PANEL_KEYS = {
+  followUp: "followup",
+  reschedule: "reschedule",
+};
+
+/**
  * Everything the calendar keeps in its URL —
  * `/admin/appointments?view=week&type=clinical&date=2026-08-13`: the range
  * (Today / This Week / This Month), the event-type filter and the day the
  * range is anchored on — plus the open drawer: `&appointment=<id>` for an
- * event's details, `&panel=add` for "Schedule New Appointment". Every field `.catch()`es its default, so a stale or
+ * event's details, `&panel=add` for "Schedule New Appointment", or the
+ * admin's `&followup=<id>` / `&reschedule=<id>` over one appointment. Every field `.catch()`es its default, so a stale or
  * hand-edited link falls back to today's full schedule; the resting state
  * (today, all types) is the bare path.
  */
@@ -38,4 +48,10 @@ export const appointmentsParamsSchema = z.object({
   [APPOINTMENTS_PARAM_KEYS.date]: optionalIsoDateParam,
   [APPOINTMENTS_PARAM_KEYS.appointment]: optionalIdParam,
   [APPOINTMENTS_PARAM_KEYS.panel]: optionalEnumParam([ADD_PANEL]),
+  ...Object.fromEntries(
+    Object.values(APPOINTMENT_RECORD_PANEL_KEYS).map((key) => [
+      key,
+      optionalIdParam,
+    ]),
+  ),
 });
