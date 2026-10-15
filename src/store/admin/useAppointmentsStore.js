@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+import { CLIENT_PROFESSIONAL_OPTIONS } from "@/data/admin/client-detail.data";
 import { appointmentsData } from "@/data/admin/appointments.data";
 import {
   addDays,
@@ -17,10 +18,12 @@ import { fillTemplate } from "@/lib/fillTemplate";
 import { searchParamDefaults } from "@/lib/url/searchParams";
 import { writeUrlParams } from "@/lib/url/urlState";
 import {
+  APPOINTMENT_RECORD_PANEL_KEYS,
   APPOINTMENTS_PARAM_KEYS,
   appointmentsParamsSchema,
 } from "@/schemas/appointments/appointments-params.schema";
 import { ADD_PANEL } from "@/schemas/url/list-params.schema";
+import { recordPanelSlice } from "@/store/recordPanelSlice";
 
 const {
   view: VIEW,
@@ -83,18 +86,32 @@ const events =
 
 const DETAIL = appointmentsData?.detail;
 
+const PROFESSIONAL_LABELS = Object.fromEntries(
+  CLIENT_PROFESSIONAL_OPTIONS?.map((option) => [option?.value, option?.label]) ??
+    [],
+);
+
 /**
  * An event as its details panel shows it: the shared `sample` under the
  * event's own fields, its client account, its "12:00 PM – 12:30 PM" window,
- * its title (`name`, else `title`) and its "Scheduled for …" line.
+ * its title (`name`, else `title`) and its "Scheduled for …" line — and, for
+ * the admin's follow-up and reschedule drawers, its `slot` ("28 Aug 2026 ·
+ * 12:00 PM–12:30 PM"), its length in minutes and its professional's name.
  */
 function buildDetail(event) {
   const start = formatTime(event?.start, FORMATS?.time, LOCALE);
   const end = formatTime(event?.end, FORMATS?.time, LOCALE);
+  const record = { ...DETAIL?.sample, ...event };
 
   return {
-    ...DETAIL?.sample,
-    ...event,
+    ...record,
+    slot: fillTemplate(DETAIL?.slotTemplate, {
+      day: formatIsoDate(event?.date, DETAIL?.slotDateFormat, DETAIL?.slotLocale),
+      start,
+      end,
+    }),
+    durationMinutes: String(minutesOf(event?.end) - minutesOf(event?.start)),
+    professional: PROFESSIONAL_LABELS?.[record?.professionalId],
     client: event?.subtitle,
     startLabel: start,
     typeTag: TYPE_TAGS?.[event?.type],
@@ -216,9 +233,19 @@ function dateParam(iso) {
  * Its two drawers live there too (rule 20): an event's details
  * (`?appointment=<id>`) and "Schedule New Appointment" (`?panel=add`, the
  * `isAddOpen` / `setAddOpen` pair `FormPanel` reads). Opening one clears
- * the other.
+ * the other. The admin's drawers over one appointment — Follow-up call
+ * (`?followup=<id>`) and Reschedule (`?reschedule=<id>`) — are
+ * `recordPanelSlice`'s, and opening one closes the details.
  */
-export const useAppointmentsStore = create(() => ({
+export const useAppointmentsStore = create((set, get) => ({
+  /** Writes any of the calendar's URL keys — what `recordPanelSlice` calls. */
+  setParams: (patch) => writeUrlParams(patch, { defaults }),
+  ...recordPanelSlice({
+    keys: APPOINTMENT_RECORD_PANEL_KEYS,
+    recordById: (id) => appointmentDetailsById.get(id),
+    clears: [APPOINTMENT],
+  })(set, get),
+
   content: appointmentsData,
   detailContent: DETAIL,
   paramsSchema: appointmentsParamsSchema,

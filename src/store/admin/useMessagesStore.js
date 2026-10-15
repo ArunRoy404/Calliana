@@ -8,8 +8,10 @@ import { writeUrlParams } from "@/lib/url/urlState";
 import {
   CLIENT_INFO_PANEL,
   MESSAGES_PARAM_KEYS,
+  MESSAGES_RECORD_PANEL_KEYS,
   messagesParamsSchema,
 } from "@/schemas/messages/messages-params.schema";
+import { recordPanelSlice } from "@/store/recordPanelSlice";
 
 const {
   query: QUERY,
@@ -34,11 +36,15 @@ const FILTER_MATCHERS = {
 /**
  * A conversation with its list preview, its "started" line and its inbound
  * sender (`contact` — the name and picture an incoming bubble shows) filled
- * in.
+ * in — and, flat for the admin's drawers' copy templates, its account lead
+ * (`leadName`, `leadPhone`) over the shared `formSample` values.
  */
 function buildConversation(conversation) {
   return {
+    ...messagesData?.formSample,
     ...conversation,
+    leadName: conversation?.client?.primaryContact,
+    leadPhone: conversation?.client?.phone,
     contact: { name: conversation?.contactName, avatar: conversation?.avatar },
     preview: conversation?.preview ?? conversation?.messages?.at?.(-1)?.text,
     startedLabel: fillTemplate(messagesData?.thread?.startedTemplate, {
@@ -125,8 +131,20 @@ function matchesQuery(conversation, needle) {
  * The client-details drawer (rule 20) is there too (`?panel=info`): the
  * phone's way to the third column, which only fits beside the thread from
  * `xl` up. Choosing a conversation closes it, so the two never disagree.
+ *
+ * The admin's drawers over the open conversation (Call back, Call account
+ * lead, Create action task) are `recordPanelSlice`'s: one key each, opened by
+ * an action whose data names its `panel`, and opening one closes the
+ * client-details drawer.
  */
-export const useMessagesStore = create(() => ({
+export const useMessagesStore = create((set, get) => ({
+  /** Writes any of the inbox's URL keys — what `recordPanelSlice` calls. */
+  setParams: (patch) => writeUrlParams(patch, { defaults }),
+  ...recordPanelSlice({
+    keys: MESSAGES_RECORD_PANEL_KEYS,
+    recordById: (id) => conversationsById.get(id),
+  })(set, get),
+
   content: messagesData,
   /** The inbox as `role` sees it — its own action links, or none. */
   contentFor: (role) => contentByRole.get(role) ?? messagesData,

@@ -1,42 +1,15 @@
-import { callsData } from "@/data/admin/calls.data";
 import {
   CALLBACKS,
-  TRANSCRIPTIONS,
   VOICEMAIL_STATUSES,
-  voicemailData,
-} from "@/data/agent/voicemail.data";
+} from "@/data/admin/voicemail.data";
+import { voicemailData } from "@/data/agent/voicemail.data";
 import { agentVoicemailParamsSchema } from "@/schemas/agent/agent-voicemail-params.schema";
 import { CALLS_PARAM_KEYS } from "@/schemas/calls/calls-params.schema";
 import { callDetailSlice } from "@/store/calls/callDetailSlice";
+import { voicemailRows } from "@/store/calls/voicemailRows";
 import { createTableStore } from "@/store/createTableStore";
 
 const { call: CALL } = CALLS_PARAM_KEYS;
-const VOICEMAILS = voicemailData?.voicemails ?? {};
-
-/**
- * Each voicemail: its call from the call log joined with what the
- * voicemail has of its own — the badges the list shows, the keys its
- * filters match, and the drawer's received time, length and transcript.
- * Calls without a voicemail are not listed. Built once.
- */
-const voicemailRows =
-  callsData?.rows
-    ?.filter((row) => VOICEMAILS?.[row?.id])
-    ?.map((row) => {
-      const voicemail = VOICEMAILS?.[row?.id];
-
-      return {
-        ...row,
-        voicemailKey: voicemail?.status,
-        voicemailStatus: VOICEMAIL_STATUSES?.[voicemail?.status]?.badge,
-        transcriptionStatus: TRANSCRIPTIONS?.[voicemail?.transcription],
-        callbackKey: voicemail?.callback,
-        callbackStatus: CALLBACKS?.[voicemail?.callback]?.badge,
-        received: voicemail?.received,
-        voicemailLength: voicemail?.voicemailLength,
-        transcription: voicemail?.transcript,
-      };
-    }) ?? [];
 
 /**
  * The drawer's tags read the voicemail's own words — "New Voicemail",
