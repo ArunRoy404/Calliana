@@ -80,16 +80,16 @@ it rather than letting it grow.
 | Folder                       | Holds                                                        |
 | ---------------------------- | ------------------------------------------------------------ |
 | `components/atoms/`          | Indivisible pieces — Button, Checkbox, Spinner, AppImage, AssetIcon, ToneIcon, UserAvatar, StatusBadge, MetaLine, TextLink, IconTile, StatusPill, CountBadge |
-| `components/forms/`          | Inputs and form compositions — FieldShell, InputField, TextAreaField, FormField, StoreField, FormSelect, StoreSelect, FilterSelect, FormSection, TimeRangeField, SearchField, FormOptionsRow |
-| `components/overlays/`       | SidePanel — the one drawer every add/edit/detail panel is built on; FormPanel (an add drawer) and its FormPanelFooter |
+| `components/forms/`          | Inputs and form compositions — FieldShell, InputField, TextAreaField, FormField, StoreField, FormSelect, StoreSelect, FilterSelect, FormSection, TimeRangeField, SearchField, FormOptionsRow, FormLayoutFields (a record drawer's summary → rows → notice body) |
+| `components/overlays/`       | SidePanel — the one drawer every add/edit/detail panel is built on; FormPanel (an add drawer) and its FormPanelFooter; RecordFormPanel (one record's form drawer) and RecordFormPanels (a page's set of them) |
 | `components/actions/`        | ActionBar — a record's row of action buttons; PanelLink — a panel header's "Inbox ›" link |
 | `components/lists/`          | StaggerList — a list whose rows reveal one after another       |
 | `components/tabs/`           | UnderlineTabs                                                  |
 | `components/timeline/`       | Timeline and TimelineEvent (audit trail, agent and client activities) |
 | `components/charts/`         | MeterRow, DotMatrixChart / DotMatrixColumn, DonutChart, ChartLegend, ChartTooltip, ChartDataTable |
 | `components/tables/`         | The reusable list screen — TableDirectory (the whole screen), TableCard, TableToolbar, DataTable, TablePagination, TableViews (the table-or-cards switch), TableCardList / TableRowCard (the card view), EmptyMessage, and `cells/` (one renderer per column `type`) |
-| `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard, CardField, DetailSection, InfoTile, InstructionCard, MetricRow, NoticeCard, RowCard, StatFigure, StatTile |
-| `components/agents/`         | Agent compositions — `add/` (AddAgentPanel, AddAgentFields) and `detail/` (AgentDetailPanel, its tabs and rows) |
+| `components/cards/`          | Card shells — CardHeading, CardNote, PanelCard, CardField, DetailSection, InfoTile, InstructionCard, MetricRow, NoticeCard, NoticeWell, RowCard, StatFigure, StatTile |
+| `components/agents/`         | Agent compositions — `add/` (AddAgentPanel, AddAgentFields), `detail/` (AgentDetailPanel, its tabs and rows), `edit/` (EditAgentPanel) and `assign/` (AssignClientsPanel, AssignClientsFields, AssignClientRow) |
 | `components/clients/`        | Client compositions — `add/` (AddClientPanel, AddClientFields) and `detail/` (ClientDetailView, its header, tabs and rows) |
 | `components/messages/`       | The inbox — MessagesInbox (the three columns), ConversationList / ConversationRow, ConversationThread with ThreadHeader, MessageBubble and MessageComposer, ClientInfoPanel |
 | `components/appointments/`   | The calendar — AppointmentsCalendar (on `TableCard`), CalendarToolbar, CalendarDayCard (Today), CalendarWeekView (time grid), CalendarMonthView / CalendarMonthCell (month grid), CalendarEventRow, AppointmentDetailPanel, ScheduleAppointmentPanel / ScheduleAppointmentFields |
@@ -825,6 +825,108 @@ Reach for these before adding anything similar:
   `sr-only` `charts/ChartDataTable`. A report panel with a solid primary
   header band is `PanelCard variant="banded"`. shadcn `TooltipContent`
   takes `showArrow={false}` for a card-style tooltip.
+
+- **A drawer that works on one record** (edit an agent, assign its
+  clients, the admin client page's Call client / Schedule appointment /
+  Edit client / Add contact) is `overlays/RecordFormPanel` — `FormPanel`
+  with `open` / `onOpenChange` from the page's store and the record — around
+  `forms/FormLayoutFields`. Its form store is `createFormStore({ content,
+  schema, defaultValues, closePanel, fromRecord })`: `content` gives the
+  toast copy and, with `fromRecord`, a `view` (`recordView(content)` — the
+  `subtitleTemplate` and the `summary.fields` templates filled from the
+  record). `FormLayoutFields` draws the copy top to bottom: `summary` (grey
+  well of facts), `layout` rows (`[["date", "startTime", "duration"]]`, one
+  to three across from `sm`, keys into `fields` / `selects` — or a row whose
+  key names `notices.<key>`, a `cards/NoticeWell` placed among the fields:
+  the call drawer's Zoiper note, the call-notes drawer's note under each
+  field; a notice with `field` / `empty` reads its text from the record —
+  a voicemail's transcript — through `view.notices`; a key naming
+  `buttons.<key>` is a not-wired-up neutral button), a drawer's own
+  `children(delayAt)` blocks, then the closing `notice`. A drawer whose
+  submit moves on to another drawer for the same record passes
+  `createFormStore`'s `onSubmitted(recordId)` (a voicemail's "Call back"
+  opens its return-call drawer). A drawer that is another drawer
+  re-addressed spreads its copy (`returnCallForm` = `callClientData` with
+  its own title and summary) and reuses its schema. `RecordFormPanel` is open while it has a `record` and takes
+  `onClose`; a page with several data-driven ones renders
+  `overlays/RecordFormPanels` (`panelForms`, `recordOf(id)`, `onClose(id)`).
+  A list page's drawers over one row are `store/recordPanelSlice({ keys,
+  recordById, clears, closeClears })` spread into its store —
+  `panelRecord(params, id)`, `openRecordPanel(id, recordId)`,
+  `closeRecordPanel(id)`; one URL key per drawer (agents' `?edit=` /
+  `?assign=`, calls' `?notes=` / `?outcome=`), opening one closes the rest.
+  A button reaches one through its data's `panel` (`withPanelActions`, or
+  `CallDetailPanel`'s section / footer action). `useLoadedRecord` seeds the form whenever a different record
+  opens and a cancel forgets it, so reopening reseeds (the routing rules
+  drawer uses it too; never a hand-written `useEffect` + `loadX`). A drawer
+  whose form is laid out by data needs no fields component of its own. A
+  field config's `disabled` shows a fixed value (the contact's client
+  account). A search inside a drawer is a URL key too (`?find=`, the
+  shared `queryParam`) behind `useDebouncedDraft`. A form laid out in rows
+  of one or two fields reads a data `layout` (`[["phone", "email"], …]`).
+  Option lists two forms share are named exports (`AGENT_ROLE_OPTIONS`,
+  `CALL_QUEUE_OPTIONS`, `ACCOUNT_STATUS_OPTIONS`); a row's status badge and
+  the form's select read one `…_STATUSES` map via a `…Key` slug on the row.
+  It also added `DetailSection variant="well"` (a borderless grey well;
+  with `tone` that tone's tint — "Client access"), `RowCard variant="well"`
+  and `FactList layout="columns"`.
+- **A client page's own drawers are `?panel=<id>`** on its detail params
+  (`CLIENT_PANELS`). A portal opts in through its link data — an action's
+  `panel`, the Contacts tab's `contacts.addPanel` (`ADMIN_CLIENT_DETAIL_LINKS`)
+  — wired by `withPanelActions` (`src/lib/actionLinks.js`); a portal without
+  them (the agent's) keeps those buttons not-wired-up. The drawers' form
+  stores are `panelForms` (`ADMIN_CLIENT_PANEL_FORMS`) handed to
+  `ClientDetailView` by the route's client wrapper (`AdminClientDetail`) —
+  **never imported into a store the server page reads**: form stores pull in
+  `goey-toast`, which cannot load in a server component. Each closes through
+  `closeClientPanel`. The admin's calls page does the same: its
+  `AdminCallsDirectory` wrapper hands `CallsDirectory` the
+  `ADMIN_CALL_PANEL_FORMS` (Edit call notes from the agent notes' "Edit
+  Notes", Record outcome from the footer). An action only one portal's
+  copy of a shared drawer has (`ADMIN_RECORD_OUTCOME_ACTION`) is added by
+  that portal's store, never put in the shared copy for the others to
+  inherit as not-wired-up.
+- **Voicemail is one record set for both portals.** The admin's list
+  (`/admin/voicemail`) and the agent's read the same rows,
+  `store/calls/voicemailRows.js` (the call log joined with `voicemails`);
+  the base copy — statuses, filters, columns (`VOICEMAIL_COLUMNS`) and
+  `voicemails` — is `src/data/admin/voicemail.data.js`, which the agent's
+  data spreads, changing only its "CALL STATUS" heading, the call log's own
+  actions and its `CallDetailPanel` drawer. The admin's two drawers
+  (Voicemail details `?voicemail=`, Return voicemail call `?return=` — the
+  filter already owns `?callback=`) are `recordPanelSlice` +
+  `RecordFormPanels` over `ADMIN_VOICEMAIL_PANEL_FORMS`; a row action names
+  its drawer with `panel` and the page's `onRowAction` opens it.
+- **The admin inbox's drawers** over the open conversation — Call back
+  (`?callback=`), Call account lead (`?lead=`), Create action task
+  (`?task=`, from either "Create Task") — are the same pattern on a store
+  that is not a table: `useMessagesStore` adds a `setParams` (the inbox's
+  `writeUrlParams`) and spreads `recordPanelSlice`. The admin opts in
+  through its `actionLinks.admin` (`{ panel }` where it had an `href`);
+  `ConversationThread` / `ClientInfoPanel` wire it with
+  `withPanelActions(actions, onOpenPanel)`, and the agent's and client's
+  inboxes keep their links. The forms come in as `MessagesInbox
+  panelForms` from `AdminMessagesInbox` (`ADMIN_MESSAGE_PANEL_FORMS`) —
+  `useMessagesStore` is imported by the clients page's server code, so it
+  must never import a form store. Both calls spread `callClientData`; the
+  task drawer reuses the task form's lists (`TASK_TYPE_OPTIONS`,
+  `TASK_PRIORITY_OPTIONS`, `TASK_AGENT_OPTIONS`).
+- **The admin calendar's drawers** over one appointment — Follow-up call
+  (`?followup=`) and Reschedule appointment (`?reschedule=`) — follow the
+  inbox: `useAppointmentsStore` adds `setParams` and spreads
+  `recordPanelSlice`; `AdminAppointmentsCalendar` hands
+  `ADMIN_APPOINTMENT_PANEL_FORMS` to `AppointmentsCalendar panelForms`.
+  When the same screen serves several portals and one store, a portal
+  opts in by the forms it hands in, not by its links: the details drawer's
+  footer is data (`detail.footerActions`: `close`, `panel`, and
+  `onlyWithPanel` for a button that exists only where its drawer does), so
+  the client's calendar keeps a not-wired "Reschedule" and shows no
+  "Follow-up Call". A booking's "28 Aug 2026 · 12:00 PM–12:30 PM" is the
+  store's `slot` (`detail.slotTemplate` / `slotDateFormat` / `slotLocale`);
+  `APPOINTMENT_DURATION_OPTIONS` and `CLIENT_PROFESSIONAL_OPTIONS` are the
+  lists every booking form shares. Lists two forms offer are shared exports
+  (`TIMEZONE_OPTIONS`, `CLIENT_PROFESSIONAL_OPTIONS`, the date/time
+  field icons `CALENDAR_ICON` / `CLOCK_ICON`).
 
 ## 30. Pixel fidelity is mandatory, not "close enough"
 

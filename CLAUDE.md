@@ -98,6 +98,26 @@ Also binding, in full in AGENTS.md:
   values genuinely have no field chrome around them — a bordered,
   select-height box means build a real editable `FormSelect`, not
   `CardField` text.
+  A record's drawer is `RecordFormPanel` (`record` + `onClose`) +
+  `FormLayoutFields` over `createFormStore({ content, fromRecord })`
+  (copy-driven summary well, `layout` rows — a `notices` key puts a
+  `NoticeWell` among them — and closing notice); a page's set is
+  `RecordFormPanels`; a list's drawers over one row are `recordPanelSlice`
+  (one URL key each, opened by data's `panel`); layout rows may also name
+  `buttons` and record-filled notices (`field` / `empty`), and
+  `onSubmitted` chains one drawer into the next. Voicemail rows and copy
+  are one source for admin and agent (`voicemailRows`, admin
+  `voicemail.data.js` spread by the agent's); a non-table store (the
+  inbox, the calendar) gets the same drawers by adding `setParams` and
+  spreading `recordPanelSlice`; one screen serving several portals opts
+  each in by the `panelForms` it hands in, its footer data marking
+  `onlyWithPanel` buttons; a drawer's search is a
+  URL key (`queryParam`); `DetailSection`/`RowCard` `variant="well"`,
+  `FactList layout="columns"`. A client page's drawers are `?panel=<id>`,
+  opted into by a portal's link data (`panel` / `addPanel`) and handed in as
+  `panelForms` by the route's client wrapper — never imported into a store
+  the server page reads (admin calls: `AdminCallsDirectory`). A portal-only
+  action on a shared drawer is added by that portal's store.
 - **Rule 30** — pixel fidelity is mandatory: pull `get_design_context` on the
   specific node and match size/weight/colour exactly, not the nearest
   type-scale class. `TextCell` takes `column.tone` / `column.weight` for
